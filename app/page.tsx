@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Navigation from '@/components/landing/Navigation';
 import FAQ from '@/components/landing/FAQ';
 import Hero from '@/components/landing/Hero';
 import Section from '@/components/landing/Section';
@@ -45,9 +44,62 @@ function AnimatedCard({ children, delay = 0, className = '' }: { children: React
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-[#fafafa]">
-      <Navigation />
+    <div className="bg-[#fafafa]">
       <Hero />
+
+      {/* Before vs After */}
+      <Section className="py-16">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="mx-auto max-w-5xl">
+            <div className="grid gap-6 sm:grid-cols-2">
+              <AnimatedCard delay={0}>
+                <div className="rounded-lg border border-zinc-200 bg-zinc-50/50 p-6 shadow-sm h-full">
+                  <h3 className="text-lg font-medium text-zinc-700 mb-5">Before</h3>
+                  <ul className="space-y-3 text-sm text-zinc-600 leading-relaxed">
+                    <li className="flex items-start gap-3">
+                      <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
+                      <span>Screenshots with no source trail</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
+                      <span>Metric definitions change deck-to-deck</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
+                      <span>Email threads: 'How did you calculate this?'</span>
+                    </li>
+                  </ul>
+                </div>
+              </AnimatedCard>
+
+              <AnimatedCard delay={80}>
+                <div className="rounded-lg border border-zinc-200 bg-white p-6 shadow-sm h-full relative">
+                  <div className="absolute top-4 right-4">
+                    <span className="inline-flex items-center rounded-full bg-indigo-50 border border-indigo-100 px-2 py-0.5 text-xs font-medium text-indigo-700">
+                      Verified
+                    </span>
+                  </div>
+                  <h3 className="text-lg font-medium text-zinc-900 mb-5">After</h3>
+                  <ul className="space-y-3 text-sm text-zinc-600 leading-relaxed">
+                    <li className="flex items-start gap-3">
+                      <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
+                      <span>Source-linked to Stripe events</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
+                      <span>Standardized definitions across metrics</span>
+                    </li>
+                    <li className="flex items-start gap-3">
+                      <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
+                      <span>Single read-only investor link</span>
+                    </li>
+                  </ul>
+                </div>
+              </AnimatedCard>
+            </div>
+          </div>
+        </div>
+      </Section>
 
       {/* Problem and Solution */}
       <Section background="tinted" className="py-24">
@@ -55,8 +107,8 @@ export default function Home() {
           <div className="mx-auto max-w-5xl">
             <div className="grid gap-6 lg:grid-cols-2">
               <AnimatedCard delay={0}>
-                <div className="rounded-xl border-t-2 border-zinc-300 bg-white p-8 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
-                  <h2 className="text-2xl font-medium tracking-tight text-zinc-900">Problem</h2>
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50/30 p-8">
+                  <h2 className="text-2xl font-medium tracking-tight text-zinc-700">Problem</h2>
                   <ul className="mt-6 space-y-3.5 text-zinc-600 leading-relaxed">
                     <li className="flex items-start gap-3">
                       <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
@@ -75,7 +127,7 @@ export default function Home() {
               </AnimatedCard>
 
               <AnimatedCard delay={80}>
-                <div className="rounded-xl border-t-3 border-indigo-600 bg-white p-8 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all">
+                <div className="rounded-xl border-2 border-indigo-600 bg-white p-8 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all">
                   <h2 className="text-2xl font-medium tracking-tight text-zinc-900">Solution</h2>
                   <ul className="mt-6 space-y-3.5 text-zinc-600 leading-relaxed">
                     <li className="flex items-start gap-3">
@@ -102,7 +154,7 @@ export default function Home() {
       <Section id="how-it-works" className="py-24">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <h2 className="text-3xl font-medium tracking-tight text-zinc-900">How It Works</h2>
+            <h2 className="text-3xl font-medium tracking-tight text-zinc-900">How founders share revenue now</h2>
           </div>
 
           <div className="mx-auto mt-16 max-w-4xl">
@@ -111,17 +163,20 @@ export default function Home() {
               {[
                 {
                   num: 1,
-                  title: 'Connect Stripe (read-only access)',
+                  title: 'Connect Stripe',
+                  timeEstimate: '30s',
                   desc: 'Authorize Proofround to access your Stripe account with read-only permissions. We cannot initiate charges, issue refunds, or modify any settings.',
                 },
                 {
                   num: 2,
-                  title: 'Generate a packet for a defined time range',
+                  title: 'Generate packet',
+                  timeEstimate: 'instant',
                   desc: 'Select a time range and generate your verification packet. The system processes your Stripe data, calculates metrics with clear definitions, and creates a time-stamped snapshot.',
                 },
                 {
                   num: 3,
-                  title: 'Share a controlled investor link (revocable, expirable)',
+                  title: 'Share link',
+                  timeEstimate: 'done',
                   desc: 'Share a single link with investors. They can view the verification packet in a read-only interface—no account required. Links are revocable and can be set to expire.',
                 },
               ].map((step, idx) => (
@@ -131,7 +186,10 @@ export default function Home() {
                       {step.num}
                     </div>
                     <div className="flex-1 rounded-lg bg-white/50 p-4 -ml-2">
-                      <h3 className="text-xl font-semibold text-zinc-900">{step.title}</h3>
+                      <div className="flex items-baseline gap-2">
+                        <h3 className="text-xl font-semibold text-zinc-900">{step.title}</h3>
+                        <span className="text-sm text-zinc-500">({step.timeEstimate})</span>
+                      </div>
                       <p className="mt-2.5 text-zinc-600 leading-relaxed">{step.desc}</p>
                     </div>
                   </div>
@@ -150,6 +208,34 @@ export default function Home() {
             <p className="mt-5 text-lg leading-7 text-zinc-600">
               A time-stamped, Stripe-verified snapshot designed to replace screenshots and reduce diligence follow-ups.
             </p>
+          </div>
+
+          <div className="mx-auto mt-12 max-w-2xl">
+            <AnimatedCard delay={0}>
+              <div className="rounded-lg border border-zinc-200 bg-white p-5 shadow-sm">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h3 className="text-sm font-medium text-zinc-900">Revenue Snapshot</h3>
+                    <p className="mt-0.5 text-xs text-zinc-500">Generated Jan 15, 2025 • Last 12 months</p>
+                  </div>
+                  <span className="rounded-full bg-zinc-100 px-2.5 py-0.5 text-xs font-medium text-zinc-700">Read-only</span>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="rounded border border-zinc-100 bg-zinc-50/50 p-3">
+                    <div className="text-xs font-medium text-zinc-500 uppercase tracking-wide">MRR</div>
+                    <div className="mt-1.5 text-base font-medium text-zinc-900">—</div>
+                  </div>
+                  <div className="rounded border border-zinc-100 bg-zinc-50/50 p-3">
+                    <div className="text-xs font-medium text-zinc-500 uppercase tracking-wide">Net Revenue</div>
+                    <div className="mt-1.5 text-base font-medium text-zinc-900">—</div>
+                  </div>
+                  <div className="rounded border border-zinc-100 bg-zinc-50/50 p-3">
+                    <div className="text-xs font-medium text-zinc-500 uppercase tracking-wide">Churn</div>
+                    <div className="mt-1.5 text-base font-medium text-zinc-900">—</div>
+                  </div>
+                </div>
+              </div>
+            </AnimatedCard>
           </div>
 
           <div className="mx-auto mt-16 max-w-5xl">
@@ -212,12 +298,12 @@ export default function Home() {
             </div>
 
             <AnimatedCard delay={160}>
-              <div className="mt-10 rounded-xl border border-zinc-200 bg-white p-8 shadow-sm">
+              <div className="mt-10 rounded-xl border border-zinc-200 bg-white/80 backdrop-blur-sm p-8 shadow-sm">
                 <h3 className="text-lg font-medium text-zinc-900 mb-4">Metrics included</h3>
                 <p className="text-sm text-zinc-600 mb-7">
                   All metrics are calculated using standardized definitions and displayed consistently across companies.
                 </p>
-                <div className="grid gap-6 sm:grid-cols-2">
+                <div className="grid gap-8 sm:grid-cols-2">
                   {[
                     { title: 'MRR / ARR', desc: 'Monthly and annual recurring revenue with displayed calculation method', highlight: true },
                     { title: 'Gross vs. net revenue', desc: 'Breakdown of gross revenue, refunds, and net revenue', highlight: true },
@@ -226,9 +312,9 @@ export default function Home() {
                     { title: 'Customer concentration', desc: 'Top customers by revenue and concentration risk indicators', highlight: false },
                     { title: 'Payout reconciliation', desc: 'Indicators for payout timing and reconciliation status', highlight: false },
                   ].map((metric, idx) => (
-                    <div key={idx} className={`pb-5 border-b border-zinc-100 last:border-b-0 last:pb-0 ${metric.highlight ? 'bg-indigo-50/30 -mx-2 px-2 py-3 rounded-md' : ''}`}>
+                    <div key={idx} className={`pb-6 border-b border-zinc-100 last:border-b-0 last:pb-0 ${metric.highlight ? 'bg-indigo-50/30 -mx-2 px-2 py-4 rounded-md' : ''}`}>
                       <h4 className={`text-sm font-medium ${metric.highlight ? 'text-zinc-900' : 'text-zinc-900'}`}>{metric.title}</h4>
-                      <p className="mt-1.5 text-xs text-zinc-500 leading-relaxed">{metric.desc}</p>
+                      <p className="mt-2 text-xs text-zinc-500 leading-relaxed">{metric.desc}</p>
                     </div>
                   ))}
                   <div className="sm:col-span-2 pt-4 mt-2 rounded-lg bg-indigo-50/50 border border-indigo-100 p-4">
@@ -260,7 +346,7 @@ export default function Home() {
 
             <div className="mt-12 grid gap-8 lg:grid-cols-2">
               <AnimatedCard delay={0}>
-                <div className="space-y-7">
+                <div className="rounded-xl border border-zinc-200 bg-white/60 p-8 space-y-7">
                   <div>
                     <h3 className="text-lg font-medium text-zinc-900">Read-only Stripe access</h3>
                     <p className="mt-2.5 text-sm leading-relaxed text-zinc-600">
@@ -286,9 +372,9 @@ export default function Home() {
               </AnimatedCard>
 
               <AnimatedCard delay={80}>
-                <div className="rounded-xl border border-zinc-200 bg-white p-7 shadow-sm hover:shadow-md transition-shadow">
-                  <h3 className="text-lg font-medium text-zinc-900 mb-5">Controls</h3>
-                  <ul className="space-y-3.5 text-sm text-zinc-600">
+                <div className="rounded-xl border border-zinc-200 bg-white p-7 shadow-sm">
+                  <h3 className="text-lg font-medium text-zinc-900 mb-6">Controls</h3>
+                  <ul className="space-y-4 text-sm text-zinc-600">
                     {[
                       { label: 'Read-only', desc: 'No write permissions requested or granted' },
                       { label: 'Least-privilege', desc: 'Minimum permissions necessary' },
@@ -298,7 +384,7 @@ export default function Home() {
                       { label: 'Data minimization', desc: 'Only necessary data retained' },
                     ].map((item, idx) => (
                       <li key={idx} className="flex items-start gap-3">
-                        <svg className="mt-0.5 h-5 w-5 flex-shrink-0 text-indigo-600" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+                        <svg className="mt-0.5 h-6 w-6 flex-shrink-0 text-indigo-600" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
                         <span><strong className="text-zinc-900">{item.label}:</strong> {item.desc}</span>
@@ -330,11 +416,14 @@ export default function Home() {
             </p>
             <div className="mt-10">
               <Link
-                href="/app"
+                href="/get-started"
                 className="inline-flex rounded-lg border-2 border-zinc-900 bg-white px-7 py-3.5 text-base font-medium text-zinc-900 hover:bg-zinc-50 hover:-translate-y-0.5 hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2"
               >
                 Get started
               </Link>
+              <p className="mt-4 text-xs text-zinc-500">
+                Connect Stripe (read-only). No charges. No changes.
+              </p>
             </div>
           </div>
         </div>
@@ -365,46 +454,31 @@ export default function Home() {
             <p className="mt-5 text-lg leading-7 text-zinc-600">
               Generate a time-stamped snapshot and share a source-linked investor view.
             </p>
-            <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row sm:items-center">
               <Link
-                href="/app"
+                href="/get-started"
                 className="rounded-lg bg-indigo-600 px-6 py-3 text-base font-medium text-white hover:bg-indigo-700 hover:-translate-y-0.5 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
                 data-analytics="cta_get_started_final"
               >
                 Get started
               </Link>
-              <Link
-                href="#security"
-                className="rounded-lg border border-zinc-300 bg-white px-6 py-3 text-base font-medium text-zinc-900 hover:bg-zinc-50 hover:border-zinc-400 transition-all focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2"
-              >
-                Read security
-              </Link>
+              <span className="text-xs text-zinc-500">
+                Connect Stripe (read-only). No charges. No changes.{' '}
+                <Link
+                  href="#security"
+                  className="text-zinc-600 hover:text-zinc-900 underline underline-offset-2 transition-colors"
+                >
+                  View security model
+                </Link>
+              </span>
             </div>
-            <p className="mt-6 text-xs text-zinc-500">
+            <p className="mt-4 text-xs text-zinc-500">
               Read-only access. No investor account required.
             </p>
           </div>
         </div>
       </Section>
 
-      {/* Footer */}
-      <footer className="border-t border-zinc-200 bg-white py-12">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="text-sm text-zinc-600">
-              © {new Date().getFullYear()} Proofround. All rights reserved.
-            </div>
-            <div className="flex gap-6 text-sm text-zinc-600">
-              <Link href="#security" className="hover:text-zinc-900 transition-colors">
-                Security
-              </Link>
-              <Link href="#faq" className="hover:text-zinc-900 transition-colors">
-                FAQ
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 export default function AppPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#fafafa]">
+    <div className="flex items-center justify-center bg-[#fafafa] py-16">
       <div className="mx-auto max-w-md text-center px-4">
         <h1 className="text-3xl font-medium tracking-tight text-zinc-900 mb-4">
           Dashboard coming soon
@@ -20,4 +20,3 @@ export default function AppPage() {
     </div>
   );
 }
-
