@@ -17,10 +17,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Proofround — Source-linked Stripe metrics for fundraising",
-  description: "Generate time-stamped verification packets from read-only Stripe data. Share source-linked revenue metrics with investors instead of screenshots.",
+  description:
+    "Generate time-stamped verification packets from read-only Stripe data. Share source-linked revenue metrics with investors instead of screenshots.",
   openGraph: {
     title: "Proofround — Source-linked Stripe metrics for fundraising",
-    description: "Generate time-stamped verification packets from read-only Stripe data. Share source-linked revenue metrics with investors instead of screenshots.",
+    description:
+      "Generate time-stamped verification packets from read-only Stripe data. Share source-linked revenue metrics with investors instead of screenshots.",
     url: "https://proofround.com",
     siteName: "Proofround",
     type: "website",
@@ -28,7 +30,8 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "Proofround — Source-linked Stripe metrics for fundraising",
-    description: "Generate time-stamped verification packets from read-only Stripe data. Share source-linked revenue metrics with investors instead of screenshots.",
+    description:
+      "Generate time-stamped verification packets from read-only Stripe data. Share source-linked revenue metrics with investors instead of screenshots.",
   },
   metadataBase: new URL("https://proofround.com"),
 };
@@ -40,9 +43,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthSessionProvider>
           <div className="flex min-h-screen flex-col bg-[#fafafa]">
             <Navigation />

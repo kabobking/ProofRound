@@ -1,36 +1,37 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Proofround Stripe investor reports
 
-## Getting Started
+This app lets a business connect its existing Stripe Standard account with read-only scope, generate a PDF investor report, store it privately in GCS, and share a revocable public link (`/r/[reportId]?t=token`).
 
-First, run the development server:
+## Setup
+- Install deps: `npm install` (new runtime deps: stripe, pdfkit, @google-cloud/storage, prisma/@prisma/client).
+- Environment (examples in `.env.local`):
+  - `DATABASE_URL` (Postgres)
+  - `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `NEXTAUTH_SECRET`, `NEXTAUTH_URL`
+  - `STRIPE_SECRET_KEY` (platform key), `STRIPE_CONNECT_CLIENT_ID`, `STRIPE_CONNECT_REDIRECT_URI` (e.g. `https://yourapp.com/api/stripe/connect/callback`)
+  - `TOKEN_ENCRYPTION_KEY` (32+ byte key, raw or base64, for AES-256-GCM)
+  - `GCS_BUCKET`, `GCS_PROJECT_ID`, `GCS_SERVICE_ACCOUNT_KEY` (JSON or base64-encoded JSON for a service account with `storage.objects.create/get`)
+- Prisma schema lives in `prisma/schema.prisma` (User + Report). Run `npx prisma migrate dev --name init_reports && npx prisma generate` after setting `DATABASE_URL`.
+- Stripe dashboard: create a Connect platform for Standard accounts, set the redirect URI above, and ensure the app requests `scope=read_only`. (Optional but recommended) add a webhook endpoint for `account.application.deauthorized` to clear tokens if a user disconnects.
+- GCS: create a private bucket for reports, grant the service account access, and set the env vars above.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## API surface
+- `GET /api/stripe/connect` → validates session, sets a CSRF state cookie, and redirects to `https://connect.stripe.com/oauth/authorize` with `scope=read_only`.
+- `GET /api/stripe/connect/callback` → validates state per-user/session, exchanges the code via `stripe.oauth.token`, encrypts and stores access/refresh tokens, and redirects to `/dashboard?connected=1`.
+- `POST /api/reports` → requires login + connected Stripe; computes metrics, generates a PDF, uploads to GCS, stores the Report row (with only a SHA-256 hash of the share token), and returns the share URL `/r/[id]?t=token`.
+- `POST /api/reports/[reportId]/revoke` → rotates the share token hash and returns a new share URL.
+- Public: `/r/[reportId]?t=token` → validates the hashed token, signs a short-lived GCS URL, and renders an iframe/download for the PDF (no login required).
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Stripe metrics calls used
+- `stripe.oauth.token` for Connect OAuth.
+- `stripe.balanceTransactions.list` for gross/net volume, fees, refunds, disputes, payouts (preferred source of truth).
+- `stripe.invoices.list` (paid, in window) for invoice count.
+- `stripe.subscriptions.list` (active) for subscription count if relevant.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## PDF + storage notes
+- PDFs are built server-side with `pdfkit` (no headless browser needed). Keep these routes on the Node.js runtime, not Edge.
+- If you prefer HTML-to-PDF via Playwright/Chromium, ensure the binary is available in your hosting environment and keep the route on the Node runtime; swap out `lib/pdf.ts` accordingly.
+- PDFs are uploaded privately to GCS; investor links receive only a short-lived signed URL or stream, never raw tokens.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Security highlights
+- Stripe access/refresh tokens are encrypted at rest with AES-256-GCM using `TOKEN_ENCRYPTION_KEY` and never returned to the client.
+- Investor links store only `hash(token)` (SHA-256); rotating a link writes a new hash. State is per-user/session via an httpOnly cookie.

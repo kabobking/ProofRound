@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReportStatus {
+  processing
+  ready
+  failed
+}
+
+model User {
+  id                          String   @id @default(cuid())
+  email                       String   @unique
+  stripeAccountId             String?  @db.VarChar(255)
+  stripeAccessTokenEncrypted  String?  @db.Text
+  stripeRefreshTokenEncrypted String?  @db.Text
+  stripeConnectedAt           DateTime?
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
+
+  reports Report[]
+
+  @@index([stripeAccountId])
+}
+
+model Report {
+  id               String       @id @default(cuid())
+  ownerUserId      String
+  stripeAccountId  String
+  periodStart      DateTime
+  periodEnd        DateTime
+  status           ReportStatus @default(processing)
+  pdfGcsPath       String
+  shareTokenHash   String?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  owner User @relation(fields: [ownerUserId], references: [id], onDelete: Cascade)
+
+  @@index([ownerUserId])
+  @@index([stripeAccountId])
+}

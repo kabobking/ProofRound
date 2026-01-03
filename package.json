@@ -9,18 +9,28 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@swc/helpers": "^0.5.5",
     "next": "16.1.1",
-    "next-auth": "^4.24.7",
+    "next-auth": "^4.24.13",
+    "pdfkit": "^0.15.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "stripe": "^16.10.0",
+    "@google-cloud/storage": "^7.12.1",
+    "@prisma/client": "^5.20.0"
+  },
+  "overrides": {
+  "@swc/helpers": "^0.5.5"
   },
   "devDependencies": {
+    "@types/pdfkit": "^0.12.12",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.1.1",
+    "prisma": "^5.20.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }
