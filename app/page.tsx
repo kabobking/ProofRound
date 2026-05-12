@@ -330,7 +330,7 @@ export default function Home() {
             </p>
             <div className="mt-10">
               <Link
-                href="/app"
+                href="/dashboard"
                 className="inline-flex rounded-lg border-2 border-zinc-900 bg-white px-7 py-3.5 text-base font-medium text-zinc-900 hover:bg-zinc-50 hover:-translate-y-0.5 hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-zinc-900 focus:ring-offset-2"
               >
                 Get started
@@ -367,7 +367,7 @@ export default function Home() {
             </p>
             <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
-                href="/app"
+                href="/dashboard"
                 className="rounded-lg bg-indigo-600 px-6 py-3 text-base font-medium text-white hover:bg-indigo-700 hover:-translate-y-0.5 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2"
                 data-analytics="cta_get_started_final"
               >

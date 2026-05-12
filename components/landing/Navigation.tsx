@@ -60,7 +60,7 @@ export default function Navigation() {
               FAQ
             </Link>
             <Link
-              href="/app"
+              href="/dashboard"
               className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 hover:-translate-y-0.5 hover:shadow-md transition-all"
               data-analytics="cta_get_started_nav"
             >
@@ -133,7 +133,7 @@ export default function Navigation() {
                 FAQ
               </Link>
               <Link
-                href="/app"
+                href="/dashboard"
                 className="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 text-center"
                 onClick={() => setMobileMenuOpen(false)}
                 data-analytics="cta_get_started_nav"

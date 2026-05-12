@@ -165,11 +165,31 @@ export default function DashboardPage() {
 
       try {
         if (userProfile.role === 'investor') {
-          const [publicStartupsResponse, opportunities, investorInterests] = await Promise.all([
-            getPublicStartups(12),
-            getActiveOpportunities(),
-            getInvestorInterests(userProfile.id),
-          ]);
+          // Run each call separately to identify permission failures
+          let publicStartupsResponse = null;
+          let opportunities: any[] = [];
+          let investorInterests: any[] = [];
+
+          try {
+            publicStartupsResponse = await getPublicStartups(12);
+          } catch (e) {
+            console.error('Failed to fetch public startups:', e);
+            throw new Error('publicStartups');
+          }
+
+          try {
+            opportunities = await getActiveOpportunities();
+          } catch (e) {
+            console.error('Failed to fetch active opportunities:', e);
+            throw new Error('opportunities');
+          }
+
+          try {
+            investorInterests = await getInvestorInterests(userProfile.id);
+          } catch (e) {
+            console.error('Failed to fetch investor interests:', e);
+            throw new Error('investorInterests');
+          }
 
           if (cancelled) return;
 
@@ -183,9 +203,30 @@ export default function DashboardPage() {
           return;
         }
 
-        const startups = await getStartupsByFounder(userProfile.id);
-        const opportunities = (await Promise.all(startups.map(startup => getOpportunitiesByStartup(startup.id)))).flat();
-        const packets = (await Promise.all(startups.map(startup => getPacketsByStartup(startup.id)))).flat();
+        // For founders, fetch startups then dependent data with per-call logging
+        let startups = [] as any[];
+        try {
+          startups = await getStartupsByFounder(userProfile.id);
+        } catch (e) {
+          console.error('Failed to fetch startups by founder:', e);
+          throw new Error('startups');
+        }
+
+        let opportunities: any[] = [];
+        try {
+          opportunities = (await Promise.all(startups.map(startup => getOpportunitiesByStartup(startup.id)))).flat();
+        } catch (e) {
+          console.error('Failed to fetch opportunities for startups:', e);
+          throw new Error('opportunities');
+        }
+
+        let packets: any[] = [];
+        try {
+          packets = (await Promise.all(startups.map(startup => getPacketsByStartup(startup.id)))).flat();
+        } catch (e) {
+          console.error('Failed to fetch packets for startups:', e);
+          throw new Error('packets');
+        }
 
         if (cancelled) return;
 
@@ -197,8 +238,14 @@ export default function DashboardPage() {
           publicStartups: startups.filter(startup => startup.visible),
         });
       } catch (loadError) {
-        console.error('Error loading dashboard:', loadError);
-        if (!cancelled) setError('We could not load your dashboard data right now.');
+        console.error('Error loading dashboard (tagged):', loadError);
+        if (!cancelled) {
+          if (loadError instanceof Error && loadError.message) {
+            setError(`Dashboard load failed at: ${loadError.message}`);
+          } else {
+            setError('We could not load your dashboard data right now.');
+          }
+        }
       } finally {
         if (!cancelled) setLoading(false);
       }

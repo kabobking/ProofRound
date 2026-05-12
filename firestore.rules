@@ -55,7 +55,7 @@ service cloud.firestore {
       allow read: if resource.data.visible == true;
       
       // Founders can read their own startup
-      allow read: if isSignedIn() && isStartupFounder(startupId);
+      allow read: if isSignedIn() && resource.data.founderId == request.auth.uid;
       
       // Admins can read all startups
       allow read: if isAdmin(request.auth.uid);
