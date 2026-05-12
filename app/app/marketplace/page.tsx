@@ -1,11 +1,10 @@
 'use client';
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { getPublicStartups, searchStartups } from '@/lib/database';
 import { Startup } from '@/lib/models';
 import Link from 'next/link';
 import AnimatedCard from '@/components/AnimatedCard';
-import { prefersReducedMotion, getMotionClasses } from '@/components/landing/motion';
 import { analyticsEvents } from '@/lib/analytics';
 import AppHeader from '@/components/AppHeader';
 

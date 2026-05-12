@@ -166,9 +166,9 @@ export default function DashboardPage() {
       try {
         if (userProfile.role === 'investor') {
           // Run each call separately to identify permission failures
-          let publicStartupsResponse = null;
-          let opportunities: any[] = [];
-          let investorInterests: any[] = [];
+          let publicStartupsResponse: { startups: Startup[] } | null = null;
+          let opportunities: InvestmentOpportunity[] = [];
+          let investorInterests: InvestmentInterest[] = [];
 
           try {
             publicStartupsResponse = await getPublicStartups(12);
@@ -204,7 +204,7 @@ export default function DashboardPage() {
         }
 
         // For founders, fetch startups then dependent data with per-call logging
-        let startups = [] as any[];
+        let startups: Startup[] = [];
         try {
           startups = await getStartupsByFounder(userProfile.id);
         } catch (e) {
@@ -212,7 +212,7 @@ export default function DashboardPage() {
           throw new Error('startups');
         }
 
-        let opportunities: any[] = [];
+        let opportunities: InvestmentOpportunity[] = [];
         try {
           opportunities = (await Promise.all(startups.map(startup => getOpportunitiesByStartup(startup.id)))).flat();
         } catch (e) {
@@ -220,7 +220,7 @@ export default function DashboardPage() {
           throw new Error('opportunities');
         }
 
-        let packets: any[] = [];
+        let packets: ProofroundPacket[] = [];
         try {
           packets = (await Promise.all(startups.map(startup => getPacketsByStartup(startup.id)))).flat();
         } catch (e) {

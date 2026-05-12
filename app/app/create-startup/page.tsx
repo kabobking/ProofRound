@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { createStartup } from '@/lib/database';
-import { Startup } from '@/lib/models';
 import AnimatedCard from '@/components/AnimatedCard';
 import AppHeader from '@/components/AppHeader';
 

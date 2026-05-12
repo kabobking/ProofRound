@@ -60,7 +60,7 @@ export default function Home() {
                   <ul className="mt-6 space-y-3.5 text-zinc-600 leading-relaxed">
                     <li className="flex items-start gap-3">
                       <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
-                      <span>Investors receive screenshots that can't be validated</span>
+                      <span>Investors receive screenshots that cannot be validated</span>
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
@@ -68,7 +68,7 @@ export default function Home() {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
-                      <span>Diligence turns into email threads asking 'how did you calculate this?'</span>
+                      <span>Diligence turns into email threads asking "how did you calculate this?"</span>
                     </li>
                   </ul>
                 </div>

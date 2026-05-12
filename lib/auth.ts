@@ -16,7 +16,6 @@ import {
   doc,
   setDoc,
   getDoc,
-  serverTimestamp,
 } from 'firebase/firestore';
 import { getAuthInstance, getFirestoreInstance } from './firebase-client';
 import { User } from './models';

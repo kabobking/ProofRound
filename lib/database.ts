@@ -9,7 +9,6 @@ import {
   updateDoc,
   deleteDoc,
   getDoc,
-  setDoc,
   query,
   where,
   orderBy,
@@ -17,9 +16,6 @@ import {
   startAfter,
   getDocs,
   doc,
-  QueryConstraint,
-  startAt,
-  Timestamp,
 } from 'firebase/firestore';
 import { getFirestoreInstance } from './firebase-client';
 import {

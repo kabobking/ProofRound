@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { prefersReducedMotion, getMotionClasses } from './motion';
 
 interface SectionProps {
@@ -43,7 +43,7 @@ export default function Section({ children, id, className = '', background = 'wh
 
   return (
     <section
-      ref={ref as any}
+      ref={ref as React.RefObject<HTMLElement>}
       id={id}
       className={`border-t border-zinc-200 ${bgClass} py-24 ${motion.base} ${isInView ? motion.inView : ''} ${motion.transition} ${className}`}
     >

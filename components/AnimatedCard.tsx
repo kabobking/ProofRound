@@ -7,14 +7,12 @@ interface AnimatedCardProps {
   children: ReactNode;
   delay?: number;
   className?: string;
-  asLink?: boolean;
 }
 
 export default function AnimatedCard({
   children,
   delay = 0,
   className = '',
-  asLink = false,
 }: AnimatedCardProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [isInView, setIsInView] = useState(false);
