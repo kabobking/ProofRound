@@ -1,0 +1,168 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isAdmin(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data.isAdmin == true;
+    }
+    
+    function isFounder(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data.role == 'founder';
+    }
+    
+    function isInvestor(userId) {
+      return get(/databases/$(database)/documents/users/$(userId)).data.role == 'investor';
+    }
+    
+    function isOwnUser(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    function isStartupFounder(startupId) {
+      return request.auth.uid == get(/databases/$(database)/documents/startups/$(startupId)).data.founderId;
+    }
+    
+    // Users collection
+    match /users/{userId} {
+      // Users can read their own profile
+      allow read: if isOwnUser(userId);
+      
+      // Admins can read all users
+      allow read: if isAdmin(request.auth.uid);
+      
+      // Users can create their own profile during signup
+      allow create: if isSignedIn() && isOwnUser(userId) && request.resource.data.isAdmin == false;
+      
+      // Users can update their own profile
+      allow update: if isOwnUser(userId) && (!('isAdmin' in request.resource.data) || request.resource.data.isAdmin == resource.data.isAdmin);
+      
+      // Only admins can update isAdmin flag
+      allow update: if isAdmin(request.auth.uid) && request.resource.data.keys().hasAll(resource.data.keys());
+      
+      // Only admins can delete users
+      allow delete: if isAdmin(request.auth.uid);
+    }
+    
+    // Startups collection
+    match /startups/{startupId} {
+      // Anyone can read public startups (visible: true)
+      allow read: if resource.data.visible == true;
+      
+      // Founders can read their own startup
+      allow read: if isSignedIn() && isStartupFounder(startupId);
+      
+      // Admins can read all startups
+      allow read: if isAdmin(request.auth.uid);
+      
+      // Founders can create startups
+      allow create: if isSignedIn() && isFounder(request.auth.uid) && request.resource.data.founderId == request.auth.uid;
+      
+      // Founders can update their own startups
+      allow update: if isStartupFounder(startupId) && (
+        !('verifiedFinancials' in request.resource.data) || 
+        request.resource.data.verifiedFinancials == resource.data.verifiedFinancials
+      );
+      
+      // Admins can update any startup (including verification status)
+      allow update: if isAdmin(request.auth.uid);
+      
+      // Founders can delete their own startups
+      allow delete: if isStartupFounder(startupId);
+      
+      // Admins can delete any startup
+      allow delete: if isAdmin(request.auth.uid);
+    }
+    
+    // Investment opportunities collection
+    match /investment_opportunities/{opportunityId} {
+      // Anyone can read public opportunities (status != draft)
+      allow read: if resource.data.status != 'draft';
+      
+      // Founders can read their own opportunities (in draft or published)
+      allow read: if isSignedIn() && resource.data.createdBy == request.auth.uid;
+      
+      // Admins can read all opportunities
+      allow read: if isAdmin(request.auth.uid);
+      
+      // Founders can create opportunities
+      allow create: if isSignedIn() && isFounder(request.auth.uid) && request.resource.data.createdBy == request.auth.uid;
+      
+      // Founders can update their own opportunities
+      allow update: if resource.data.createdBy == request.auth.uid;
+      
+      // Admins can update any opportunity
+      allow update: if isAdmin(request.auth.uid);
+      
+      // Founders can delete their own opportunities
+      allow delete: if resource.data.createdBy == request.auth.uid;
+      
+      // Admins can delete any opportunity
+      allow delete: if isAdmin(request.auth.uid);
+    }
+    
+    // Investment interests collection
+    match /investment_interests/{interestId} {
+      // Investors can read/write their own interests
+      allow read, write: if isSignedIn() && resource.data.investorId == request.auth.uid;
+      
+      // Founders can read interests on their opportunities
+      allow read: if isSignedIn() && get(/databases/$(database)/documents/investment_opportunities/$(resource.data.opportunityId)).data.createdBy == request.auth.uid;
+      
+      // Admins can read/write all interests
+      allow read, write: if isAdmin(request.auth.uid);
+      
+      // Investors can create interests
+      allow create: if isSignedIn() && request.resource.data.investorId == request.auth.uid;
+    }
+    
+    // Proofround packets collection
+    match /proofround_packets/{packetId} {
+      // Founders can read packets they generated or for their startups
+      allow read: if isSignedIn() && (
+        resource.data.generatedBy == request.auth.uid ||
+        get(/databases/$(database)/documents/startups/$(resource.data.startupId)).data.founderId == request.auth.uid
+      );
+      
+      // Anyone can read verified public packets (for investor verification)
+      allow read: if resource.data.verified == true && resource.data.startupId != null;
+      
+      // Admins can read all packets
+      allow read: if isAdmin(request.auth.uid);
+      
+      // Founders can create packets
+      allow create: if isSignedIn() && request.resource.data.generatedBy == request.auth.uid;
+      
+      // Founders can update their own packets
+      allow update: if isSignedIn() && resource.data.generatedBy == request.auth.uid && !('verified' in request.resource.data);
+      
+      // Only admins can verify packets
+      allow update: if isAdmin(request.auth.uid);
+      
+      // Admins can delete packets
+      allow delete: if isAdmin(request.auth.uid);
+    }
+    
+    // Admin logs collection
+    match /admin_logs/{logId} {
+      // Only admins can read logs
+      allow read: if isAdmin(request.auth.uid);
+      
+      // Only admins can create logs
+      allow create: if isAdmin(request.auth.uid) && request.resource.data.adminId == request.auth.uid;
+      
+      // Only admins can delete logs
+      allow delete: if isAdmin(request.auth.uid);
+    }
+    
+    // Deny everything else
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
