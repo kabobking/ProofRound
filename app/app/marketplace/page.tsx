@@ -7,6 +7,7 @@ import Link from 'next/link';
 import AnimatedCard from '@/components/AnimatedCard';
 import { prefersReducedMotion, getMotionClasses } from '@/components/landing/motion';
 import { analyticsEvents } from '@/lib/analytics';
+import AppHeader from '@/components/AppHeader';
 
 export default function MarketplacePage() {
   const [startups, setStartups] = useState<Startup[]>([]);
@@ -48,19 +49,17 @@ export default function MarketplacePage() {
     filterStage === 'all' ? startups : startups.filter(s => s.stage === filterStage);
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      {/* Header */}
-      <div className="bg-white border-b border-zinc-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          <div className="opacity-0 translate-y-2 transition-all duration-500 ease-out" style={{ animation: 'fadeInUp 0.6s ease-out forwards' }}>
-            <h1 className="text-3xl font-bold text-zinc-900">Browse Investment Opportunities</h1>
-            <p className="mt-2 text-zinc-600">Discover and evaluate verified startup opportunities</p>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
+      <AppHeader 
+        title="Marketplace" 
+        subtitle="Discover verified startup opportunities and investment rounds"
+        quickLinks={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'My Startups', href: '/startups' },
+        ]}
+      />
 
-      {/* Search & Filters */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <form onSubmit={handleSearch} className="flex gap-4 mb-8">
           <input
             type="text"
@@ -147,7 +146,7 @@ export default function MarketplacePage() {
             ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

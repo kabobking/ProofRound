@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { getStartupsByFounder } from '@/lib/database';
 import { Startup } from '@/lib/models';
 import Link from 'next/link';
+import AppHeader from '@/components/AppHeader';
 
 export default function FounderStartupsPage() {
   const { userProfile } = useAuth();
@@ -41,28 +42,18 @@ export default function FounderStartupsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      {/* Header */}
-      <div className="bg-white border-b border-zinc-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-zinc-900">My Startups</h1>
-              <p className="mt-2 text-zinc-600">Manage your company profiles and fundraising</p>
-            </div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
+      <AppHeader 
+        title="My Startups" 
+        subtitle="Manage your company profiles and fundraising"
+        quickLinks={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'Marketplace', href: '/marketplace' },
+          { label: '+ Add Startup', href: '/create-startup' },
+        ]}
+      />
 
-            <Link
-              href="/create-startup"
-              className="px-6 py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors"
-            >
-              + Add Startup
-            </Link>
-          </div>
-        </div>
-      </div>
-
-      {/* Content */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         {startups.length === 0 ? (
           <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center">
             <p className="text-zinc-600 mb-4">No startups yet</p>
@@ -137,7 +128,7 @@ export default function FounderStartupsPage() {
             ))}
           </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }

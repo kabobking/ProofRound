@@ -6,6 +6,7 @@ import { useAuth } from '@/lib/auth-context';
 import { createStartup } from '@/lib/database';
 import { Startup } from '@/lib/models';
 import AnimatedCard from '@/components/AnimatedCard';
+import AppHeader from '@/components/AppHeader';
 
 export default function CreateStartupPage() {
   const router = useRouter();
@@ -65,17 +66,18 @@ export default function CreateStartupPage() {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      {/* Header */}
-      <div className="bg-white border-b border-zinc-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          <h1 className="text-3xl font-bold text-zinc-900">Add New Startup</h1>
-          <p className="mt-2 text-zinc-600">List your company to attract investors</p>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
+      <AppHeader 
+        title="Create New Startup" 
+        subtitle="List your company and start attracting investors"
+        quickLinks={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'My Startups', href: '/startups' },
+          { label: 'Marketplace', href: '/marketplace' },
+        ]}
+      />
 
-      {/* Form */}
-      <div className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-12">
+      <main className="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-12">
         <AnimatedCard>
           <div className="bg-white rounded-lg border border-zinc-200 p-8">
           {error && (
@@ -312,7 +314,7 @@ export default function CreateStartupPage() {
           </form>
           </div>
         </AnimatedCard>
-      </div>
+      </main>
     </div>
   );
 }

@@ -7,6 +7,7 @@ import { Startup, InvestmentOpportunity, ProofroundPacket } from '@/lib/models';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
 import AnimatedCard from '@/components/AnimatedCard';
+import AppHeader from '@/components/AppHeader';
 import { prefersReducedMotion, getMotionClasses } from '@/components/landing/motion';
 import { analyticsEvents } from '@/lib/analytics';
 
@@ -74,43 +75,19 @@ export default function StartupDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-zinc-50">
-      {/* Header */}
-      <div className="bg-white border-b border-zinc-200">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-          <Link href="/marketplace" className="text-indigo-600 hover:underline text-sm mb-4 inline-block">
-            ← Back to marketplace
-          </Link>
-
-          <div className="flex items-start justify-between">
-            <div>
-              <h1 className="text-4xl font-bold text-zinc-900">{startup.name}</h1>
-              <p className="mt-2 text-lg text-zinc-600">{startup.tagline}</p>
-              <div className="mt-4 flex gap-4 items-center">
-                <span className="px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-sm font-medium capitalize">
-                  {startup.stage}
-                </span>
-                <span className="text-zinc-600">{startup.location}</span>
-                {startup.verifiedFinancials && (
-                  <span className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-sm font-medium">
-                    ✓ Verified Financials
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <button
-              onClick={() => setSaved(!saved)}
-              className="px-4 py-2 rounded-lg border border-zinc-300 hover:bg-zinc-50 transition-colors"
-            >
-              {saved ? '♥' : '♡'} Save
-            </button>
-          </div>
-        </div>
-      </div>
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
+      <AppHeader 
+        title={startup.name} 
+        subtitle={startup.tagline}
+        quickLinks={[
+          { label: 'Dashboard', href: '/dashboard' },
+          { label: 'My Startups', href: '/startups' },
+          { label: 'Marketplace', href: '/marketplace' },
+        ]}
+      />
 
       {/* Main Content */}
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
+      <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid gap-8 lg:grid-cols-3">
           {/* Main */}
           <div className="lg:col-span-2 space-y-8">
@@ -299,7 +276,7 @@ export default function StartupDetailPage() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
