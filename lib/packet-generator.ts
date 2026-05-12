@@ -130,11 +130,16 @@ function processRevenueMetrics(
 ): RevenueMetrics {
   let grossRevenue = 0;
   let refunds = 0;
-  let chargebacks = 0;
+  const chargebacks = 0;
   const monthlyBreakdown: Map<string, number> = new Map();
 
   // Process charges
+  const startTs = Math.floor(timeRangeStart.getTime() / 1000);
+  const endTs = Math.floor(timeRangeEnd.getTime() / 1000);
+
   for (const charge of charges) {
+    // Skip charges outside the requested time range
+    if (charge.created < startTs || charge.created > endTs) continue;
     if (charge.status === 'succeeded') {
       const amount = charge.amount / 100; // Convert from cents
       grossRevenue += amount;
@@ -156,6 +161,9 @@ function processRevenueMetrics(
 
   // Process invoices for additional revenue
   for (const invoice of invoices) {
+    // Skip invoices outside the requested time range
+    if (invoice.created < startTs || invoice.created > endTs) continue;
+
     if (invoice.status === 'paid') {
       const amount = invoice.amount_paid / 100;
       grossRevenue += amount;

@@ -184,14 +184,6 @@ export function isRawStripeObject(value: unknown): boolean {
   
   const obj = value as Record<string, unknown>;
   
-  // Check for common Stripe object indicators
-  const stripeObjectIndicators = [
-    'object', // Stripe objects have an 'object' field
-    'created', // Timestamp field
-    'livemode', // Stripe-specific field
-    'metadata', // Stripe metadata field
-  ];
-  
   // If it has 'object' field and looks like a Stripe object, it's likely raw
   if ('object' in obj && typeof obj.object === 'string') {
     const objectType = obj.object as string;

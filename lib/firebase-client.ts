@@ -6,14 +6,12 @@
 import { initializeApp } from 'firebase/app';
 import { 
   getAuth, 
-  connectAuthEmulator,
   Auth,
   setPersistence,
   browserLocalPersistence
 } from 'firebase/auth';
 import { 
   getFirestore, 
-  connectFirestoreEmulator,
   Firestore 
 } from 'firebase/firestore';
 import { getAnalytics, Analytics, logEvent } from 'firebase/analytics';
@@ -96,7 +94,7 @@ export function getAnalyticsInstance(): Analytics | null {
 /**
  * Log event to Firebase Analytics
  */
-export function trackEvent(eventName: string, eventParams?: Record<string, any>) {
+export function trackEvent(eventName: string, eventParams?: Record<string, unknown>) {
   try {
     const analyticsInstance = getAnalyticsInstance();
     if (analyticsInstance) {

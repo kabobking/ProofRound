@@ -68,7 +68,7 @@ export default function Home() {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-zinc-400" />
-                      <span>Diligence turns into email threads asking "how did you calculate this?"</span>
+                      <span>Diligence turns into email threads asking &quot;how did you calculate this?&quot;</span>
                     </li>
                   </ul>
                 </div>

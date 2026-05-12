@@ -123,9 +123,7 @@ export async function fetchStripeInvoices(
  * Fetch subscriptions (active at any point during date range)
  */
 export async function fetchStripeSubscriptions(
-  accountId: string,
-  startDate: Date,
-  endDate: Date
+  accountId: string
 ) {
   const stripe = getStripeInstance();
   const subscriptions: Stripe.Subscription[] = [];
