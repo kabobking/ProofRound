@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
+// GitHub Pages static export configuration
+// Note: Dynamic routes ([id]) are skipped in static export
+// They will be unavailable in the GitHub Pages demo but work fine in development
 const nextConfig: NextConfig = {
-  // Note: For GitHub Pages static deployment, set output: 'export' and disable API routes
-  // For dynamic deployment (Vercel), remove 'output' config or set to 'standalone'
-  // Default: standalone for Vercel/Node.js deployment (supports both static pages and dynamic APIs)
+  output: "export",
+  basePath: "",
   images: {
     unoptimized: true,
   },
