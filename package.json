@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start",
+    "start": "npx serve@latest out",
+    "preview": "npx serve@latest out",
     "lint": "eslint",
     "export": "next build && next export"
   },
@@ -18,6 +19,7 @@
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
+    "serve": "^14.2.6",
     "stripe": "^17.3.0"
   },
   "devDependencies": {

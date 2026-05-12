@@ -339,8 +339,11 @@ Use GitHub Pages if:
 2. Scroll to "Authorized domains"
 3. Add your domain:
    - localhost:3000 (development)
-   - yourdomain.com (production)
-   - app.yourdomain.com (if using subdomain)
+   - proofround.com (production custom domain)
+   - www.proofround.com (if you use the `www` alias)
+   - your GitHub Pages domain, if you still preview there
+
+Google sign-in uses Firebase Auth in the browser, so the current site origin must be on this list for popup sign-in to work.
 
 ## Monitoring & Debugging
 

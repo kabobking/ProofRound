@@ -28,7 +28,7 @@ ProofRound is a marketplace connecting investors with verified startup opportuni
 2. Create a new project named "ProofRound"
 3. Enable authentication methods:
    - Email/Password
-   - (Optional) Google Sign-In
+  - Google Sign-In
 4. Create a Firestore database:
    - Choose "Production mode"
    - Select your preferred region
@@ -53,18 +53,29 @@ ProofRound is a marketplace connecting investors with verified startup opportuni
 4. Copy content from `firestore.rules` to `firestore.rules` file
 5. Deploy: `firebase deploy --only firestore:rules`
 
-### Step 4: Install Dependencies
+### Step 4: Configure Authorized Domains for Auth
+1. Open Firebase Console > Authentication > Settings
+2. Add the origins where the app will run:
+  - `localhost:3000` for local development
+  - `proofround.com` for production
+  - `www.proofround.com` if you use the `www` alias
+  - Your GitHub Pages preview domain, if you still keep one
+3. Save the changes
+
+Google sign-in uses a popup from the current origin, so the active site must be listed here.
+
+### Step 5: Install Dependencies
 ```bash
 npm install
 ```
 
-### Step 5: Create First Admin User
+### Step 6: Create First Admin User
 1. Start the dev server: `npm run dev`
 2. Sign up at `http://localhost:3000/auth/signup` as Admin/Founder
 3. Go to Firebase Console > Firestore > users collection
 4. Find your user document and manually set `isAdmin: true`
 
-### Step 6: Stripe Integration (Optional)
+### Step 7: Stripe Integration (Optional)
 For live Stripe revenue verification:
 1. Get Stripe API keys from [Stripe Dashboard](https://dashboard.stripe.com)
 2. Add to `.env.local`:
