@@ -529,7 +529,7 @@ export default function DashboardPage() {
                       </div>
 
                       <div className="mt-4 flex flex-wrap gap-2">
-                        <Link href={`/startup/${startup.id}`} className="inline-flex items-center rounded-full bg-slate-950 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800">View page</Link>
+                        <Link href={`/startup?startupId=${startup.id}`} className="inline-flex items-center rounded-full bg-slate-950 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800">View page</Link>
                         <Link href="/marketplace" className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">Marketplace</Link>
                       </div>
                     </div>

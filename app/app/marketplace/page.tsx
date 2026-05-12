@@ -7,6 +7,7 @@ import Link from 'next/link';
 import AnimatedCard from '@/components/AnimatedCard';
 import { analyticsEvents } from '@/lib/analytics';
 import AppHeader from '@/components/AppHeader';
+import StartupRevenueActions from '@/components/StartupRevenueActions';
 
 export default function MarketplacePage() {
   const [startups, setStartups] = useState<Startup[]>([]);
@@ -111,7 +112,7 @@ export default function MarketplacePage() {
             {filteredStartups.map((startup, idx) => (
               <AnimatedCard key={startup.id} delay={idx * 50}>
                 <Link
-                  href={`/startup/${startup.id}`}
+                  href={`/startup?startupId=${startup.id}`}
                   className="block bg-white rounded-lg border border-zinc-200 p-6 hover:shadow-md hover:-translate-y-0.5 transition-all"
                 >
                   <div className="flex items-start justify-between mb-3">
@@ -131,6 +132,14 @@ export default function MarketplacePage() {
                     {startup.verifiedFinancials && (
                       <span className="text-green-600 font-medium">✓ Verified</span>
                     )}
+                  </div>
+
+                  <div className="mt-4">
+                    <StartupRevenueActions
+                      startupName={startup.name}
+                      founderEmail={startup.founderEmail}
+                      variant="investor"
+                    />
                   </div>
 
                   {startup.seeking_amount && (

@@ -48,12 +48,15 @@ For static-only sites without API routes.
 # 1. Add to next.config.ts:
 # output: 'export'
 
-# 2. GitHub Actions handles deployment automatically
+# 2. Add public/CNAME with your custom domain if you want one
+# Example: proofround.com
+
+# 3. GitHub Actions handles deployment automatically
 # Every push to V1.0-Landing-Page triggers deployment
 
-# 3. Enable GitHub Pages
+# 4. Enable GitHub Pages
 # Repository Settings > Pages > Source: Deploy from a branch
-# Branch: gh-pages, Directory: /root
+# Source: GitHub Actions
 ```
 
 ### Option 3: Self-Hosted (Node.js Server)
@@ -341,9 +344,16 @@ Use GitHub Pages if:
    - localhost:3000 (development)
    - proofround.com (production custom domain)
    - www.proofround.com (if you use the `www` alias)
-   - your GitHub Pages domain, if you still preview there
+   - your GitHub Pages preview domain, if you still preview there
 
 Google sign-in uses Firebase Auth in the browser, so the current site origin must be on this list for popup sign-in to work.
+
+### 6. Point GitHub Pages at the custom domain
+
+1. Open Repository Settings > Pages
+2. Set Source to `GitHub Actions`
+3. If you want the repo to serve `proofround.com`, keep the `public/CNAME` file checked in
+4. In the DNS provider for `proofround.com`, point the domain to GitHub Pages and wait for SSL provisioning
 
 ## Monitoring & Debugging
 

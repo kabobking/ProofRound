@@ -56,7 +56,7 @@ export default function CreateStartupPage() {
         verifiedFinancials: false,
       });
 
-      router.push(`/startup/${startup.id}`);
+      router.push(`/startup?startupId=${startup.id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create startup');
     } finally {

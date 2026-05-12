@@ -85,6 +85,15 @@ For live Stripe revenue verification:
    ```
 3. Implement Stripe Connect OAuth for connected accounts
 
+### Step 8: GitHub Pages Setup
+1. Keep the `public/CNAME` file with `proofround.com` if you want the custom domain
+2. In the GitHub repo, go to Settings > Pages
+3. Set Source to `GitHub Actions`
+4. Push to `V1.0-Landing-Page` to trigger the workflow
+5. Add `proofround.com` and `www.proofround.com` to Firebase Authentication > Authorized domains
+
+Google sign-in uses the browser origin, so the deployed domain must be authorized in Firebase.
+
 ## File Structure
 
 ```

@@ -6,6 +6,7 @@ import { getStartupsByFounder } from '@/lib/database';
 import { Startup } from '@/lib/models';
 import Link from 'next/link';
 import AppHeader from '@/components/AppHeader';
+import StartupRevenueActions from '@/components/StartupRevenueActions';
 
 export default function FounderStartupsPage() {
   const { userProfile } = useAuth();
@@ -118,11 +119,16 @@ export default function FounderStartupsPage() {
 
                 <div className="flex gap-4">
                   <Link
-                    href={`/startup/${startup.id}`}
+                    href={`/startup?startupId=${startup.id}`}
                     className="px-4 py-2 text-zinc-600 hover:bg-zinc-100 border border-zinc-300 rounded-lg transition-colors text-sm font-medium"
                   >
                     View Public Page
                   </Link>
+                  <StartupRevenueActions
+                    startupName={startup.name}
+                    stripeConnected={Boolean(startup.stripeAccountId)}
+                    variant="founder"
+                  />
                 </div>
               </div>
             ))}
