@@ -94,6 +94,22 @@ For live Stripe revenue verification:
 
 Google sign-in uses the browser origin, so the deployed domain must be authorized in Firebase.
 
+### Step 9: Deploy the Node backend on Vercel
+1. Create a second Vercel project using the same repository but set the root directory to `backend`
+2. Add backend env vars in Vercel:
+  - `STRIPE_SECRET_KEY`
+  - `FIREBASE_PROJECT_ID`
+  - `FIREBASE_SERVICE_ACCOUNT_KEY`
+  - `FRONTEND_BASE_URL=https://proofround.com`
+  - `VERIFIED_PACKET_PRICE_USD=49`
+3. Deploy the backend project
+4. Put the deployed Vercel URLs into the frontend env vars:
+  - `NEXT_PUBLIC_STRIPE_CONNECT_URL`
+  - `NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL`
+  - `NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL`
+
+The frontend remains on GitHub Pages, and all Stripe/PDF work runs on the Vercel backend.
+
 ## File Structure
 
 ```

@@ -136,6 +136,7 @@ export default function MarketplacePage() {
 
                   <div className="mt-4">
                     <StartupRevenueActions
+                      startupId={startup.id}
                       startupName={startup.name}
                       founderEmail={startup.founderEmail}
                       variant="investor"

@@ -355,6 +355,38 @@ Google sign-in uses Firebase Auth in the browser, so the current site origin mus
 3. If you want the repo to serve `proofround.com`, keep the `public/CNAME` file checked in
 4. In the DNS provider for `proofround.com`, point the domain to GitHub Pages and wait for SSL provisioning
 
+### 7. Set the Stripe packet action URLs
+
+These values are not built into Stripe itself. They should point to the backend endpoints that perform the action:
+
+| Variable | Use | Good value for a demo |
+|---|---|---|
+| `NEXT_PUBLIC_STRIPE_CONNECT_URL` | Founder connect/manage Stripe flow | Leave blank until you deploy a backend endpoint |
+| `NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL` | Generate the verified PDF packet | Leave blank until you deploy a backend endpoint |
+| `NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL` | Investor request flow | `mailto:support@proofround.com?subject=Request%20verified%20revenue%20packet` |
+| `NEXT_PUBLIC_VERIFIED_PACKET_PRICE_USD` | Displayed price tag | `49` |
+
+If you later deploy Firebase Functions or another API, point the two action URLs at those HTTPS endpoints instead of leaving them blank.
+
+### 8. Deploy the Node backend on Vercel
+
+Use the `backend/` folder as a separate Vercel project.
+
+1. In Vercel, create a new project from this repository and set the root directory to `backend`.
+2. Add these environment variables in the Vercel project settings:
+   - `STRIPE_SECRET_KEY`
+   - `FIREBASE_PROJECT_ID`
+   - `FIREBASE_SERVICE_ACCOUNT_KEY`
+   - `FRONTEND_BASE_URL=https://proofround.com`
+   - `VERIFIED_PACKET_PRICE_USD=49`
+3. Deploy the backend project.
+4. Copy the backend URLs into the frontend GitHub Pages env vars:
+   - `NEXT_PUBLIC_STRIPE_CONNECT_URL=https://<your-backend>.vercel.app/api/stripe/connect`
+   - `NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL=https://<your-backend>.vercel.app/api/packets/generate`
+   - `NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL=https://<your-backend>.vercel.app/api/packets/request`
+
+The frontend stays static on GitHub Pages, while Stripe and PDF generation run on Node through Vercel.
+
 ## Monitoring & Debugging
 
 ### Vercel Analytics & Monitoring

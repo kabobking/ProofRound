@@ -1,0 +1,21 @@
+{
+  "name": "proofround-backend",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo \"No build step required for Vercel Functions\"",
+    "deploy": "vercel deploy"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.7.0",
+    "pdfkit": "^0.16.0",
+    "stripe": "^17.3.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24",
+    "@types/pdfkit": "^0.13.6",
+    "typescript": "^5",
+    "vercel": "^41"
+  }
+}

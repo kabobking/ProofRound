@@ -125,6 +125,7 @@ export default function FounderStartupsPage() {
                     View Public Page
                   </Link>
                   <StartupRevenueActions
+                    startupId={startup.id}
                     startupName={startup.name}
                     stripeConnected={Boolean(startup.stripeAccountId)}
                     variant="founder"

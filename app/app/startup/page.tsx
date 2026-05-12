@@ -271,6 +271,7 @@ export default function StartupPage() {
                 Request or generate the Stripe-backed PDF version of this startup&apos;s verified revenue data.
               </p>
               <StartupRevenueActions
+                startupId={startup.id}
                 startupName={startup.name}
                 founderEmail={startup.founderEmail}
                 stripeConnected={Boolean(startup.stripeAccountId)}

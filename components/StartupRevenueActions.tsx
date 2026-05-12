@@ -3,6 +3,7 @@
 import { MouseEvent } from 'react';
 
 interface StartupRevenueActionsProps {
+  startupId: string;
   startupName: string;
   founderEmail?: string;
   stripeConnected?: boolean;
@@ -21,15 +22,29 @@ function openExternalTarget(url: string | undefined, fallbackMessage: string) {
 }
 
 export default function StartupRevenueActions({
+  startupId,
   startupName,
   founderEmail,
   stripeConnected = false,
   variant = 'founder',
 }: StartupRevenueActionsProps) {
+  const appendStartupId = (url: string | undefined) => {
+    if (!url) return undefined;
+
+    if (url.startsWith('mailto:')) {
+      return url;
+    }
+
+    const nextUrl = new URL(url);
+    nextUrl.searchParams.set('startupId', startupId);
+    nextUrl.searchParams.set('startupName', startupName);
+    return nextUrl.toString();
+  };
+
   const handleConnectStripe = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     openExternalTarget(
-      process.env.NEXT_PUBLIC_STRIPE_CONNECT_URL,
+      appendStartupId(process.env.NEXT_PUBLIC_STRIPE_CONNECT_URL),
       'Configure NEXT_PUBLIC_STRIPE_CONNECT_URL to point to your Stripe Connect onboarding or dashboard link.'
     );
   };
@@ -42,16 +57,13 @@ export default function StartupRevenueActions({
       return;
     }
 
-    openExternalTarget(
-      process.env.NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL,
-      'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL to trigger your packet generator or backend export step.'
-    );
+    openExternalTarget(appendStartupId(process.env.NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL), 'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL to trigger your packet generator or backend export step.');
   };
 
   const handleRequestPacket = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    const requestUrl = process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL;
+    const requestUrl = appendStartupId(process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL);
     if (requestUrl) {
       window.open(requestUrl, '_blank', 'noopener,noreferrer');
       return;
