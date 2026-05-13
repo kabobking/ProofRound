@@ -296,7 +296,7 @@ export default function DashboardPage() {
     const totalSeeking = dataset.startups.reduce((sum, startup) => sum + (startup.seeking_amount || 0), 0);
 
     return {
-      title: isAdmin ? 'Operations console' : 'Fundraising command center',
+      title: isAdmin ? 'Dashboard' : 'Dashboard',
       subtitle: isAdmin
         ? 'Monitor verification, platform activity, and public startup health from one polished workspace.'
         : 'Track company readiness, packets, and live fundraising activity without losing sight of the details.',
