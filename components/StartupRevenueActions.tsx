@@ -55,9 +55,18 @@ export default function StartupRevenueActions({
 
   const handleConnectStripe = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
+    
+    const stripeUrl = process.env.NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL || 
+                      process.env.NEXT_PUBLIC_STRIPE_OAUTH_URL;
+    
+    if (!stripeUrl) {
+      alert('Stripe Connect URL not configured. Set NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL or NEXT_PUBLIC_STRIPE_OAUTH_URL in .env.local');
+      return;
+    }
+    
     openExternalTarget(
-      appendStartupId(process.env.NEXT_PUBLIC_STRIPE_CONNECT_URL || '/api/stripe/connect'),
-      'Configure NEXT_PUBLIC_STRIPE_CONNECT_URL to point to your Stripe Connect onboarding or dashboard link, or expose /api/stripe/connect on the same origin.'
+      appendStartupId(stripeUrl),
+      'Configure NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL or NEXT_PUBLIC_STRIPE_OAUTH_URL in .env.local'
     );
   };
 
