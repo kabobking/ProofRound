@@ -16,9 +16,25 @@ export default async function handler(req: BackendRequest, res: BackendResponse)
     if (!state) return res.status(400).json({ error: 'state (startupId) is required' });
 
     const stripe = getStripeClient();
+
     // Exchange the authorization code for an access token
-    const tokenResponse = await (stripe as any).oauth.token({ grant_type: 'authorization_code', code });
-    const { stripe_user_id, access_token, refresh_token, scope, token_type } = tokenResponse;
+    type OAuthTokenResult = {
+      stripe_user_id?: string;
+      access_token?: string;
+      refresh_token?: string;
+      scope?: string;
+      token_type?: string;
+      [key: string]: unknown;
+    };
+
+    const stripeWithOauth = stripe as unknown as {
+      oauth: {
+        token: (opts: { grant_type: string; code: string }) => Promise<OAuthTokenResult>;
+      };
+    };
+
+    const tokenResponse = await stripeWithOauth.oauth.token({ grant_type: 'authorization_code', code });
+    const { stripe_user_id, access_token, refresh_token, scope, token_type } = tokenResponse || {};
 
     if (!stripe_user_id) {
       return res.status(500).json({ error: 'No stripe_user_id returned' });
