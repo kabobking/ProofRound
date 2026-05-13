@@ -45,3 +45,5 @@ next-env.d.ts
 .cache
 .turbo
 .swc
+
+backend/node_modules/
