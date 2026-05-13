@@ -4,6 +4,7 @@ service cloud.firestore {
   match /databases/{database}/documents {
     
     // Helper functions
+    
     function isSignedIn() {
       return request.auth != null;
     }
