@@ -361,7 +361,7 @@ These values are not built into Stripe itself. They should point to the backend 
 
 | Variable | Use | Good value for a demo |
 |---|---|---|
-| `NEXT_PUBLIC_STRIPE_CONNECT_URL` | Founder connect/manage Stripe flow | Leave blank until you deploy a backend endpoint |
+| `NEXT_PUBLIC_STRIPE_CONNECT_URL` | Founder connect/manage Stripe flow | `/api/stripe/connect` if same-origin, otherwise `https://<your-backend>/api/stripe/connect` |
 | `NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL` | Generate the verified PDF packet | Leave blank until you deploy a backend endpoint |
 | `NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL` | Investor request flow | `mailto:support@proofround.com?subject=Request%20verified%20revenue%20packet` |
 | `NEXT_PUBLIC_VERIFIED_PACKET_PRICE_USD` | Displayed price tag | `49` |
@@ -381,7 +381,7 @@ Use the `backend/` folder as a separate Vercel project.
    - `VERIFIED_PACKET_PRICE_USD=49`
 3. Deploy the backend project.
 4. Copy the backend URLs into the frontend GitHub Pages env vars:
-   - `NEXT_PUBLIC_STRIPE_CONNECT_URL=https://<your-backend>.vercel.app/api/stripe/connect`
+   - `NEXT_PUBLIC_STRIPE_CONNECT_URL=https://<your-backend>.vercel.app/api/stripe/connect` or `/api/stripe/connect` if the backend is deployed on the same origin
    - `NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL=https://<your-backend>.vercel.app/api/packets/generate`
    - `NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL=https://<your-backend>.vercel.app/api/packets/request`
 

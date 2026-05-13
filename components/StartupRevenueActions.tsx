@@ -21,6 +21,18 @@ function openExternalTarget(url: string | undefined, fallbackMessage: string) {
   window.alert(fallbackMessage);
 }
 
+function toAbsoluteUrl(url: string): string {
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('mailto:')) {
+    return url;
+  }
+
+  if (url.startsWith('/')) {
+    return new URL(url, window.location.origin).toString();
+  }
+
+  return new URL(`/${url}`, window.location.origin).toString();
+}
+
 export default function StartupRevenueActions({
   startupId,
   startupName,
@@ -31,11 +43,11 @@ export default function StartupRevenueActions({
   const appendStartupId = (url: string | undefined) => {
     if (!url) return undefined;
 
-    if (url.startsWith('mailto:')) {
-      return url;
+    const nextUrl = new URL(toAbsoluteUrl(url));
+    if (nextUrl.protocol === 'mailto:') {
+      return nextUrl.toString();
     }
 
-    const nextUrl = new URL(url);
     nextUrl.searchParams.set('startupId', startupId);
     nextUrl.searchParams.set('startupName', startupName);
     return nextUrl.toString();
@@ -44,8 +56,8 @@ export default function StartupRevenueActions({
   const handleConnectStripe = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
     openExternalTarget(
-      appendStartupId(process.env.NEXT_PUBLIC_STRIPE_CONNECT_URL),
-      'Configure NEXT_PUBLIC_STRIPE_CONNECT_URL to point to your Stripe Connect onboarding or dashboard link.'
+      appendStartupId(process.env.NEXT_PUBLIC_STRIPE_CONNECT_URL || '/api/stripe/connect'),
+      'Configure NEXT_PUBLIC_STRIPE_CONNECT_URL to point to your Stripe Connect onboarding or dashboard link, or expose /api/stripe/connect on the same origin.'
     );
   };
 
