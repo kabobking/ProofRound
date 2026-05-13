@@ -1,5 +1,6 @@
 import { createPacketRequestRecord } from '../../lib/packets';
 import { getBodyString } from '../../lib/http';
+import { getStripeClient } from '../../lib/stripe';
 import type { BackendRequest, BackendResponse } from '../../lib/http';
 
 export default async function handler(req: BackendRequest, res: BackendResponse) {
@@ -26,6 +27,38 @@ export default async function handler(req: BackendRequest, res: BackendResponse)
       requesterName,
       priceUSD,
     });
+
+    // If POST, create a Stripe Checkout session and return URL for redirect
+    if (req.method === 'POST') {
+      const stripe = getStripeClient();
+      const frontend = process.env.FRONTEND_BASE_URL || 'https://proofround.com';
+
+      const session = await stripe.checkout.sessions.create({
+        mode: 'payment',
+        payment_method_types: ['card'],
+        line_items: [
+          {
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: `Verified Packet: ${startupName || startupId}`,
+                description: `Verified revenue packet for ${startupName || startupId}`,
+              },
+              unit_amount: Math.round(Number(priceUSD) * 100),
+            },
+            quantity: 1,
+          },
+        ],
+        success_url: `${frontend}/thank-you?session_id={CHECKOUT_SESSION_ID}&requestId=${encodeURIComponent(request.id)}`,
+        cancel_url: `${frontend}/startup?startupId=${encodeURIComponent(startupId)}`,
+        metadata: {
+          requestId: request.id,
+          startupId,
+        },
+      });
+
+      return res.status(200).json({ checkoutUrl: session.url, requestId: request.id });
+    }
 
     if (req.headers.accept?.includes('text/html') || req.method === 'GET') {
       return res.status(200).send(`

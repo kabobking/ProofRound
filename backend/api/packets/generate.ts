@@ -1,4 +1,6 @@
 import { createVerifiedPacket, renderPacketPdf } from '../../lib/packets';
+import { uploadBuffer } from '../../lib/storage';
+import { getDb } from '../../lib/firebase-admin';
 import type { BackendRequest, BackendResponse } from '../../lib/http';
 
 export default async function handler(req: BackendRequest, res: BackendResponse) {
@@ -18,9 +20,21 @@ export default async function handler(req: BackendRequest, res: BackendResponse)
     const { startup, packet } = await createVerifiedPacket(startupId, { start, end });
     const pdfBuffer = await renderPacketPdf(startup, packet);
 
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename=proofround-${startupId}.pdf`);
-    return res.status(200).send(pdfBuffer);
+    // upload to Firebase Storage and update the Firestore packet doc with storage info
+    const dest = `packets/${packet.id}.pdf`;
+    const { storagePath, downloadUrl } = await uploadBuffer(pdfBuffer, dest, 'application/pdf');
+
+    const db = getDb();
+    await db.collection('proofround_packets').doc(packet.id).update({
+      pdf: {
+        storagePath,
+        downloadUrl,
+      },
+      updatedAt: new Date().toISOString(),
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    return res.status(200).json({ packetId: packet.id, pdfUrl: downloadUrl });
   } catch (error) {
     console.error('Packet generation error:', error);
     return res.status(500).json({

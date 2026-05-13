@@ -63,9 +63,27 @@ export default function StartupRevenueActions({
   const handleRequestPacket = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    const requestUrl = appendStartupId(process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL);
+    const requestUrl = process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL;
     if (requestUrl) {
-      window.open(requestUrl, '_blank', 'noopener,noreferrer');
+      // Try POSTing to create a Checkout session and open the returned URL
+      fetch(requestUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startupId, startupName }),
+      })
+        .then(async res => res.json())
+        .then(json => {
+          if (json.checkoutUrl) {
+            window.open(json.checkoutUrl, '_blank', 'noopener,noreferrer');
+            return;
+          }
+
+          // fallback: if backend returned an HTML page or no checkoutUrl, open the requestUrl in a new tab
+          window.open(appendStartupId(requestUrl), '_blank', 'noopener,noreferrer');
+        })
+        .catch(() => {
+          window.open(appendStartupId(requestUrl), '_blank', 'noopener,noreferrer');
+        });
       return;
     }
 

@@ -102,6 +102,17 @@ Google sign-in uses the browser origin, so the deployed domain must be authorize
   - `FIREBASE_SERVICE_ACCOUNT_KEY`
   - `FRONTEND_BASE_URL=https://proofround.com`
   - `VERIFIED_PACKET_PRICE_USD=49`
+  - `FIREBASE_STORAGE_BUCKET` (e.g. `your-project.appspot.com`)
+  - `STRIPE_TOKEN_ENCRYPTION_KEY` (base64-encoded 32 bytes; generate with `openssl rand -base64 32`)
+  - `STRIPE_CLIENT_ID` (your Stripe Connect client id, e.g. `ca_...`)
+  - `NEXT_PUBLIC_*` envs used by the frontend should be set in the frontend build (or GitHub Actions):
+    - `NEXT_PUBLIC_STRIPE_CONNECT_URL` → `https://<your-vercel-backend>/api/stripe/connect?startupId=` (frontend adds startupId)
+    - `NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL` → `https://<your-vercel-backend>/api/packets/generate`
+    - `NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL` → `https://<your-vercel-backend>/api/packets/request`
+
+3. OAuth callback: set your Stripe Connect Redirect URI to `https://<your-vercel-backend>/api/stripe/oauth-callback`
+4. Deploy the backend project
+5. Put the deployed Vercel URLs into the frontend env vars (GitHub repo secrets used by the Pages build)
 3. Deploy the backend project
 4. Put the deployed Vercel URLs into the frontend env vars:
   - `NEXT_PUBLIC_STRIPE_CONNECT_URL`
