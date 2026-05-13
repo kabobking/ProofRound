@@ -1,5 +1,5 @@
-import { getStorageBucket } from './firebase-admin';
-import { generateDownloadToken } from './crypto';
+import { getStorageBucket } from './firebase-admin.js';
+import { generateDownloadToken } from './crypto.js';
 
 export async function uploadBuffer(buffer: Buffer, destination: string, contentType = 'application/pdf') {
   const bucket = getStorageBucket();

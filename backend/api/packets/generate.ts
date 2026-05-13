@@ -1,7 +1,7 @@
-import { createVerifiedPacket, renderPacketPdf } from '../../lib/packets';
-import { uploadBuffer } from '../../lib/storage';
-import { getDb } from '../../lib/firebase-admin';
-import type { BackendRequest, BackendResponse } from '../../lib/http';
+import { createVerifiedPacket, renderPacketPdf } from '../../lib/packets.js';
+import { uploadBuffer } from '../../lib/storage.js';
+import { getDb } from '../../lib/firebase-admin.js';
+import type { BackendRequest, BackendResponse } from '../../lib/http.js';
 
 export default async function handler(req: BackendRequest, res: BackendResponse) {
   if (req.method !== 'GET') {

@@ -1,6 +1,6 @@
-import { ensureConnectedStripeAccount, getFrontendBaseUrl } from '../../lib/packets';
-import { getStripeClient } from '../../lib/stripe';
-import type { BackendRequest, BackendResponse } from '../../lib/http';
+import { ensureConnectedStripeAccount, getFrontendBaseUrl } from '../../lib/packets.js';
+import { getStripeClient } from '../../lib/stripe.js';
+import type { BackendRequest, BackendResponse } from '../../lib/http.js';
 
 export default async function handler(req: BackendRequest, res: BackendResponse) {
   if (req.method !== 'GET') {

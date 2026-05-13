@@ -1,7 +1,7 @@
-import type { BackendRequest, BackendResponse } from '../../lib/http';
-import { getStripeClient } from '../../lib/stripe';
-import { getDb } from '../../lib/firebase-admin';
-import { encryptString } from '../../lib/crypto';
+import type { BackendRequest, BackendResponse } from '../../lib/http.js';
+import { getStripeClient } from '../../lib/stripe.js';
+import { getDb } from '../../lib/firebase-admin.js';
+import { encryptString } from '../../lib/crypto.js';
 
 export default async function handler(req: BackendRequest, res: BackendResponse) {
   if (req.method !== 'GET') {

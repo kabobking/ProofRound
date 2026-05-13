@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import PDFDocument from 'pdfkit';
-import { getDb } from './firebase-admin';
-import { getStripeClient } from './stripe';
+import { getDb } from './firebase-admin.js';
+import { getStripeClient } from './stripe.js';
 import type Stripe from 'stripe';
 
 type StartupDoc = {

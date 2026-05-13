@@ -108,27 +108,30 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="mt-4 space-y-2 border-t border-white/10 pt-4">
-              {links.map(link => (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className="block w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm font-medium text-white text-left transition-colors hover:bg-white/10 active:bg-white/20 min-h-[44px] flex items-center"
-                  onClick={() => setMobileMenuOpen(false)}
+            <div className="fixed inset-0 z-50">
+              <div className="absolute inset-0 bg-black/60" onClick={() => setMobileMenuOpen(false)} />
+              <div className="absolute top-0 left-0 right-0 bg-slate-950 text-white p-6 pt-24 space-y-4 max-h-full overflow-auto">
+                {links.map(link => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className="block w-full rounded-lg border border-white/15 bg-white/5 bg-opacity-5 px-4 py-3 text-sm font-medium text-white text-left transition-colors hover:bg-white/10 active:bg-white/20 min-h-[44px] flex items-center"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+                <button
+                  onClick={() => {
+                    setMobileMenuOpen(false);
+                    handleLogout();
+                  }}
+                  disabled={loggingOut}
+                  className="w-full rounded-lg border border-white/15 bg-white/5 bg-opacity-5 px-4 py-3 text-sm font-medium text-white text-left transition-colors hover:bg-white/10 active:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60 min-h-[44px] flex items-center"
                 >
-                  {link.label}
-                </Link>
-              ))}
-              <button
-                onClick={() => {
-                  setMobileMenuOpen(false);
-                  handleLogout();
-                }}
-                disabled={loggingOut}
-                className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-sm font-medium text-white text-left transition-colors hover:bg-white/10 active:bg-white/20 disabled:cursor-not-allowed disabled:opacity-60 min-h-[44px] flex items-center"
-              >
-                {loggingOut ? 'Signing out…' : 'Sign out'}
-              </button>
+                  {loggingOut ? 'Signing out…' : 'Sign out'}
+                </button>
+              </div>
             </div>
           )}
         </div>
