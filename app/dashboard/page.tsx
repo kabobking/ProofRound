@@ -182,7 +182,7 @@ export default function DashboardPage() {
             opportunities = await getActiveOpportunities();
           } catch (e) {
             console.error('Failed to fetch active opportunities:', e);
-            throw new Error('opportunities');
+            opportunities = [];
           }
 
           try {

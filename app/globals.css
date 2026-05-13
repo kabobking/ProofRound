@@ -13,6 +13,19 @@
   --accent-foreground: #ffffff;
 }
 
+[data-theme='dark'] {
+  --bg: #08111f;
+  --surface: #0f172a;
+  --surface2: #111c31;
+  --border: #243044;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --accent: #4f46e5;
+  --accentTint: #172554;
+  --accent2: #14b8a6;
+  --accent-foreground: #ffffff;
+}
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
