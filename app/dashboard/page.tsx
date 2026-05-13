@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
@@ -128,7 +128,9 @@ function ActivityTable({ rows }: { rows: ActivityRow[] }) {
                   <div className="font-medium text-slate-900">{row.label}</div>
                   <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{row.kind}</div>
                 </td>
-                <td className="px-4 py-4"><Badge tone={row.status === 'Verified' ? 'emerald' : row.status === 'Pending' ? 'amber' : 'indigo'}>{row.status}</Badge></td>
+                <td className="px-4 py-4">
+                  <Badge tone={row.status === 'Verified' ? 'emerald' : row.status === 'Pending' ? 'amber' : 'indigo'}>{row.status}</Badge>
+                </td>
                 <td className="px-4 py-4 text-sm text-slate-600">{row.detail}</td>
                 <td className="px-4 py-4 text-right text-sm text-slate-500">{formatDate(row.updatedAt)}</td>
               </tr>
@@ -165,7 +167,6 @@ export default function DashboardPage() {
 
       try {
         if (userProfile.role === 'investor') {
-          // Run each call separately to identify permission failures
           let publicStartupsResponse: { startups: Startup[] } | null = null;
           let opportunities: InvestmentOpportunity[] = [];
           let investorInterests: InvestmentInterest[] = [];
@@ -203,7 +204,6 @@ export default function DashboardPage() {
           return;
         }
 
-        // For founders, fetch startups then dependent data with per-call logging
         let startups: Startup[] = [];
         try {
           startups = await getStartupsByFounder(userProfile.id);
@@ -375,6 +375,37 @@ export default function DashboardPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
+        <header className="border-b border-white/10 bg-slate-950 text-white">
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+            <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em] text-slate-300">ProofRound workspace</div>
+            <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Dashboard unavailable</h1>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">{error}</p>
+          </div>
+        </header>
+
+        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-900 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+            <p className="font-semibold">We could not load your dashboard data.</p>
+            <p className="mt-2 text-sm leading-6">
+              Try refreshing the page, checking your Firebase permissions, or signing out and back in.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-3">
+              <Link href="/dashboard" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+                Retry
+              </Link>
+              <Link href="/marketplace" className="rounded-full border border-amber-300 px-4 py-2 text-sm font-medium text-amber-950 hover:bg-amber-100">
+                Go to marketplace
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
   if (loading || !summary || !dataset) {
     return (
       <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)] text-white">
@@ -433,8 +464,6 @@ export default function DashboardPage() {
       </header>
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        {error && <div className="mb-8 rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-sm text-amber-900">{error}</div>}
-
         <div className="mb-8 grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)]">
           <Panel title="Workspace shortcuts" description="Your fastest path to the rest of the product.">
             <div className="space-y-3">
