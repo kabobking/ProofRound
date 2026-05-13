@@ -26,6 +26,13 @@ import {
   AdminLog,
 } from './models';
 
+function mapDocsWithId<T extends { id: string }>(docs: Array<{ id: string; data: () => unknown }>): T[] {
+  return docs.map(snapshot => ({
+    id: snapshot.id,
+    ...(snapshot.data() as Omit<T, 'id'>),
+  }));
+}
+
 // ============ STARTUPS ============
 
 export async function createStartup(startup: Omit<Startup, 'id' | 'createdAt' | 'updatedAt'>): Promise<Startup> {
@@ -51,7 +58,7 @@ export async function createStartup(startup: Omit<Startup, 'id' | 'createdAt' | 
 export async function getStartup(startupId: string): Promise<Startup | null> {
   const db = getFirestoreInstance();
   const docSnap = await getDoc(doc(db, 'startups', startupId));
-  return docSnap.exists() ? (docSnap.data() as Startup) : null;
+  return docSnap.exists() ? ({ id: docSnap.id, ...(docSnap.data() as Omit<Startup, 'id'>) }) : null;
 }
 
 export async function updateStartup(startupId: string, updates: Partial<Startup>): Promise<void> {
@@ -71,7 +78,7 @@ export async function getStartupsByFounder(founderId: string): Promise<Startup[]
   const db = getFirestoreInstance();
   const q = query(collection(db, 'startups'), where('founderId', '==', founderId));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => doc.data() as Startup);
+  return mapDocsWithId<Startup>(querySnapshot.docs);
 }
 
 export async function getPublicStartups(pageSize: number = 20, pageToken?: string): Promise<{ startups: Startup[]; nextPageToken?: string }> {
@@ -98,7 +105,7 @@ export async function getPublicStartups(pageSize: number = 20, pageToken?: strin
   }
 
   const querySnapshot = await getDocs(q);
-  const startups = querySnapshot.docs.slice(0, pageSize).map(doc => doc.data() as Startup);
+  const startups = mapDocsWithId<Startup>(querySnapshot.docs.slice(0, pageSize));
   const nextPageToken = querySnapshot.docs.length > pageSize ? querySnapshot.docs[pageSize].id : undefined;
 
   return { startups, nextPageToken };
@@ -115,8 +122,7 @@ export async function searchStartups(searchTerm: string): Promise<Startup[]> {
   const querySnapshot = await getDocs(q);
   const lowerSearchTerm = searchTerm.toLowerCase();
 
-  return querySnapshot.docs
-    .map(doc => doc.data() as Startup)
+  return mapDocsWithId<Startup>(querySnapshot.docs)
     .filter(
       startup =>
         startup.name.toLowerCase().includes(lowerSearchTerm) ||
@@ -152,7 +158,7 @@ export async function createInvestmentOpportunity(
 export async function getInvestmentOpportunity(opportunityId: string): Promise<InvestmentOpportunity | null> {
   const db = getFirestoreInstance();
   const docSnap = await getDoc(doc(db, 'investment_opportunities', opportunityId));
-  return docSnap.exists() ? (docSnap.data() as InvestmentOpportunity) : null;
+  return docSnap.exists() ? ({ id: docSnap.id, ...(docSnap.data() as Omit<InvestmentOpportunity, 'id'>) }) : null;
 }
 
 export async function updateInvestmentOpportunity(
@@ -175,7 +181,7 @@ export async function getOpportunitiesByStartup(startupId: string): Promise<Inve
   const db = getFirestoreInstance();
   const q = query(collection(db, 'investment_opportunities'), where('startupId', '==', startupId));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => doc.data() as InvestmentOpportunity);
+  return mapDocsWithId<InvestmentOpportunity>(querySnapshot.docs);
 }
 
 export async function getActiveOpportunities(): Promise<InvestmentOpportunity[]> {
@@ -186,7 +192,7 @@ export async function getActiveOpportunities(): Promise<InvestmentOpportunity[]>
     orderBy('createdAt', 'desc')
   );
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => doc.data() as InvestmentOpportunity);
+  return mapDocsWithId<InvestmentOpportunity>(querySnapshot.docs);
 }
 
 // ============ INVESTMENT INTERESTS ============
@@ -214,21 +220,21 @@ export async function createInvestmentInterest(
 export async function getInvestmentInterest(interestId: string): Promise<InvestmentInterest | null> {
   const db = getFirestoreInstance();
   const docSnap = await getDoc(doc(db, 'investment_interests', interestId));
-  return docSnap.exists() ? (docSnap.data() as InvestmentInterest) : null;
+  return docSnap.exists() ? ({ id: docSnap.id, ...(docSnap.data() as Omit<InvestmentInterest, 'id'>) }) : null;
 }
 
 export async function getInterestsOnOpportunity(opportunityId: string): Promise<InvestmentInterest[]> {
   const db = getFirestoreInstance();
   const q = query(collection(db, 'investment_interests'), where('opportunityId', '==', opportunityId));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => doc.data() as InvestmentInterest);
+  return mapDocsWithId<InvestmentInterest>(querySnapshot.docs);
 }
 
 export async function getInvestorInterests(investorId: string): Promise<InvestmentInterest[]> {
   const db = getFirestoreInstance();
   const q = query(collection(db, 'investment_interests'), where('investorId', '==', investorId));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => doc.data() as InvestmentInterest);
+  return mapDocsWithId<InvestmentInterest>(querySnapshot.docs);
 }
 
 export async function updateInvestmentInterest(
@@ -271,7 +277,7 @@ export async function createProofroundPacket(
 export async function getProofroundPacket(packetId: string): Promise<ProofroundPacket | null> {
   const db = getFirestoreInstance();
   const docSnap = await getDoc(doc(db, 'proofround_packets', packetId));
-  return docSnap.exists() ? (docSnap.data() as ProofroundPacket) : null;
+  return docSnap.exists() ? ({ id: docSnap.id, ...(docSnap.data() as Omit<ProofroundPacket, 'id'>) }) : null;
 }
 
 export async function getPacketsByStartup(startupId: string): Promise<ProofroundPacket[]> {
@@ -282,7 +288,7 @@ export async function getPacketsByStartup(startupId: string): Promise<Proofround
     where('verified', '==', true)
   );
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map(doc => doc.data() as ProofroundPacket);
+  return mapDocsWithId<ProofroundPacket>(querySnapshot.docs);
 }
 
 export async function updateProofroundPacket(
