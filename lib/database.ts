@@ -30,7 +30,7 @@ function mapDocsWithId<T extends { id: string }>(docs: Array<{ id: string; data:
   return docs.map(snapshot => ({
     id: snapshot.id,
     ...(snapshot.data() as Omit<T, 'id'>),
-  }));
+  } as T));
 }
 
 // ============ STARTUPS ============
