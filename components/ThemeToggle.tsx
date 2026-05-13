@@ -2,17 +2,9 @@
 
 import { useTheme } from '@/lib/theme-context';
 import { Moon, Sun } from 'lucide-react';
-import { useEffect, useState } from 'react';
 
 export function ThemeToggle() {
-  const [mounted, setMounted] = useState(false);
   const { isDark, toggleTheme } = useTheme();
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
 
   return (
     <button

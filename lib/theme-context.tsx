@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -24,21 +24,16 @@ function getInitialTheme(): Theme {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
-  const [mounted, setMounted] = useState(false);
+  const isMountedRef = useRef(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (!mounted) return;
-    
     const root = document.documentElement;
     root.dataset.theme = theme;
     root.classList.toggle('dark', theme === 'dark');
     root.style.colorScheme = theme;
     window.localStorage.setItem('proofround-theme', theme);
-  }, [theme, mounted]);
+    isMountedRef.current = true;
+  }, [theme]);
 
   const value = useMemo<ThemeContextValue>(() => ({
     theme,
