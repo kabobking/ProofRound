@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import AppHeader from '@/components/AppHeader';
 import AnimatedCard from '@/components/AnimatedCard';
 import { useAuth } from '@/lib/auth-context';
 import { signOutUser } from '@/lib/auth';
@@ -74,10 +75,10 @@ function Badge({
 
 function StatCard({ label, value, detail }: { label: string; value: string; detail: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-[0_1px_0_rgba(255,255,255,0.04)_inset] backdrop-blur">
-      <p className="text-xs uppercase tracking-[0.24em] text-slate-400">{label}</p>
-      <p className="mt-3 text-3xl font-semibold tracking-tight text-white">{value}</p>
-      <p className="mt-2 text-sm text-slate-300">{detail}</p>
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+      <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">{label}</p>
+      <p className="mt-3 text-3xl font-semibold tracking-tight text-[var(--text)]">{value}</p>
+      <p className="mt-2 text-sm text-[var(--muted)]">{detail}</p>
     </div>
   );
 }
@@ -92,10 +93,10 @@ function Panel({
   children: React.ReactNode;
 }) {
   return (
-    <AnimatedCard className="rounded-3xl border border-slate-200 bg-white shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-      <div className="border-b border-slate-100 px-6 py-5 sm:px-7">
-        <h2 className="text-lg font-semibold tracking-tight text-slate-900">{title}</h2>
-        {description && <p className="mt-1 text-sm text-slate-500">{description}</p>}
+    <AnimatedCard className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+      <div className="border-b border-[var(--border)] px-6 py-5 sm:px-7">
+        <h2 className="text-lg font-semibold tracking-tight text-[var(--text)]">{title}</h2>
+        {description && <p className="mt-1 text-sm text-[var(--muted)]">{description}</p>}
       </div>
       <div className="px-6 py-6 sm:px-7">{children}</div>
     </AnimatedCard>
@@ -104,35 +105,35 @@ function Panel({
 
 function ActivityTable({ rows }: { rows: ActivityRow[] }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200">
-      <table className="min-w-full divide-y divide-slate-200">
-        <thead className="bg-slate-50">
+    <div className="overflow-hidden rounded-2xl border border-[var(--border)]">
+      <table className="min-w-full divide-y divide-[var(--border)]">
+        <thead className="bg-[var(--surface2)]">
           <tr>
-            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Item</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Status</th>
-            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Detail</th>
-            <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">Updated</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Item</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Status</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Detail</th>
+            <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">Updated</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100 bg-white">
+        <tbody className="divide-y divide-[var(--border)] bg-[var(--surface)]">
           {rows.length === 0 ? (
             <tr>
-              <td className="px-4 py-6 text-sm text-slate-500" colSpan={4}>
+              <td className="px-4 py-6 text-sm text-[var(--muted)]" colSpan={4}>
                 No recent activity to display.
               </td>
             </tr>
           ) : (
             rows.map(row => (
-              <tr key={row.id} className="transition hover:bg-slate-50/80">
+              <tr key={row.id} className="transition hover:bg-[var(--surface2)]/80">
                 <td className="px-4 py-4">
-                  <div className="font-medium text-slate-900">{row.label}</div>
-                  <div className="mt-1 text-xs uppercase tracking-[0.18em] text-slate-400">{row.kind}</div>
+                  <div className="font-medium text-[var(--text)]">{row.label}</div>
+                  <div className="mt-1 text-xs uppercase tracking-[0.18em] text-[var(--muted)]">{row.kind}</div>
                 </td>
                 <td className="px-4 py-4">
                   <Badge tone={row.status === 'Verified' ? 'emerald' : row.status === 'Pending' ? 'amber' : 'indigo'}>{row.status}</Badge>
                 </td>
-                <td className="px-4 py-4 text-sm text-slate-600">{row.detail}</td>
-                <td className="px-4 py-4 text-right text-sm text-slate-500">{formatDate(row.updatedAt)}</td>
+                <td className="px-4 py-4 text-sm text-[var(--muted)]">{row.detail}</td>
+                <td className="px-4 py-4 text-right text-sm text-[var(--muted)]">{formatDate(row.updatedAt)}</td>
               </tr>
             ))
           )}
@@ -366,37 +367,34 @@ export default function DashboardPage() {
 
   if (!userProfile) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
-        <div className="text-center">
-          <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-white/70" />
-          <p className="mt-4 text-sm text-slate-300">Loading dashboard...</p>
-        </div>
+      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+        <AppHeader title="Dashboard" subtitle="Loading your workspace" />
+        <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-[var(--accent)]" />
+            <p className="mt-4 text-sm text-[var(--muted)]">Loading dashboard...</p>
+          </div>
+        </main>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
-        <header className="border-b border-white/10 bg-slate-950 text-white">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em] text-slate-300">ProofRound workspace</div>
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">Dashboard unavailable</h1>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">{error}</p>
-          </div>
-        </header>
+      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+        <AppHeader title="Dashboard unavailable" subtitle={error} />
 
         <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-900 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+          <div className="rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-900 shadow-[0_20px_60px_rgba(15,23,42,0.06)] dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
             <p className="font-semibold">We could not load your dashboard data.</p>
             <p className="mt-2 text-sm leading-6">
               Try refreshing the page, checking your Firebase permissions, or signing out and back in.
             </p>
             <div className="mt-4 flex flex-wrap gap-3">
-              <Link href="/dashboard" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+              <Link href="/dashboard" className="rounded-full bg-[var(--text)] px-4 py-2 text-sm font-medium text-[var(--bg)] hover:opacity-90">
                 Retry
               </Link>
-              <Link href="/marketplace" className="rounded-full border border-amber-300 px-4 py-2 text-sm font-medium text-amber-950 hover:bg-amber-100">
+              <Link href="/marketplace" className="rounded-full border border-amber-300 px-4 py-2 text-sm font-medium text-amber-950 hover:bg-amber-100 dark:border-amber-400/30 dark:text-amber-100 dark:hover:bg-amber-500/10">
                 Go to marketplace
               </Link>
             </div>
@@ -408,9 +406,10 @@ export default function DashboardPage() {
 
   if (loading || !summary || !dataset) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)] text-white">
+      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+        <AppHeader title="Dashboard" subtitle="Loading your workspace" />
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="h-72 animate-pulse rounded-3xl border border-white/10 bg-white/5" />
+          <div className="h-72 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
         </div>
       </div>
     );
@@ -433,44 +432,17 @@ export default function DashboardPage() {
   const maxStageCount = Math.max(...stageCounts.map(item => item.value), 1);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
-      <header className="border-b border-white/10 bg-slate-950 text-white">
-        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <div className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.24em] text-slate-300">ProofRound workspace</div>
-              <h1 className="mt-4 text-4xl font-semibold tracking-tight sm:text-5xl">{summary.title}</h1>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300 sm:text-base">{summary.subtitle}</p>
-            </div>
-
-            <div className="flex flex-wrap gap-3">
-              {quickLinks.map(link => (
-                <Link key={link.href} href={link.href} className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10">
-                  {link.label}
-                </Link>
-              ))}
-              <button onClick={handleLogout} disabled={loggingOut} className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-60">
-                {loggingOut ? 'Signing out…' : 'Sign out'}
-              </button>
-            </div>
-          </div>
-
-          <div className="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-            {summary.stats.map(stat => (
-              <StatCard key={stat.label} label={stat.label} value={stat.value} detail={stat.detail} />
-            ))}
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+      <AppHeader title={summary.title} subtitle={summary.subtitle} quickLinks={quickLinks} />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8 grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)]">
           <Panel title="Workspace shortcuts" description="Your fastest path to the rest of the product.">
             <div className="space-y-3">
               {quickLinks.map(link => (
-                <Link key={link.href} href={link.href} className="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 transition hover:border-indigo-200 hover:bg-indigo-50/50">
-                  <span className="font-medium text-slate-900">{link.label}</span>
-                  <span className="text-xs text-slate-500">Open</span>
+                <Link key={link.href} href={link.href} className="flex items-center justify-between rounded-2xl border border-[var(--border)] px-4 py-3 transition hover:border-[var(--accent)]/30 hover:bg-[var(--surface2)]/60">
+                  <span className="font-medium text-[var(--text)]">{link.label}</span>
+                  <span className="text-xs text-[var(--muted)]">Open</span>
                 </Link>
               ))}
             </div>
@@ -479,17 +451,17 @@ export default function DashboardPage() {
           <Panel title="Account" description="Your role, status, and access at a glance.">
             <div className="space-y-4">
               <div>
-                <p className="text-2xl font-semibold tracking-tight text-slate-900">{userProfile.displayName}</p>
-                <p className="mt-1 text-sm text-slate-500">{userProfile.email}</p>
+                <p className="text-2xl font-semibold tracking-tight text-[var(--text)]">{userProfile.displayName}</p>
+                <p className="mt-1 text-sm text-[var(--muted)]">{userProfile.email}</p>
               </div>
               <div className="flex flex-wrap gap-2">
                 <Badge tone="indigo">{titleCase(userProfile.role)}</Badge>
                 <Badge tone={userProfile.emailVerified ? 'emerald' : 'amber'}>{userProfile.emailVerified ? 'Email verified' : 'Email unverified'}</Badge>
                 {userProfile.isAdmin && <Badge tone="slate">Admin access</Badge>}
               </div>
-              <div className="rounded-2xl bg-slate-50 p-4">
-                <p className="text-xs uppercase tracking-[0.22em] text-slate-500">Joined</p>
-                <p className="mt-2 text-sm font-medium text-slate-900">{formatDate(userProfile.createdAt)}</p>
+              <div className="rounded-2xl bg-[var(--surface2)] p-4">
+                <p className="text-xs uppercase tracking-[0.22em] text-[var(--muted)]">Joined</p>
+                <p className="mt-2 text-sm font-medium text-[var(--text)]">{formatDate(userProfile.createdAt)}</p>
               </div>
             </div>
           </Panel>
@@ -498,13 +470,13 @@ export default function DashboardPage() {
         <div className="grid gap-8 xl:grid-cols-[240px_minmax(0,1fr)]">
           <aside className="space-y-6 xl:sticky xl:top-6 xl:self-start">
             <Panel title="Focus" description="The next few things worth your attention.">
-              <div className="space-y-3 text-sm text-slate-600">
-                <div className="rounded-2xl bg-slate-50 p-4">
+              <div className="space-y-3 text-sm text-[var(--muted)]">
+                <div className="rounded-2xl bg-[var(--surface2)] p-4">
                   {isInvestor ? 'Review live opportunities and compare verified financials before you invest.' : isAdmin ? 'Triage startup verification and keep the public marketplace clean.' : 'Keep packets fresh, move startup drafts toward verification, and monitor fundraising health.'}
                 </div>
-                <div className="rounded-2xl border border-dashed border-slate-200 p-4">
-                  <p className="font-medium text-slate-900">Updated {new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</p>
-                  <p className="mt-1 text-slate-500">All views below are based on the latest account data.</p>
+                <div className="rounded-2xl border border-dashed border-[var(--border)] p-4">
+                  <p className="font-medium text-[var(--text)]">Updated {new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</p>
+                  <p className="mt-1 text-[var(--muted)]">All views below are based on the latest account data.</p>
                 </div>
               </div>
             </Panel>
@@ -512,16 +484,16 @@ export default function DashboardPage() {
             <Panel title={isInvestor ? 'Market stage mix' : 'Startup stage mix'} description="A quick read on where the portfolio sits.">
               <div className="space-y-4">
                 {stageCounts.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-sm text-slate-500">No stage data yet.</div>
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] p-6 text-sm text-[var(--muted)]">No stage data yet.</div>
                 ) : (
                   stageCounts.map(item => (
                     <div key={item.label}>
-                      <div className="mb-1 flex items-center justify-between text-xs text-slate-500">
+                      <div className="mb-1 flex items-center justify-between text-xs text-[var(--muted)]">
                         <span>{item.label}</span>
                         <span>{item.value}</span>
                       </div>
-                      <div className="h-2 rounded-full bg-slate-100">
-                        <div className="h-2 rounded-full bg-slate-900" style={{ width: `${Math.max((item.value / maxStageCount) * 100, 8)}%` }} />
+                      <div className="h-2 rounded-full bg-[var(--surface2)]">
+                        <div className="h-2 rounded-full bg-[var(--text)]" style={{ width: `${Math.max((item.value / maxStageCount) * 100, 8)}%` }} />
                       </div>
                     </div>
                   ))
@@ -534,32 +506,32 @@ export default function DashboardPage() {
             <Panel title={isInvestor ? 'Live opportunity feed' : 'Portfolio overview'} description={isInvestor ? 'The most active rounds currently available.' : 'Your startups, their status, and the latest movement.'}>
               <div className="space-y-4">
                 {primaryStartups.length === 0 ? (
-                  <div className="rounded-2xl border border-dashed border-slate-200 p-6 text-sm text-slate-500">
+                  <div className="rounded-2xl border border-dashed border-[var(--border)] p-6 text-sm text-[var(--muted)]">
                     {isInvestor ? 'No public startups were loaded yet.' : 'You have not added a startup yet.'}
                   </div>
                 ) : (
                   primaryStartups.slice(0, 4).map(startup => (
-                    <div key={startup.id} className="rounded-2xl border border-slate-200 p-4 transition hover:border-indigo-200 hover:bg-slate-50">
+                    <div key={startup.id} className="rounded-2xl border border-[var(--border)] p-4 transition hover:border-[var(--accent)]/30 hover:bg-[var(--surface2)]/60">
                       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                           <div className="flex flex-wrap items-center gap-2">
-                            <h3 className="text-base font-semibold text-slate-900">{startup.name}</h3>
+                            <h3 className="text-base font-semibold text-[var(--text)]">{startup.name}</h3>
                             <Badge tone={startup.verifiedFinancials ? 'emerald' : 'amber'}>{startup.verifiedFinancials ? 'Verified' : 'Needs review'}</Badge>
                             <Badge tone={startup.visible ? 'indigo' : 'slate'}>{startup.visible ? 'Visible' : 'Hidden'}</Badge>
                           </div>
-                          <p className="mt-1 text-sm text-slate-500">{startup.tagline}</p>
-                          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-slate-400">{titleCase(startup.stage)} · {startup.industry} · {startup.location}</p>
+                          <p className="mt-1 text-sm text-[var(--muted)]">{startup.tagline}</p>
+                          <p className="mt-2 text-xs uppercase tracking-[0.18em] text-[var(--muted)]">{titleCase(startup.stage)} · {startup.industry} · {startup.location}</p>
                         </div>
 
                         <div className="text-right">
-                          <p className="text-sm text-slate-500">Seeking</p>
-                          <p className="text-lg font-semibold text-slate-900">{formatCurrency(startup.seeking_amount)}</p>
+                          <p className="text-sm text-[var(--muted)]">Seeking</p>
+                          <p className="text-lg font-semibold text-[var(--text)]">{formatCurrency(startup.seeking_amount)}</p>
                         </div>
                       </div>
 
                       <div className="mt-4 flex flex-wrap gap-2">
-                        <Link href={`/startup?startupId=${startup.id}`} className="inline-flex items-center rounded-full bg-slate-950 px-3 py-1.5 text-xs font-medium text-white hover:bg-slate-800">View page</Link>
-                        <Link href="/marketplace" className="inline-flex items-center rounded-full border border-slate-200 px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50">Marketplace</Link>
+                        <Link href={`/startup?startupId=${startup.id}`} className="inline-flex items-center rounded-full bg-[var(--text)] px-3 py-1.5 text-xs font-medium text-[var(--bg)] hover:opacity-90">View page</Link>
+                        <Link href="/marketplace" className="inline-flex items-center rounded-full border border-[var(--border)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:bg-[var(--surface2)]">Marketplace</Link>
                       </div>
                     </div>
                   ))
@@ -572,26 +544,26 @@ export default function DashboardPage() {
                 <ActivityTable rows={activityRows} />
 
                 <div className="space-y-4">
-                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-5">
-                    <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Inspector</p>
-                    <p className="mt-2 text-lg font-semibold tracking-tight text-slate-900">{isInvestor ? 'Market watch' : isAdmin ? 'Verification watch' : 'Founder watch'}</p>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface2)] p-5">
+                    <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Inspector</p>
+                    <p className="mt-2 text-lg font-semibold tracking-tight text-[var(--text)]">{isInvestor ? 'Market watch' : isAdmin ? 'Verification watch' : 'Founder watch'}</p>
+                    <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
                       {isInvestor ? 'Keep an eye on live rounds and move quickly when a company looks ready.' : isAdmin ? 'Review verification status, packet freshness, and public visibility before listings stay live.' : 'Watch startup readiness and packet coverage before opening a round.'}
                     </p>
                   </div>
 
-                  <div className="rounded-2xl border border-slate-200 p-5">
+                  <div className="rounded-2xl border border-[var(--border)] p-5">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-xs uppercase tracking-[0.2em] text-slate-400">Signals</p>
-                        <p className="mt-2 text-sm font-semibold text-slate-900">Current account posture</p>
+                        <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Signals</p>
+                        <p className="mt-2 text-sm font-semibold text-[var(--text)]">Current account posture</p>
                       </div>
                       <Badge tone="slate">{activityRows.length} rows</Badge>
                     </div>
-                    <div className="mt-4 space-y-3 text-sm text-slate-600">
-                      <div className="flex items-center justify-between gap-4"><span>Verified financials</span><span className="font-medium text-slate-900">{visibleStartups.filter(startup => startup.verifiedFinancials).length}</span></div>
-                      <div className="flex items-center justify-between gap-4"><span>Open opportunities</span><span className="font-medium text-slate-900">{dataset.opportunities.filter(opportunity => opportunity.status === 'active').length}</span></div>
-                      <div className="flex items-center justify-between gap-4"><span>Visible startups</span><span className="font-medium text-slate-900">{visibleStartups.filter(startup => startup.visible).length}</span></div>
+                    <div className="mt-4 space-y-3 text-sm text-[var(--muted)]">
+                      <div className="flex items-center justify-between gap-4"><span>Verified financials</span><span className="font-medium text-[var(--text)]">{visibleStartups.filter(startup => startup.verifiedFinancials).length}</span></div>
+                      <div className="flex items-center justify-between gap-4"><span>Open opportunities</span><span className="font-medium text-[var(--text)]">{dataset.opportunities.filter(opportunity => opportunity.status === 'active').length}</span></div>
+                      <div className="flex items-center justify-between gap-4"><span>Visible startups</span><span className="font-medium text-[var(--text)]">{visibleStartups.filter(startup => startup.visible).length}</span></div>
                     </div>
                   </div>
                 </div>

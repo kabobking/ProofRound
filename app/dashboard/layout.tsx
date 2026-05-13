@@ -33,5 +33,5 @@ export default function DashboardLayout({
     return null;
   }
 
-  return <div className="min-h-screen bg-zinc-50">{children}</div>;
+  return <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">{children}</div>;
 }
