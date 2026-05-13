@@ -11,9 +11,11 @@
   --accentTint: #eef2ff;
   --accent2: #14b8a6;
   --accent-foreground: #ffffff;
+  color-scheme: light;
 }
 
-[data-theme='dark'] {
+html[data-theme='dark'],
+html.dark {
   --bg: #08111f;
   --surface: #0f172a;
   --surface2: #111c31;
@@ -24,6 +26,37 @@
   --accentTint: #172554;
   --accent2: #14b8a6;
   --accent-foreground: #ffffff;
+  color-scheme: dark;
+}
+
+html,
+body {
+  cursor: default;
+}
+
+* {
+  cursor: default;
+}
+
+/* Text elements should not show text cursor, only pointer for clickable */
+button,
+a,
+[role="button"],
+input[type="checkbox"],
+input[type="radio"],
+label,
+select,
+textarea {
+  cursor: pointer;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="search"],
+input[type="number"],
+textarea {
+  cursor: text;
 }
 
 @keyframes fadeInUp {

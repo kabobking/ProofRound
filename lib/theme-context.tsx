@@ -24,13 +24,21 @@ function getInitialTheme(): Theme {
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    
     const root = document.documentElement;
     root.dataset.theme = theme;
+    root.classList.toggle('dark', theme === 'dark');
     root.style.colorScheme = theme;
     window.localStorage.setItem('proofround-theme', theme);
-  }, [theme]);
+  }, [theme, mounted]);
 
   const value = useMemo<ThemeContextValue>(() => ({
     theme,

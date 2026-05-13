@@ -88,6 +88,10 @@ service cloud.firestore {
       // Founders can read their own opportunities (in draft or published)
       allow read: if isSignedIn() && resource.data.createdBy == request.auth.uid;
       
+      // Founders can read opportunities for their startups
+      allow read: if isSignedIn() && isFounder(request.auth.uid) &&
+        get(/databases/$(database)/documents/startups/$(resource.data.startupId)).data.founderId == request.auth.uid;
+      
       // Admins can read all opportunities
       allow read: if isAdmin(request.auth.uid);
       
