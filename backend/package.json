@@ -7,6 +7,9 @@
     "build": "echo \"No build step required for Vercel Functions\"",
     "deploy": "vercel deploy"
   },
+  "engines": {
+    "node": "22.x"
+  },
   "dependencies": {
     "firebase-admin": "^12.7.0",
     "pdfkit": "^0.16.0",
