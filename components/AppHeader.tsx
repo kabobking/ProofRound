@@ -23,6 +23,29 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
   const [mobileMenuRendered, setMobileMenuRendered] = useState(false);
   const mobileMenuCloseTimerRef = useRef<number | null>(null);
 
+  const openMobileMenu = () => {
+    if (mobileMenuCloseTimerRef.current) {
+      window.clearTimeout(mobileMenuCloseTimerRef.current);
+      mobileMenuCloseTimerRef.current = null;
+    }
+
+    setMobileMenuRendered(true);
+    setMobileMenuOpen(true);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+
+    if (mobileMenuCloseTimerRef.current) {
+      window.clearTimeout(mobileMenuCloseTimerRef.current);
+    }
+
+    mobileMenuCloseTimerRef.current = window.setTimeout(() => {
+      setMobileMenuRendered(false);
+      mobileMenuCloseTimerRef.current = null;
+    }, 300);
+  };
+
   const getLinkIcon = (href: string) => {
     if (href === '/dashboard') return House;
     if (href === '/startups') return BriefcaseBusiness;
@@ -56,30 +79,12 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
     };
   }, [mobileMenuOpen]);
 
-  useEffect(() => {
+  useEffect(() => () => {
     if (mobileMenuCloseTimerRef.current) {
       window.clearTimeout(mobileMenuCloseTimerRef.current);
       mobileMenuCloseTimerRef.current = null;
     }
-
-    if (mobileMenuOpen) {
-      setMobileMenuRendered(true);
-      return;
-    }
-
-    if (mobileMenuRendered) {
-      mobileMenuCloseTimerRef.current = window.setTimeout(() => {
-        setMobileMenuRendered(false);
-      }, 300);
-    }
-
-    return () => {
-      if (mobileMenuCloseTimerRef.current) {
-        window.clearTimeout(mobileMenuCloseTimerRef.current);
-        mobileMenuCloseTimerRef.current = null;
-      }
-    };
-  }, [mobileMenuOpen, mobileMenuRendered]);
+  }, []);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -108,7 +113,7 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
             ? 'border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)] shadow-sm'
             : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface2)]'
         }`}
-        onClick={() => setMobileMenuOpen(false)}
+        onClick={closeMobileMenu}
       >
         <Icon className="h-4 w-4" />
         <span>{link.label}</span>
@@ -150,7 +155,7 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
 
             {/* Mobile Menu Toggle */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={mobileMenuOpen ? closeMobileMenu : openMobileMenu}
               className="flex-shrink-0 inline-flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--surface)] p-2 text-[var(--text)] hover:bg-[var(--surface2)] transition-colors min-h-[44px] min-w-[44px]"
               aria-expanded={mobileMenuOpen}
               aria-label="Toggle menu"
@@ -177,7 +182,7 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
                   </div>
                   <button
                     type="button"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={closeMobileMenu}
                     className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--surface)] text-[var(--text)]"
                     aria-label="Close menu"
                   >
@@ -193,7 +198,7 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
                   <div className="mt-6 space-y-3">
                     <button
                       onClick={() => {
-                        setMobileMenuOpen(false);
+                        closeMobileMenu();
                         handleLogout();
                       }}
                       disabled={loggingOut}

@@ -401,6 +401,12 @@ export default function Home() {
               <Link href="#faq" className="hover:text-[var(--text)] transition-colors">
                 FAQ
               </Link>
+              <Link href="/privacy-policy" className="hover:text-[var(--text)] transition-colors">
+                Privacy Policy
+              </Link>
+              <Link href="/terms-of-service" className="hover:text-[var(--text)] transition-colors">
+                Terms of Service
+              </Link>
             </div>
           </div>
         </div>

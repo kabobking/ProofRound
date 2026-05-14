@@ -13,6 +13,29 @@ export default function Navigation() {
   const activeId = useScrollSpy(['packet-contents', 'how-it-works', 'security', 'faq']);
   const mobileMenuCloseTimerRef = useRef<number | null>(null);
 
+  const openMobileMenu = () => {
+    if (mobileMenuCloseTimerRef.current) {
+      window.clearTimeout(mobileMenuCloseTimerRef.current);
+      mobileMenuCloseTimerRef.current = null;
+    }
+
+    setMobileMenuRendered(true);
+    setMobileMenuOpen(true);
+  };
+
+  const closeMobileMenu = () => {
+    setMobileMenuOpen(false);
+
+    if (mobileMenuCloseTimerRef.current) {
+      window.clearTimeout(mobileMenuCloseTimerRef.current);
+    }
+
+    mobileMenuCloseTimerRef.current = window.setTimeout(() => {
+      setMobileMenuRendered(false);
+      mobileMenuCloseTimerRef.current = null;
+    }, 300);
+  };
+
   useEffect(() => {
     if (!mobileMenuOpen) return;
 
@@ -24,30 +47,12 @@ export default function Navigation() {
     };
   }, [mobileMenuOpen]);
 
-  useEffect(() => {
+  useEffect(() => () => {
     if (mobileMenuCloseTimerRef.current) {
       window.clearTimeout(mobileMenuCloseTimerRef.current);
       mobileMenuCloseTimerRef.current = null;
     }
-
-    if (mobileMenuOpen) {
-      setMobileMenuRendered(true);
-      return;
-    }
-
-    if (mobileMenuRendered) {
-      mobileMenuCloseTimerRef.current = window.setTimeout(() => {
-        setMobileMenuRendered(false);
-      }, 300);
-    }
-
-    return () => {
-      if (mobileMenuCloseTimerRef.current) {
-        window.clearTimeout(mobileMenuCloseTimerRef.current);
-        mobileMenuCloseTimerRef.current = null;
-      }
-    };
-  }, [mobileMenuOpen, mobileMenuRendered]);
+  }, []);
 
   const navItems = [
     { href: '#how-it-works', label: 'How it Works', icon: Rocket, sectionId: 'how-it-works' },
@@ -109,7 +114,7 @@ export default function Navigation() {
           <button
             type="button"
             className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] md:hidden"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={mobileMenuOpen ? closeMobileMenu : openMobileMenu}
             aria-label="Toggle menu"
           >
             {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -134,7 +139,7 @@ export default function Navigation() {
                 <button
                   type="button"
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border)]"
-                  onClick={() => setMobileMenuOpen(false)}
+                  onClick={closeMobileMenu}
                   aria-label="Close menu"
                 >
                   <X className="h-5 w-5" />
@@ -151,7 +156,7 @@ export default function Navigation() {
                       <Link
                         key={item.href}
                         href={item.href}
-                        onClick={() => setMobileMenuOpen(false)}
+                        onClick={closeMobileMenu}
                         className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-sm font-medium transition-colors ${
                           active
                             ? 'border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)]'
@@ -167,7 +172,7 @@ export default function Navigation() {
                   <Link
                     href="/dashboard"
                     className="flex items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-4 text-sm font-medium text-[var(--accent-foreground)] transition-colors hover:opacity-90"
-                    onClick={() => setMobileMenuOpen(false)}
+                    onClick={closeMobileMenu}
                     data-analytics="cta_get_started_nav"
                   >
                     <Rocket className="h-4 w-4" />
