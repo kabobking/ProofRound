@@ -125,7 +125,7 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
           {/* Mobile Menu */}
           {mobileMenuOpen && (
             <div className="fixed inset-0 z-50 bg-[var(--bg)]">
-              <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
+              <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
               <div className="absolute inset-0 flex flex-col bg-[var(--bg)] text-[var(--text)]">
                 <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                   <div>

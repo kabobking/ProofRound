@@ -33,17 +33,17 @@ export default function FounderStartupsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-white dark:bg-slate-950">
+      <div className="flex items-center justify-center min-h-screen bg-[var(--bg)]">
         <div className="text-center">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-          <p className="mt-4 text-zinc-600 dark:text-slate-300">Loading startups...</p>
+          <p className="mt-4 text-[var(--muted)]">Loading startups...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#f8fafc_0%,_#f8fafc_380px,_#ffffff_380px,_#ffffff_100%)] text-zinc-900 dark:bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#020617_380px,_#020617_100%)] dark:text-white">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <AppHeader 
         title="My Startups" 
         subtitle="Manage your company profiles and fundraising"
@@ -56,11 +56,11 @@ export default function FounderStartupsPage() {
 
       <main className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12">
         {startups.length === 0 ? (
-          <div className="bg-white rounded-lg border border-zinc-200 p-12 text-center dark:border-white/10 dark:bg-white/5">
-            <p className="text-zinc-600 mb-4 dark:text-slate-300">No startups yet</p>
+          <div className="bg-[var(--surface)] rounded-lg border border-[var(--border)] p-12 text-center">
+            <p className="text-[var(--muted)] mb-4">No startups yet</p>
             <Link
               href="/create-startup"
-              className="text-indigo-600 hover:underline font-medium dark:text-indigo-400"
+              className="text-[var(--accent)] hover:underline font-medium"
             >
               Create your first startup →
             </Link>
@@ -68,59 +68,59 @@ export default function FounderStartupsPage() {
         ) : (
           <div className="space-y-6">
             {startups.map((startup) => (
-              <div key={startup.id} className="rounded-lg border border-zinc-200 bg-white p-6 transition-shadow hover:shadow-md dark:border-white/10 dark:bg-white/5">
+              <div key={startup.id} className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6 transition-shadow hover:shadow-md">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
-                    <h3 className="text-2xl font-bold text-zinc-900 dark:text-white">{startup.name}</h3>
-                    <p className="mt-1 text-zinc-600 dark:text-slate-300">{startup.tagline}</p>
+                    <h3 className="text-2xl font-bold text-[var(--text)]">{startup.name}</h3>
+                    <p className="mt-1 text-[var(--muted)]">{startup.tagline}</p>
                   </div>
 
                   <div className="flex gap-2">
                     <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${
-                      startup.status === 'active' ? 'bg-green-50 text-green-700 dark:bg-green-500/15 dark:text-green-300' :
-                      startup.status === 'draft' ? 'bg-yellow-50 text-yellow-700 dark:bg-yellow-500/15 dark:text-yellow-300' :
-                      'bg-zinc-100 text-zinc-700 dark:bg-white/10 dark:text-slate-300'
+                      startup.status === 'active' ? 'bg-[var(--accent2)]/10 text-[var(--accent2)]' :
+                      startup.status === 'draft' ? 'bg-[var(--accentTint)] text-[var(--accent)]' :
+                      'bg-[var(--surface2)] text-[var(--muted)]'
                     }`}>
                       {startup.status}
                     </span>
                     {!startup.visible && (
-                      <span className="px-3 py-1 rounded-full bg-zinc-100 text-zinc-700 text-xs font-medium dark:bg-white/10 dark:text-slate-300">
+                      <span className="px-3 py-1 rounded-full bg-[var(--surface2)] text-[var(--muted)] text-xs font-medium">
                         Hidden
                       </span>
                     )}
                     {startup.verifiedFinancials && (
-                      <span className="px-3 py-1 rounded-full bg-green-50 text-green-700 text-xs font-medium dark:bg-green-500/15 dark:text-green-300">
+                      <span className="px-3 py-1 rounded-full bg-[var(--accent2)]/10 text-[var(--accent2)] text-xs font-medium">
                         ✓ Verified
                       </span>
                     )}
                   </div>
                 </div>
 
-                <p className="mb-6 text-zinc-600 dark:text-slate-300">{startup.description}</p>
+                <p className="mb-6 text-[var(--muted)]">{startup.description}</p>
 
                 <div className="mb-6 grid gap-4 sm:grid-cols-4">
                   <div>
-                    <p className="text-sm text-zinc-500 dark:text-slate-400">Industry</p>
-                    <p className="font-medium text-zinc-900 dark:text-white">{startup.industry}</p>
+                    <p className="text-sm text-[var(--muted)]">Industry</p>
+                    <p className="font-medium text-[var(--text)]">{startup.industry}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-zinc-500 dark:text-slate-400">Stage</p>
-                    <p className="font-medium text-zinc-900 capitalize dark:text-white">{startup.stage}</p>
+                    <p className="text-sm text-[var(--muted)]">Stage</p>
+                    <p className="font-medium text-[var(--text)] capitalize">{startup.stage}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-zinc-500 dark:text-slate-400">Location</p>
-                    <p className="font-medium text-zinc-900 dark:text-white">{startup.location}</p>
+                    <p className="text-sm text-[var(--muted)]">Location</p>
+                    <p className="font-medium text-[var(--text)]">{startup.location}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-zinc-500 dark:text-slate-400">Views</p>
-                    <p className="font-medium text-zinc-900 dark:text-white">{startup.views || 0}</p>
+                    <p className="text-sm text-[var(--muted)]">Views</p>
+                    <p className="font-medium text-[var(--text)]">{startup.views || 0}</p>
                   </div>
                 </div>
 
                 <div className="flex gap-4">
                   <Link
                     href={`/startup?startupId=${startup.id}`}
-                    className="rounded-lg border border-zinc-300 px-4 py-2 text-sm font-medium text-zinc-600 transition-colors hover:bg-zinc-100 dark:border-white/20 dark:text-slate-300 dark:hover:bg-white/10"
+                    className="rounded-lg border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--muted)] transition-colors hover:bg-[var(--surface2)]"
                   >
                     View Public Page
                   </Link>

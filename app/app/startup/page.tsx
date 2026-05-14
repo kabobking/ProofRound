@@ -53,7 +53,7 @@ export default function StartupPage() {
 
   if (!startupId) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
+      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
         <AppHeader
           title="Startup details"
           subtitle="Open a startup from the marketplace or your startups list."
@@ -65,16 +65,16 @@ export default function StartupPage() {
         />
 
         <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-            <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Select a startup</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-600">
+          <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+            <h2 className="text-2xl font-semibold tracking-tight text-[var(--text)]">Select a startup</h2>
+            <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
               This page uses the query parameter `startupId`, so it can be exported statically for GitHub Pages.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/marketplace" className="rounded-full bg-slate-950 px-4 py-2 text-sm font-medium text-white hover:bg-slate-800">
+              <Link href="/marketplace" className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90">
                 Browse marketplace
               </Link>
-              <Link href="/startups" className="rounded-full border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+              <Link href="/startups" className="rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface2)]">
                 My startups
               </Link>
             </div>
@@ -86,10 +86,10 @@ export default function StartupPage() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-[var(--text)]">
         <div className="text-center">
           <div className="inline-block h-12 w-12 animate-spin rounded-full border-b-2 border-indigo-600" />
-          <p className="mt-4 text-zinc-600">Loading startup...</p>
+          <p className="mt-4 text-[var(--muted)]">Loading startup...</p>
         </div>
       </div>
     );
@@ -97,10 +97,10 @@ export default function StartupPage() {
 
   if (!startup) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--text)]">
         <div className="text-center">
-          <p className="text-zinc-600 mb-4">Startup not found</p>
-          <Link href="/marketplace" className="text-indigo-600 hover:underline">
+          <p className="text-[var(--muted)] mb-4">Startup not found</p>
+          <Link href="/marketplace" className="text-[var(--accent)] hover:underline">
             Back to marketplace
           </Link>
         </div>
@@ -109,7 +109,7 @@ export default function StartupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.12),_transparent_36%),linear-gradient(180deg,_#0f172a_0%,_#0f172a_380px,_#f8fafc_380px,_#f8fafc_100%)]">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <AppHeader
         title={startup.name}
         subtitle={startup.tagline}
@@ -124,29 +124,29 @@ export default function StartupPage() {
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">
             <AnimatedCard delay={0}>
-              <section className="rounded-lg border border-zinc-200 bg-white p-8">
-                <h2 className="mb-4 text-2xl font-bold text-zinc-900">About</h2>
-                <p className="mb-6 text-zinc-600">{startup.description}</p>
+              <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
+                <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">About</h2>
+                <p className="mb-6 text-[var(--muted)]">{startup.description}</p>
 
                 <div className="grid gap-6 sm:grid-cols-2">
                   <div>
-                    <p className="mb-1 text-sm text-zinc-500">Industry</p>
-                    <p className="text-lg font-medium text-zinc-900">{startup.industry}</p>
+                    <p className="mb-1 text-sm text-[var(--muted)]">Industry</p>
+                    <p className="text-lg font-medium text-[var(--text)]">{startup.industry}</p>
                   </div>
                   <div>
-                    <p className="mb-1 text-sm text-zinc-500">Founded</p>
-                    <p className="text-lg font-medium text-zinc-900">{new Date(startup.founded).toLocaleDateString()}</p>
+                    <p className="mb-1 text-sm text-[var(--muted)]">Founded</p>
+                    <p className="text-lg font-medium text-[var(--text)]">{new Date(startup.founded).toLocaleDateString()}</p>
                   </div>
                   {startup.team_size && (
                     <div>
-                      <p className="mb-1 text-sm text-zinc-500">Team Size</p>
-                      <p className="text-lg font-medium text-zinc-900">{startup.team_size} people</p>
+                      <p className="mb-1 text-sm text-[var(--muted)]">Team Size</p>
+                      <p className="text-lg font-medium text-[var(--text)]">{startup.team_size} people</p>
                     </div>
                   )}
                   {startup.website && (
                     <div>
-                      <p className="mb-1 text-sm text-zinc-500">Website</p>
-                      <a href={startup.website} target="_blank" rel="noopener noreferrer" className="text-lg font-medium text-indigo-600 hover:underline">
+                      <p className="mb-1 text-sm text-[var(--muted)]">Website</p>
+                      <a href={startup.website} target="_blank" rel="noopener noreferrer" className="text-lg font-medium text-[var(--accent)] hover:underline">
                         Visit
                       </a>
                     </div>
@@ -157,31 +157,31 @@ export default function StartupPage() {
 
             {startup.financialMetrics && (
               <AnimatedCard delay={80}>
-                <section className="rounded-lg border border-zinc-200 bg-white p-8">
-                  <h2 className="mb-4 text-2xl font-bold text-zinc-900">Financial Metrics</h2>
+                <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
+                  <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">Financial Metrics</h2>
                   <div className="grid gap-6 sm:grid-cols-2">
                     {startup.financialMetrics.mrr && (
-                      <div className="rounded-lg bg-indigo-50 p-4">
-                        <p className="mb-1 text-sm text-indigo-700">Monthly Recurring Revenue</p>
-                        <p className="text-2xl font-bold text-indigo-900">${(startup.financialMetrics.mrr / 1000).toFixed(1)}K</p>
+                      <div className="rounded-lg bg-[var(--accentTint)] p-4">
+                        <p className="mb-1 text-sm text-[var(--accent)]">Monthly Recurring Revenue</p>
+                        <p className="text-2xl font-bold text-[var(--text)]">${(startup.financialMetrics.mrr / 1000).toFixed(1)}K</p>
                       </div>
                     )}
                     {startup.financialMetrics.arr && (
-                      <div className="rounded-lg bg-indigo-50 p-4">
-                        <p className="mb-1 text-sm text-indigo-700">Annual Recurring Revenue</p>
-                        <p className="text-2xl font-bold text-indigo-900">${(startup.financialMetrics.arr / 1000000).toFixed(1)}M</p>
+                      <div className="rounded-lg bg-[var(--accentTint)] p-4">
+                        <p className="mb-1 text-sm text-[var(--accent)]">Annual Recurring Revenue</p>
+                        <p className="text-2xl font-bold text-[var(--text)]">${(startup.financialMetrics.arr / 1000000).toFixed(1)}M</p>
                       </div>
                     )}
                     {startup.financialMetrics.burn_rate && (
-                      <div className="rounded-lg bg-zinc-50 p-4">
-                        <p className="mb-1 text-sm text-zinc-700">Burn Rate</p>
-                        <p className="text-2xl font-bold text-zinc-900">${(startup.financialMetrics.burn_rate / 1000).toFixed(1)}K/mo</p>
+                      <div className="rounded-lg bg-[var(--surface2)] p-4">
+                        <p className="mb-1 text-sm text-[var(--muted)]">Burn Rate</p>
+                        <p className="text-2xl font-bold text-[var(--text)]">${(startup.financialMetrics.burn_rate / 1000).toFixed(1)}K/mo</p>
                       </div>
                     )}
                     {startup.financialMetrics.runway_months && (
-                      <div className="rounded-lg bg-zinc-50 p-4">
-                        <p className="mb-1 text-sm text-zinc-700">Runway</p>
-                        <p className="text-2xl font-bold text-zinc-900">{startup.financialMetrics.runway_months} months</p>
+                      <div className="rounded-lg bg-[var(--surface2)] p-4">
+                        <p className="mb-1 text-sm text-[var(--muted)]">Runway</p>
+                        <p className="text-2xl font-bold text-[var(--text)]">{startup.financialMetrics.runway_months} months</p>
                       </div>
                     )}
                   </div>
@@ -191,20 +191,20 @@ export default function StartupPage() {
 
             {opportunities.length > 0 && (
               <AnimatedCard delay={160}>
-                <section className="rounded-lg border border-zinc-200 bg-white p-8">
-                  <h2 className="mb-4 text-2xl font-bold text-zinc-900">Investment Opportunities</h2>
+                <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
+                  <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">Investment Opportunities</h2>
                   <div className="space-y-4">
                     {opportunities.map((opp) => (
-                      <div key={opp.id} className="block rounded-lg border border-zinc-200 bg-white p-4">
+                      <div key={opp.id} className="block rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="font-semibold text-zinc-900">{opp.type}</h3>
-                            <p className="mt-1 text-sm text-zinc-600">{opp.description}</p>
+                            <h3 className="font-semibold text-[var(--text)]">{opp.type}</h3>
+                            <p className="mt-1 text-sm text-[var(--muted)]">{opp.description}</p>
                           </div>
-                          <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium capitalize text-zinc-700">{opp.status}</span>
+                          <span className="rounded-full bg-[var(--surface2)] px-3 py-1 text-xs font-medium capitalize text-[var(--muted)]">{opp.status}</span>
                         </div>
                         {opp.minimum_investment && (
-                          <div className="mt-3 text-sm text-zinc-600">Min. investment: ${(opp.minimum_investment / 1000).toFixed(1)}K</div>
+                          <div className="mt-3 text-sm text-[var(--muted)]">Min. investment: ${(opp.minimum_investment / 1000).toFixed(1)}K</div>
                         )}
                       </div>
                     ))}
@@ -215,19 +215,19 @@ export default function StartupPage() {
 
             {packets.length > 0 && (
               <AnimatedCard delay={240}>
-                <section className="rounded-lg border border-zinc-200 bg-white p-8">
-                  <h2 className="mb-4 text-2xl font-bold text-zinc-900">Verified Financial Packets</h2>
+                <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
+                  <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">Verified Financial Packets</h2>
                   <div className="space-y-4">
                     {packets.map((packet) => (
-                      <div key={packet.id} className="rounded-lg border border-green-200 bg-green-50 p-4">
+                      <div key={packet.id} className="rounded-lg border border-[var(--accent2)]/30 bg-[var(--accent2)]/10 p-4">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h3 className="font-semibold text-zinc-900">
+                            <h3 className="font-semibold text-[var(--text)]">
                               {packet.timeRangeStart} to {packet.timeRangeEnd}
                             </h3>
-                            <p className="mt-1 text-sm text-zinc-600">Verified MRR: ${(packet.metrics.mrr / 1000).toFixed(1)}K</p>
+                            <p className="mt-1 text-sm text-[var(--muted)]">Verified MRR: ${(packet.metrics.mrr / 1000).toFixed(1)}K</p>
                           </div>
-                          <span className="text-sm font-medium text-indigo-600">Verified packet</span>
+                          <span className="text-sm font-medium text-[var(--accent)]">Verified packet</span>
                         </div>
                       </div>
                     ))}
@@ -239,35 +239,35 @@ export default function StartupPage() {
 
           <div className="lg:col-span-1">
             {startup.seeking_amount && (
-              <div className="mb-6 rounded-lg border border-zinc-200 bg-white p-6">
-                <h3 className="mb-3 font-semibold text-zinc-900">Fundraising</h3>
+              <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
+                <h3 className="mb-3 font-semibold text-[var(--text)]">Fundraising</h3>
                 <div className="space-y-3">
                   <div>
-                    <p className="text-sm text-zinc-500">Seeking</p>
-                    <p className="text-2xl font-bold text-zinc-900">${(startup.seeking_amount / 1000000).toFixed(1)}M</p>
+                    <p className="text-sm text-[var(--muted)]">Seeking</p>
+                    <p className="text-2xl font-bold text-[var(--text)]">${(startup.seeking_amount / 1000000).toFixed(1)}M</p>
                   </div>
                   {startup.valuation && (
                     <div>
-                      <p className="text-sm text-zinc-500">Valuation</p>
-                      <p className="text-lg font-bold text-zinc-900">${(startup.valuation / 1000000).toFixed(1)}M</p>
+                      <p className="text-sm text-[var(--muted)]">Valuation</p>
+                      <p className="text-lg font-bold text-[var(--text)]">${(startup.valuation / 1000000).toFixed(1)}M</p>
                     </div>
                   )}
                   {startup.equity_offered && (
                     <div>
-                      <p className="text-sm text-zinc-500">Equity Offered</p>
-                      <p className="text-lg font-bold text-zinc-900">{startup.equity_offered}%</p>
+                      <p className="text-sm text-[var(--muted)]">Equity Offered</p>
+                      <p className="text-lg font-bold text-[var(--text)]">{startup.equity_offered}%</p>
                     </div>
                   )}
                 </div>
-                <button className="mt-6 w-full rounded-lg bg-indigo-600 py-2 font-medium text-white transition-colors hover:bg-indigo-700">
+                <button className="mt-6 w-full rounded-lg bg-[var(--accent)] py-2 font-medium text-[var(--accent-foreground)] transition-colors hover:opacity-90">
                   Express Interest
                 </button>
               </div>
             )}
 
-            <div className="mb-6 rounded-lg border border-zinc-200 bg-white p-6">
-              <h3 className="mb-3 font-semibold text-zinc-900">Verified revenue packets</h3>
-              <p className="mb-4 text-sm text-zinc-600">
+            <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
+              <h3 className="mb-3 font-semibold text-[var(--text)]">Verified revenue packets</h3>
+              <p className="mb-4 text-sm text-[var(--muted)]">
                 Request or generate the Stripe-backed PDF version of this startup&apos;s verified revenue data.
               </p>
               <StartupRevenueActions
@@ -279,10 +279,10 @@ export default function StartupPage() {
               />
             </div>
 
-            <div className="rounded-lg border border-zinc-200 bg-white p-6">
-              <h3 className="mb-3 font-semibold text-zinc-900">Founder</h3>
+            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
+              <h3 className="mb-3 font-semibold text-[var(--text)]">Founder</h3>
               <div className="space-y-2 text-sm">
-                <p className="font-medium text-zinc-900">{startup.founderEmail}</p>
+                <p className="font-medium text-[var(--text)]">{startup.founderEmail}</p>
               </div>
             </div>
           </div>

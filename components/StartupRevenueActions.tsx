@@ -123,20 +123,20 @@ export default function StartupRevenueActions({
         <button
           type="button"
           onClick={handleConnectStripe}
-          className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 transition-colors hover:bg-indigo-100"
+          className="inline-flex items-center rounded-full border border-[var(--accent)] bg-[var(--accentTint)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:opacity-90"
         >
           {stripeConnected ? 'Manage Stripe' : 'Connect with Stripe'}
         </button>
         <button
           type="button"
           onClick={handleGeneratePacket}
-          className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 transition-colors hover:bg-emerald-100 disabled:cursor-not-allowed disabled:opacity-60"
+          className="inline-flex items-center rounded-full border border-[var(--accent2)]/40 bg-[var(--accent2)]/10 px-4 py-2 text-sm font-medium text-[var(--accent2)] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
           disabled={!stripeConnected}
         >
           Generate verified PDF
         </button>
         {!stripeConnected && (
-          <span className="self-center text-xs text-slate-500">
+          <span className="self-center text-xs text-[var(--muted)]">
             Stripe access is required before generating verified packets.
           </span>
         )}
@@ -149,7 +149,7 @@ export default function StartupRevenueActions({
       <button
         type="button"
         onClick={handleRequestPacket}
-        className="inline-flex items-center rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-medium text-indigo-700 transition-colors hover:bg-indigo-100"
+        className="inline-flex items-center rounded-full border border-[var(--accent)] bg-[var(--accentTint)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:opacity-90"
       >
         Request verified PDF {packetPriceLabel ? `($${packetPriceLabel})` : ''}
       </button>

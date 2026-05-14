@@ -49,7 +49,7 @@ export default function MarketplacePage() {
     filterStage === 'all' ? startups : startups.filter(s => s.stage === filterStage);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.10),_transparent_36%),linear-gradient(180deg,_#f8fafc_0%,_#f8fafc_380px,_#ffffff_380px,_#ffffff_100%)] text-zinc-900 dark:bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.14),_transparent_36%),linear-gradient(180deg,_#020617_0%,_#020617_380px,_#0f172a_380px,_#0f172a_100%)] dark:text-white">
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <AppHeader 
         title="Marketplace" 
         subtitle="Discover verified startup opportunities and investment rounds"
@@ -66,11 +66,11 @@ export default function MarketplacePage() {
             placeholder="Search startups..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 placeholder:text-zinc-400 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/20 dark:bg-slate-950 dark:text-white dark:placeholder:text-slate-400 dark:focus:border-indigo-400 dark:focus:ring-indigo-400/30"
+            className="flex-1 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-[var(--text)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
           />
           <button
             type="submit"
-            className="rounded-xl bg-indigo-600 px-6 py-3 font-medium text-white transition-colors hover:bg-indigo-700"
+            className="rounded-xl bg-[var(--accent)] px-6 py-3 font-medium text-[var(--accent-foreground)] transition-colors hover:opacity-90"
           >
             Search
           </button>
@@ -85,7 +85,7 @@ export default function MarketplacePage() {
                 analyticsEvents.startup_filter(e.target.value);
               }
             }}
-            className="rounded-xl border border-zinc-300 bg-white px-4 py-3 text-zinc-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 dark:border-white/20 dark:bg-slate-950 dark:text-white dark:focus:border-indigo-400 dark:focus:ring-indigo-400/30"
+            className="rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-[var(--text)] outline-none focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
           >
             <option value="all">All Stages</option>
             <option value="pre-seed">Pre-seed</option>
@@ -101,11 +101,11 @@ export default function MarketplacePage() {
         {loading ? (
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
-            <p className="mt-4 text-zinc-600 dark:text-slate-300">Loading startups...</p>
+            <p className="mt-4 text-[var(--muted)]">Loading startups...</p>
           </div>
         ) : filteredStartups.length === 0 ? (
-          <div className="text-center py-12 rounded-2xl border border-zinc-200 bg-white dark:border-white/10 dark:bg-white/5">
-            <p className="text-zinc-600 dark:text-slate-300">No startups found</p>
+          <div className="text-center py-12 rounded-2xl border border-[var(--border)] bg-[var(--surface)]">
+            <p className="text-[var(--muted)]">No startups found</p>
           </div>
         ) : (
           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -113,24 +113,24 @@ export default function MarketplacePage() {
               <AnimatedCard key={startup.id} delay={idx * 50}>
                 <Link
                   href={`/startup?startupId=${startup.id}`}
-                  className="block rounded-2xl border border-zinc-200 bg-white p-6 transition-all hover:-translate-y-0.5 hover:shadow-md dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"
+                  className="block rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 transition-all hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="flex items-start justify-between mb-3">
                     <div>
-                      <h3 className="text-lg font-semibold text-zinc-900 dark:text-white">{startup.name}</h3>
-                      <p className="text-sm text-zinc-500 dark:text-slate-300">{startup.industry}</p>
+                      <h3 className="text-lg font-semibold text-[var(--text)]">{startup.name}</h3>
+                      <p className="text-sm text-[var(--muted)]">{startup.industry}</p>
                     </div>
-                    <span className="inline-block rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium capitalize text-indigo-700 dark:bg-indigo-500/15 dark:text-indigo-200">
+                    <span className="inline-block rounded-full bg-[var(--accentTint)] px-3 py-1 text-xs font-medium capitalize text-[var(--accent)]">
                       {startup.stage}
                     </span>
                   </div>
 
-                  <p className="mb-4 line-clamp-2 text-sm text-zinc-600 dark:text-slate-300">{startup.description}</p>
+                  <p className="mb-4 line-clamp-2 text-sm text-[var(--muted)]">{startup.description}</p>
 
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-zinc-500 dark:text-slate-400">{startup.location}</span>
+                    <span className="text-[var(--muted)]">{startup.location}</span>
                     {startup.verifiedFinancials && (
-                      <span className="font-medium text-green-600 dark:text-emerald-300">✓ Verified</span>
+                      <span className="font-medium text-[var(--accent2)]">✓ Verified</span>
                     )}
                   </div>
 
@@ -144,9 +144,9 @@ export default function MarketplacePage() {
                   </div>
 
                   {startup.seeking_amount && (
-                    <div className="mt-4 border-t border-zinc-200 pt-4 dark:border-white/10">
-                      <p className="text-sm text-zinc-600 dark:text-slate-300">
-                        Seeking: <span className="font-semibold text-zinc-900 dark:text-white">${(startup.seeking_amount / 1000000).toFixed(1)}M</span>
+                    <div className="mt-4 border-t border-[var(--border)] pt-4">
+                      <p className="text-sm text-[var(--muted)]">
+                        Seeking: <span className="font-semibold text-[var(--text)]">${(startup.seeking_amount / 1000000).toFixed(1)}M</span>
                       </p>
                     </div>
                   )}

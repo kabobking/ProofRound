@@ -20,7 +20,10 @@ export default function Navigation() {
 
   const isActive = (href: string, sectionId?: string) => {
     if (href === '/') return pathname === '/';
-    return sectionId ? activeId === sectionId : false;
+    if (!sectionId) return false;
+
+    const isLandingDefault = pathname === '/' && !activeId && sectionId === 'packet-contents';
+    return activeId === sectionId || isLandingDefault;
   };
 
   return (
