@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { signOutUser } from '@/lib/auth';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { analyticsEvents } from '@/lib/analytics';
 import { BriefcaseBusiness, ChevronRight, House, LogOut, Menu, Plus, Rocket, X } from 'lucide-react';
 
@@ -42,6 +42,17 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
   ];
 
   const links = [...defaultQuickLinks, ...(quickLinks || [])].filter((link, index, array) => array.findIndex(candidate => candidate.href === link.href) === index);
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [mobileMenuOpen]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -124,9 +135,9 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
 
           {/* Mobile Menu */}
           {mobileMenuOpen && (
-            <div className="fixed inset-0 z-50 bg-[var(--bg)]">
+            <div className="fixed inset-0 z-[100] h-[100dvh] w-screen overflow-hidden bg-[var(--bg)]">
               <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
-              <div className="absolute inset-0 flex flex-col bg-[var(--bg)] text-[var(--text)]">
+              <div className="absolute inset-0 flex h-full flex-col bg-[var(--bg)] text-[var(--text)]">
                 <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Menu</p>

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FileText, HelpCircle, Home, ShieldCheck, Menu, Rocket, X } from 'lucide-react';
 import { useScrollSpy } from './ScrollSpy';
 
@@ -11,9 +11,20 @@ export default function Navigation() {
   const pathname = usePathname();
   const activeId = useScrollSpy(['packet-contents', 'how-it-works', 'security', 'faq']);
 
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+    };
+  }, [mobileMenuOpen]);
+
   const navItems = [
-    { href: '#packet-contents', label: 'Product', icon: FileText, sectionId: 'packet-contents' },
     { href: '#how-it-works', label: 'How it Works', icon: Rocket, sectionId: 'how-it-works' },
+    { href: '#packet-contents', label: 'Product', icon: FileText, sectionId: 'packet-contents' },
     { href: '#security', label: 'Security', icon: ShieldCheck, sectionId: 'security' },
     { href: '#faq', label: 'FAQ', icon: HelpCircle, sectionId: 'faq' },
   ];
@@ -80,9 +91,9 @@ export default function Navigation() {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="fixed inset-0 z-50 md:hidden">
+          <div className="fixed inset-0 z-[100] h-[100dvh] w-screen overflow-hidden md:hidden">
             <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
-            <div className="absolute inset-0 flex flex-col bg-[var(--surface)] text-[var(--text)]">
+            <div className="absolute inset-0 flex h-full flex-col bg-[var(--surface)] text-[var(--text)]">
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Menu</p>

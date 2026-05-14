@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import { createContext, useContext, useLayoutEffect, useMemo, useState } from 'react';
 
 type Theme = 'light' | 'dark';
 
@@ -22,17 +22,25 @@ function getInitialTheme(): Theme {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
+function getThemeColor(theme: Theme) {
+  return theme === 'dark' ? '#07101d' : '#fafafa';
+}
+
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => getInitialTheme());
-  const isMountedRef = useRef(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const root = document.documentElement;
     root.dataset.theme = theme;
     root.classList.toggle('dark', theme === 'dark');
     root.style.colorScheme = theme;
     window.localStorage.setItem('proofround-theme', theme);
-    isMountedRef.current = true;
+
+    const themeColor = getThemeColor(theme);
+    const metaThemeColor = document.querySelector('meta[name="theme-color"][data-proofround-theme-color]') as HTMLMetaElement | null;
+    if (metaThemeColor) {
+      metaThemeColor.content = themeColor;
+    }
   }, [theme]);
 
   const value = useMemo<ThemeContextValue>(() => ({
