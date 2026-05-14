@@ -2,14 +2,16 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FileText, HelpCircle, Home, ShieldCheck, Menu, Rocket, X } from 'lucide-react';
 import { useScrollSpy } from './ScrollSpy';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuRendered, setMobileMenuRendered] = useState(false);
   const pathname = usePathname();
   const activeId = useScrollSpy(['packet-contents', 'how-it-works', 'security', 'faq']);
+  const mobileMenuCloseTimerRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -21,6 +23,31 @@ export default function Navigation() {
       document.body.style.overflow = originalOverflow;
     };
   }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (mobileMenuCloseTimerRef.current) {
+      window.clearTimeout(mobileMenuCloseTimerRef.current);
+      mobileMenuCloseTimerRef.current = null;
+    }
+
+    if (mobileMenuOpen) {
+      setMobileMenuRendered(true);
+      return;
+    }
+
+    if (mobileMenuRendered) {
+      mobileMenuCloseTimerRef.current = window.setTimeout(() => {
+        setMobileMenuRendered(false);
+      }, 300);
+    }
+
+    return () => {
+      if (mobileMenuCloseTimerRef.current) {
+        window.clearTimeout(mobileMenuCloseTimerRef.current);
+        mobileMenuCloseTimerRef.current = null;
+      }
+    };
+  }, [mobileMenuOpen, mobileMenuRendered]);
 
   const navItems = [
     { href: '#how-it-works', label: 'How it Works', icon: Rocket, sectionId: 'how-it-works' },
@@ -90,10 +117,15 @@ export default function Navigation() {
         </div>
 
         {/* Mobile menu */}
-        {mobileMenuOpen && (
-          <div className="fixed inset-0 z-[100] h-[100dvh] w-screen overflow-hidden md:hidden">
-            <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
-            <div className="absolute inset-0 flex h-full flex-col bg-[var(--surface)] text-[var(--text)]">
+        {mobileMenuRendered && (
+          <div className={`fixed inset-0 z-[100] h-[100dvh] w-screen overflow-hidden md:hidden transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}>
+            <div
+              className={`absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px] transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div
+              className={`absolute inset-0 flex h-full flex-col bg-[var(--surface)] text-[var(--text)] transform-gpu transition-transform duration-300 ease-out ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+            >
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Menu</p>

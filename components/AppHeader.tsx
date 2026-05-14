@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { signOutUser } from '@/lib/auth';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { analyticsEvents } from '@/lib/analytics';
 import { BriefcaseBusiness, ChevronRight, House, LogOut, Menu, Plus, Rocket, X } from 'lucide-react';
 
@@ -20,6 +20,8 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileMenuRendered, setMobileMenuRendered] = useState(false);
+  const mobileMenuCloseTimerRef = useRef<number | null>(null);
 
   const getLinkIcon = (href: string) => {
     if (href === '/dashboard') return House;
@@ -53,6 +55,31 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
       document.body.style.overflow = originalOverflow;
     };
   }, [mobileMenuOpen]);
+
+  useEffect(() => {
+    if (mobileMenuCloseTimerRef.current) {
+      window.clearTimeout(mobileMenuCloseTimerRef.current);
+      mobileMenuCloseTimerRef.current = null;
+    }
+
+    if (mobileMenuOpen) {
+      setMobileMenuRendered(true);
+      return;
+    }
+
+    if (mobileMenuRendered) {
+      mobileMenuCloseTimerRef.current = window.setTimeout(() => {
+        setMobileMenuRendered(false);
+      }, 300);
+    }
+
+    return () => {
+      if (mobileMenuCloseTimerRef.current) {
+        window.clearTimeout(mobileMenuCloseTimerRef.current);
+        mobileMenuCloseTimerRef.current = null;
+      }
+    };
+  }, [mobileMenuOpen, mobileMenuRendered]);
 
   const handleLogout = async () => {
     setLoggingOut(true);
@@ -134,10 +161,15 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
           </div>
 
           {/* Mobile Menu */}
-          {mobileMenuOpen && (
-            <div className="fixed inset-0 z-[100] h-[100dvh] w-screen overflow-hidden bg-[var(--bg)]">
-              <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
-              <div className="absolute inset-0 flex h-full flex-col bg-[var(--bg)] text-[var(--text)]">
+          {mobileMenuRendered && (
+            <div className={`fixed inset-0 z-[100] h-[100dvh] w-screen overflow-hidden bg-[var(--bg)] transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}>
+              <div
+                className={`absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px] transition-opacity duration-300 ${mobileMenuOpen ? 'opacity-100' : 'opacity-0'}`}
+                onClick={() => setMobileMenuOpen(false)}
+              />
+              <div
+                className={`absolute inset-0 flex h-full flex-col bg-[var(--bg)] text-[var(--text)] transform-gpu transition-transform duration-300 ease-out ${mobileMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}
+              >
                 <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                   <div>
                     <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Menu</p>
