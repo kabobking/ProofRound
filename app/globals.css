@@ -12,6 +12,7 @@
   --accent2: #14b8a6;
   --accent-foreground: #ffffff;
   color-scheme: light;
+  --overlay: rgba(0,0,0,0.45);
 }
 
 html[data-theme='dark'],
@@ -27,6 +28,7 @@ html.dark {
   --accent2: #14b8a6;
   --accent-foreground: #ffffff;
   color-scheme: dark;
+  --overlay: rgba(255,255,255,0.06);
 }
 
 html,

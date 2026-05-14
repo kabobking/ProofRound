@@ -24,11 +24,11 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-zinc-200 bg-white/95 backdrop-blur-sm dark:border-white/10 dark:bg-slate-950/90">
+    <nav className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--surface)] backdrop-blur-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-2 text-xl font-medium text-zinc-900 dark:text-white">
+          <Link href="/" className="inline-flex items-center gap-2 text-xl font-medium text-[var(--text)]">
             <Home className="h-5 w-5" />
             Proofround
           </Link>
@@ -45,8 +45,8 @@ export default function Navigation() {
                   href={item.href}
                   className={`inline-flex items-center gap-2 border-b px-1 pb-0.5 text-sm font-medium transition-colors ${
                     active
-                      ? 'border-indigo-600/50 text-indigo-600 dark:border-indigo-400/60 dark:text-indigo-300'
-                      : 'border-transparent text-zinc-700 hover:border-indigo-600/30 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-300'
+                      ? 'border-[var(--accent)] text-[var(--accent)]'
+                        : 'border-transparent text-[var(--muted)] hover:border-[var(--accent)] hover:text-[var(--accent)]'
                   }`}
                 >
                   <Icon className="h-4 w-4" />
@@ -56,7 +56,7 @@ export default function Navigation() {
             })}
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:-translate-y-0.5 hover:bg-indigo-700 hover:shadow-md transition-all"
+              className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md transition-all"
               data-analytics="cta_get_started_nav"
             >
               <Rocket className="h-4 w-4" />
@@ -67,7 +67,7 @@ export default function Navigation() {
           {/* Mobile menu button */}
           <button
             type="button"
-            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-zinc-200 text-gray-700 dark:border-white/10 dark:text-slate-100 md:hidden"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--muted)] md:hidden"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -78,16 +78,16 @@ export default function Navigation() {
         {/* Mobile menu */}
         {mobileMenuOpen && (
           <div className="fixed inset-0 z-50 md:hidden">
-            <div className="absolute inset-0 bg-black/45 backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
-            <div className="absolute inset-0 flex flex-col bg-white text-zinc-900 dark:bg-slate-950 dark:text-white">
-              <div className="flex items-center justify-between border-b border-zinc-200 px-4 py-4 dark:border-white/10">
+            <div className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]" onClick={() => setMobileMenuOpen(false)} />
+            <div className="absolute inset-0 flex flex-col bg-[var(--surface)] text-[var(--text)]">
+              <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                 <div>
-                  <p className="text-xs uppercase tracking-[0.24em] text-zinc-500 dark:text-slate-400">Menu</p>
+                  <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Menu</p>
                   <p className="mt-1 text-lg font-semibold">Proofround</p>
                 </div>
                 <button
                   type="button"
-                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 dark:border-white/10"
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border)]"
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Close menu"
                 >
@@ -108,8 +108,8 @@ export default function Navigation() {
                         onClick={() => setMobileMenuOpen(false)}
                         className={`flex items-center gap-3 rounded-2xl border px-4 py-4 text-sm font-medium transition-colors ${
                           active
-                            ? 'border-indigo-600 bg-indigo-50 text-indigo-700 dark:border-indigo-400/60 dark:bg-indigo-500/15 dark:text-indigo-200'
-                            : 'border-zinc-200 bg-white text-zinc-900 hover:bg-zinc-50 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10'
+                            ? 'border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)]'
+                            : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface2)]'
                         }`}
                       >
                         <Icon className="h-5 w-5" />
@@ -120,7 +120,7 @@ export default function Navigation() {
 
                   <Link
                     href="/dashboard"
-                    className="flex items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-4 py-4 text-sm font-medium text-white transition-colors hover:bg-indigo-700"
+                    className="flex items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-4 text-sm font-medium text-[var(--accent-foreground)] transition-colors hover:opacity-90"
                     onClick={() => setMobileMenuOpen(false)}
                     data-analytics="cta_get_started_nav"
                   >

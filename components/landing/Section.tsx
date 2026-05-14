@@ -39,13 +39,13 @@ export default function Section({ children, id, className = '', background = 'wh
     };
   }, []);
 
-  const bgClass = background === 'tinted' ? 'bg-zinc-50/50' : 'bg-white';
+  const bgClass = background === 'tinted' ? 'bg-[var(--surface2)]' : 'bg-[var(--surface)]';
 
   return (
     <section
       ref={ref as React.RefObject<HTMLElement>}
       id={id}
-      className={`border-t border-zinc-200 ${bgClass} py-24 ${motion.base} ${isInView ? motion.inView : ''} ${motion.transition} ${className}`}
+      className={`border-t border-[var(--border)] ${bgClass} py-24 ${motion.base} ${isInView ? motion.inView : ''} ${motion.transition} ${className}`}
     >
       {children}
     </section>

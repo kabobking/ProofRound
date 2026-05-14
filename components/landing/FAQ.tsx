@@ -63,10 +63,10 @@ export default function FAQ() {
       {faqItems.map((item, index) => (
         <div
           key={index}
-          className={`group border-b border-zinc-200 last:border-b-0 pb-5 last:pb-0 -mx-4 px-4 rounded-lg transition-all ${
+          className={`group border-b border-[var(--border)] last:border-b-0 pb-5 last:pb-0 -mx-4 px-4 rounded-lg transition-all ${
             openIndex === index 
-              ? 'bg-indigo-50/50 border-l-2 border-l-indigo-500' 
-              : 'hover:bg-zinc-50/50'
+              ? 'bg-[var(--accentTint)]/50 border-l-2 border-l-[var(--accent)]' 
+              : 'hover:bg-[var(--surface2)]'
           }`}
         >
           <button
@@ -76,15 +76,15 @@ export default function FAQ() {
             aria-expanded={openIndex === index}
           >
             <h3 className={`text-base font-medium pr-4 transition-colors leading-snug ${
-              openIndex === index ? 'text-indigo-700' : 'text-zinc-900 group-hover:text-indigo-600'
+              openIndex === index ? 'text-[var(--accent)]' : 'text-[var(--text)] group-hover:text-[var(--accent)]'
             }`}>
               {item.question}
             </h3>
             <svg
               className={`h-5 w-5 flex-shrink-0 transition-all ${
                 openIndex === index 
-                  ? 'rotate-180 text-indigo-600' 
-                  : 'text-zinc-400 group-hover:text-indigo-600'
+                  ? 'rotate-180 text-[var(--accent)]' 
+                  : 'text-[var(--muted)] group-hover:text-[var(--accent)]'
               }`}
               fill="none"
               stroke="currentColor"
@@ -99,7 +99,7 @@ export default function FAQ() {
             </svg>
           </button>
           {openIndex === index && (
-            <div className="mt-2 pb-2 text-sm text-zinc-600 leading-relaxed">
+            <div className="mt-2 pb-2 text-sm text-[var(--muted)] leading-relaxed">
               {item.answer}
             </div>
           )}
