@@ -103,22 +103,40 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
     const Icon = getLinkIcon(link.href);
     const active = isActiveLink(link.href);
 
-    return (
-      <Link
-        key={link.href}
-        href={link.href}
-        aria-current={active ? 'page' : undefined}
-        className={`inline-flex items-center gap-2 rounded-full border px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium min-h-[44px] transition-all ${
-          active
-            ? 'border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)] shadow-sm'
-            : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface2)]'
-        }`}
-        onClick={closeMobileMenu}
-      >
-        <Icon className="h-4 w-4" />
-        <span>{link.label}</span>
-      </Link>
-    );
+    return {
+      desktop: (
+        <Link
+          key={link.href}
+          href={link.href}
+          aria-current={active ? 'page' : undefined}
+          className={`inline-flex items-center gap-2 rounded-full border px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium min-h-[44px] transition-all ${
+            active
+              ? 'border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)] shadow-sm'
+              : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface2)]'
+          }`}
+          onClick={closeMobileMenu}
+        >
+          <Icon className="h-4 w-4" />
+          <span>{link.label}</span>
+        </Link>
+      ),
+      mobile: (
+        <Link
+          key={link.href}
+          href={link.href}
+          aria-current={active ? 'page' : undefined}
+          className={`flex w-full items-center gap-2 rounded-2xl border px-4 py-4 text-left text-sm font-medium min-h-[44px] transition-all ${
+            active
+              ? 'border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)] shadow-sm'
+              : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface2)]'
+          }`}
+          onClick={closeMobileMenu}
+        >
+          <Icon className="h-4 w-4" />
+          <span>{link.label}</span>
+        </Link>
+      ),
+    };
   });
 
   return (
@@ -132,7 +150,7 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
           </div>
 
           <div className="flex flex-wrap gap-2 sm:gap-3">
-            {renderedLinks}
+            {renderedLinks.map(link => link.desktop)}
             <button
               onClick={handleLogout}
               disabled={loggingOut}
@@ -192,7 +210,7 @@ export default function AppHeader({ title, subtitle, quickLinks }: AppHeaderProp
 
                 <div className="flex-1 overflow-auto px-4 py-6">
                   <div className="space-y-3">
-                    {renderedLinks}
+                    {renderedLinks.map(link => link.mobile)}
                   </div>
 
                   <div className="mt-6 space-y-3">
