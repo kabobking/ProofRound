@@ -70,7 +70,7 @@ export default function Home() {
               </AnimatedCard>
 
               <AnimatedCard delay={80}>
-                <div className="rounded-[1.5rem] border border-[var(--accent)]/20 bg-[linear-gradient(180deg,rgba(79,70,229,0.12),rgba(15,23,42,0.9))] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)] transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(2,6,23,0.22)]">
+                <div className="rounded-[1.5rem] border border-[var(--accent)]/20 bg-[linear-gradient(180deg,var(--surface),var(--surface2))] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.12)] transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(2,6,23,0.18)]">
                   <div className="flex items-center gap-3">
                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--accentTint)] text-[var(--accent)] ring-1 ring-[var(--accent)]/20">02</div>
                     <h2 className="text-2xl font-semibold tracking-tight text-[var(--text)]">What Proofround does</h2>
@@ -123,7 +123,7 @@ export default function Home() {
               </AnimatedCard>
 
               <AnimatedCard delay={80}>
-                <div className="rounded-[1.5rem] border border-[var(--accent)]/30 bg-[linear-gradient(180deg,rgba(79,70,229,0.09),rgba(15,23,42,0.92))] p-7 shadow-[0_20px_60px_rgba(2,6,23,0.16)] transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(2,6,23,0.22)]">
+                <div className="rounded-[1.5rem] border border-[var(--accent)]/25 bg-[linear-gradient(180deg,var(--surface),var(--surface2))] p-7 shadow-[0_20px_60px_rgba(2,6,23,0.12)] transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(2,6,23,0.18)]">
                   <div className="mb-5"><span className="inline-flex items-center rounded-full border border-[var(--accentTint)] bg-[var(--accentTint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)]">For investors</span></div>
                   <ul className="space-y-3.5 text-sm text-[var(--muted)] leading-relaxed">
                     <li className="flex items-start gap-3"><span className="mt-2 h-1 w-1 flex-shrink-0 rounded-full bg-[var(--muted)]" /><span>Read-only view with no account required</span></li>
