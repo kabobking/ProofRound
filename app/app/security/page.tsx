@@ -14,7 +14,7 @@ export default function SecurityModelPage() {
           <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">Security model</p>
           <h1 className="mt-3 text-4xl font-semibold tracking-tight text-[var(--text)] sm:text-5xl">Read-only Stripe access, no account changes.</h1>
           <p className="mx-auto mt-5 max-w-3xl text-lg leading-8 text-[var(--muted)]">
-            Proofround is designed to make a founder's revenue packet credible without expanding access beyond what is needed to verify Stripe-backed metrics.
+            Proofround is designed to make a founder revenue packet credible without expanding access beyond what is needed to verify Stripe-backed metrics.
           </p>
           <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link href="/dashboard" className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-medium text-[var(--accent-foreground)] transition-all hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md">Get started</Link>

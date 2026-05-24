@@ -57,14 +57,6 @@ export default function StartupForm({
   const [errors, setErrors] = useState<Partial<Record<keyof FormValues, string>>>({});
   const [touched, setTouched] = useState<Partial<Record<keyof FormValues, boolean>>>({});
 
-  const requiredFields: Array<keyof Pick<FormValues, 'name' | 'tagline' | 'description' | 'industry' | 'location'>> = [
-    'name',
-    'tagline',
-    'description',
-    'industry',
-    'location',
-  ];
-
   const validate = (draft: FormValues) => {
     const nextErrors: Partial<Record<keyof FormValues, string>> = {};
 

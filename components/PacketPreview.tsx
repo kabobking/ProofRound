@@ -44,9 +44,9 @@ export default function PacketPreview() {
             <p className="mt-1 text-sm text-[var(--muted)]">Read-only Stripe access. No charges. No account changes.</p>
           </div>
           <div className="flex justify-start sm:justify-end">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accentTint)]/40 px-3 py-2 text-xs font-medium text-[var(--accent)]">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent)]/30 bg-[var(--accentTint)]/40 px-3 py-2 text-xs font-medium text-[var(--accent)]">
               <Sparkles className="h-3.5 w-3.5" />
-              Founder's link ready
+              Founder link ready
             </div>
           </div>
         </div>

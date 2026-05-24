@@ -2,13 +2,11 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import AppHeader from '@/components/AppHeader';
 import AnimatedCard from '@/components/AnimatedCard';
 import EmptyState from '@/components/EmptyState';
 import OnboardingSteps from '@/components/OnboardingSteps';
 import { useAuth } from '@/lib/auth-context';
-import { signOutUser } from '@/lib/auth';
 import { analyticsEvents } from '@/lib/analytics';
 import {
   getActiveOpportunities,
@@ -73,16 +71,6 @@ function Badge({
   }[tone];
 
   return <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${classes}`}>{children}</span>;
-}
-
-function StatCard({ label, value, detail }: { label: string; value: string; detail: string }) {
-  return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-5 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
-      <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">{label}</p>
-      <p className="mt-3 text-3xl font-semibold tracking-tight text-[var(--text)]">{value}</p>
-      <p className="mt-2 text-sm text-[var(--muted)]">{detail}</p>
-    </div>
-  );
 }
 
 function Panel({
@@ -208,11 +196,9 @@ export default function DashboardPage() {
   const { userProfile } = useAuth();
   const isInvestor = userProfile?.role === 'investor';
   const isAdmin = userProfile?.role === 'admin';
-  const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [dataset, setDataset] = useState<DashboardDataset | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loggingOut, setLoggingOut] = useState(false);
 
   useEffect(() => {
     if (userProfile) analyticsEvents.dashboard_view(userProfile.role);
@@ -318,19 +304,6 @@ export default function DashboardPage() {
       cancelled = true;
     };
   }, [userProfile]);
-
-  const handleLogout = async () => {
-    setLoggingOut(true);
-    try {
-      analyticsEvents.logout();
-      await signOutUser();
-      router.push('/');
-    } catch (logoutError) {
-      console.error('Logout failed:', logoutError);
-    } finally {
-      setLoggingOut(false);
-    }
-  };
 
   const summary = useMemo(() => {
     if (!userProfile || !dataset) return null;
