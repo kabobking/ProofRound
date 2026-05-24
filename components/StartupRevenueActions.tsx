@@ -33,6 +33,20 @@ function toAbsoluteUrl(url: string): string {
   return new URL(`/${url}`, window.location.origin).toString();
 }
 
+function resolveGeneratePacketUrl() {
+  const explicitUrl = process.env.NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL;
+  if (explicitUrl) {
+    return explicitUrl;
+  }
+
+  const requestUrl = process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL;
+  if (requestUrl && !requestUrl.startsWith('mailto:')) {
+    return requestUrl.replace(/\/api\/packets\/request(?:\?.*)?$/, '/api/packets/generate');
+  }
+
+  return undefined;
+}
+
 export default function StartupRevenueActions({
   startupId,
   startupName,
@@ -78,7 +92,10 @@ export default function StartupRevenueActions({
       return;
     }
 
-    openExternalTarget(appendStartupId(process.env.NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL), 'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL to trigger your packet generator or backend export step.');
+    openExternalTarget(
+      appendStartupId(resolveGeneratePacketUrl()),
+      'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL, or set NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL to the matching backend host so ProofRound can derive /api/packets/generate automatically.'
+    );
   };
 
   const handleRequestPacket = (event: MouseEvent<HTMLButtonElement>) => {
