@@ -14,6 +14,18 @@ export function useScrollSpy(sectionIds: string[]) {
     };
 
     const observers: IntersectionObserver[] = [];
+    const intersectingIds = new Set<string>();
+
+    const updateActiveId = () => {
+      for (const id of sectionIds) {
+        if (intersectingIds.has(id)) {
+          setActiveId(id);
+          return;
+        }
+      }
+
+      setActiveId('');
+    };
 
     sectionIds.forEach((id) => {
       const element = document.getElementById(id);
@@ -23,9 +35,13 @@ export function useScrollSpy(sectionIds: string[]) {
         (entries) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
-              setActiveId(id);
+              intersectingIds.add(id);
+            } else {
+              intersectingIds.delete(id);
             }
           });
+
+          updateActiveId();
         },
         observerOptions
       );

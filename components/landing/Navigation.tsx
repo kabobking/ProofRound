@@ -65,8 +65,7 @@ export default function Navigation() {
     if (href === '/') return pathname === '/';
     if (!sectionId) return false;
 
-    const isLandingDefault = pathname === '/' && !activeId && sectionId === 'packet-contents';
-    return activeId === sectionId || isLandingDefault;
+    return activeId === sectionId;
   };
 
   return (
