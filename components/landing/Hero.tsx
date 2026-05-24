@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
+import PacketPreview from '@/components/PacketPreview';
 import { prefersReducedMotion, getMotionClasses } from './motion';
 
 export default function Hero() {
@@ -51,29 +52,35 @@ export default function Hero() {
             ref={textRef}
             className={`${motion.base} ${textInView ? motion.inView : ''} ${motion.transition}`}
           >
-            <h1 className="text-4xl font-medium tracking-tight text-[var(--text)] sm:text-5xl lg:text-6xl leading-[1.1]">
+            <div className="mb-5 inline-flex items-center rounded-full border border-[var(--accent)]/20 bg-[var(--accentTint)]/30 px-3 py-1 text-xs font-medium uppercase tracking-[0.22em] text-[var(--accent)]">
+              Stripe-verified fundraising packets
+            </div>
+            <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-[var(--text)] sm:text-5xl lg:text-6xl leading-[1.08]">
               Replace revenue screenshots with a verified Stripe investor link.
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-lg leading-7 text-[var(--muted)]">
-              Connect Stripe (read-only) to generate time-stamped, source-verified revenue metrics investors can trust without follow-ups.
+            <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-[var(--muted)]">
+              Create time-stamped, read-only Stripe verification packets investors can trust — without exposing raw Stripe data.
             </p>
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
-                <Link
+              <Link
                 href="/dashboard"
-                className="rounded-lg bg-[var(--accent)] px-6 py-3 text-base font-medium text-[var(--accent-foreground)] hover:opacity-90 hover:-translate-y-0.5 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-6 py-3 text-base font-medium text-[var(--accent-foreground)] hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
                 data-analytics="cta_get_started_hero"
               >
                 Get started
               </Link>
               <Link
-                href="#security"
-                className="rounded-lg border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-base font-medium text-[var(--text)] hover:bg-[var(--surface2)] hover:border-[var(--border)] transition-all focus:outline-none focus:ring-2 focus:ring-[var(--text)] focus:ring-offset-2"
+                href="#packet-contents"
+                className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-base font-medium text-[var(--text)] hover:-translate-y-0.5 hover:bg-[var(--surface2)] hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--text)] focus:ring-offset-2"
               >
-                Read security
+                View sample packet
               </Link>
             </div>
-            <p className="mt-8 text-sm text-[var(--muted)] tracking-wide">
-              Read-only access • Time-stamped snapshots • Investor link (no account)
+            <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
+              Read-only Stripe access. No charges. No account changes. Revoke anytime.
+            </p>
+            <p className="mt-3 text-sm text-[var(--muted)]">
+              Learn more in the <Link href="/security" className="text-[var(--accent)] hover:underline">Security Model</Link>.
             </p>
           </div>
 
@@ -83,46 +90,7 @@ export default function Hero() {
             className={`${motion.base} ${cardInView ? motion.inView : ''} ${motion.transition}`}
             style={{ transitionDelay: cardInView ? '150ms' : '0ms' }}
           >
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all">
-              <div className="mb-6 rounded-t-lg bg-[var(--surface2)] border-b border-[var(--border)] pb-4 px-2 -mx-2 -mt-2 pt-4">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <h3 className="text-sm font-medium text-[var(--text)]">Verification Packet</h3>
-                    <p className="mt-1 text-xs text-[var(--muted)]">Snapshot — Last 12 months</p>
-                  </div>
-                  <span className="rounded-full bg-[var(--surface2)] px-3 py-1 text-xs font-medium text-[var(--muted)]">Read-only</span>
-                </div>
-                <div className="mt-3">
-                  <span className="inline-flex items-center rounded-full bg-[var(--accentTint)] border border-[var(--accentTint)] px-2.5 py-1 text-xs font-medium text-[var(--accent)]">
-                    Computed directly from Stripe events
-                  </span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface2)] p-4 hover:border-[var(--border)] hover:bg-[var(--surface)] transition-all">
-                  <div className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">MRR</div>
-                  <div className="mt-2.5 text-lg font-medium text-[var(--text)]">—</div>
-                </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface2)] p-4 hover:border-[var(--border)] hover:bg-[var(--surface)] transition-all">
-                  <div className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Net Revenue</div>
-                  <div className="mt-2.5 text-lg font-medium text-[var(--text)]">—</div>
-                </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface2)] p-4 hover:border-[var(--border)] hover:bg-[var(--surface)] transition-all">
-                  <div className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Refund Rate</div>
-                  <div className="mt-2.5 text-lg font-medium text-[var(--text)]">—</div>
-                </div>
-                <div className="rounded-lg border border-[var(--border)] bg-[var(--surface2)] p-4 hover:border-[var(--border)] hover:bg-[var(--surface)] transition-all">
-                  <div className="text-xs font-medium text-[var(--muted)] uppercase tracking-wide">Revenue Churn</div>
-                  <div className="mt-2.5 text-lg font-medium text-[var(--text)]">—</div>
-                </div>
-              </div>
-              <div className="mt-5 border-t border-[var(--border)] pt-4">
-                <div className="flex items-center gap-2.5">
-                  <div className="h-1.5 w-1.5 rounded-full bg-[var(--accent2)]"></div>
-                  <span className="text-xs text-[var(--muted)]">Audit indicators included</span>
-                </div>
-              </div>
-            </div>
+            <PacketPreview />
           </div>
         </div>
       </div>

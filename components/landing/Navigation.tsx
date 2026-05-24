@@ -55,10 +55,9 @@ export default function Navigation() {
   }, []);
 
   const navItems = [
-    { href: '#how-it-works', label: 'How it Works', icon: Rocket, sectionId: 'how-it-works' },
-    { href: '#packet-contents', label: 'Product', icon: FileText, sectionId: 'packet-contents' },
-    { href: '#security', label: 'Security', icon: ShieldCheck, sectionId: 'security' },
-    { href: '#faq', label: 'FAQ', icon: HelpCircle, sectionId: 'faq' },
+    { href: '/#packet-contents', label: 'Product', icon: FileText, sectionId: 'packet-contents' },
+    { href: '/#security', label: 'Security', icon: ShieldCheck, sectionId: 'security' },
+    { href: '/#faq', label: 'FAQ', icon: HelpCircle, sectionId: 'faq' },
   ];
 
   const isActive = (href: string, sectionId?: string) => {

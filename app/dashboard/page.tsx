@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import AppHeader from '@/components/AppHeader';
 import AnimatedCard from '@/components/AnimatedCard';
+import EmptyState from '@/components/EmptyState';
+import OnboardingSteps from '@/components/OnboardingSteps';
 import { useAuth } from '@/lib/auth-context';
 import { signOutUser } from '@/lib/auth';
 import { analyticsEvents } from '@/lib/analytics';
@@ -101,6 +103,65 @@ function Panel({
       <div className="px-6 py-6 sm:px-7">{children}</div>
     </AnimatedCard>
   );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-8">
+      <div className="grid gap-4 lg:grid-cols-2">
+        <div className="h-48 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+        <div className="h-48 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+      </div>
+      <div className="grid gap-8 xl:grid-cols-[240px_minmax(0,1fr)]">
+        <div className="space-y-6">
+          <div className="h-64 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+          <div className="h-72 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+        </div>
+        <div className="space-y-8">
+          <div className="h-80 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+          <div className="h-96 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RecoveryCard({ onReconnect }: { onReconnect: () => void }) {
+  return (
+    <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+      <AppHeader title="Dashboard" subtitle="Your data is safe. Try again, reconnect Stripe, or return to your startup profiles." />
+
+      <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <div className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
+          <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Recovery</p>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text)]">We couldn’t load your dashboard data.</h2>
+          <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Your data is safe. Try again, reconnect Stripe, or return to your startup profiles.</p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row">
+            <Link href="/dashboard" className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] transition-all hover:opacity-90">
+              Retry
+            </Link>
+            <button type="button" onClick={onReconnect} className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-all hover:bg-[var(--surface2)]">
+              Reconnect Stripe
+            </button>
+            <Link href="/startups" className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-all hover:bg-[var(--surface2)]">
+              Go to Startups
+            </Link>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function openStripeConnect() {
+  const stripeUrl = process.env.NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL || process.env.NEXT_PUBLIC_STRIPE_OAUTH_URL;
+
+  if (!stripeUrl) {
+    window.alert('Stripe Connect is not configured yet.');
+    return;
+  }
+
+  window.open(stripeUrl, '_blank', 'noopener,noreferrer');
 }
 
 function ActivityTable({ rows }: { rows: ActivityRow[] }) {
@@ -380,28 +441,7 @@ export default function DashboardPage() {
   }
 
   if (error) {
-    return (
-      <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-        <AppHeader title="Dashboard unavailable" subtitle={error} />
-
-        <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-amber-200 bg-amber-50 px-6 py-5 text-amber-900 shadow-[0_20px_60px_rgba(15,23,42,0.06)] dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-100">
-            <p className="font-semibold">We could not load your dashboard data.</p>
-            <p className="mt-2 text-sm leading-6">
-              Try refreshing the page, checking your Firebase permissions, or signing out and back in.
-            </p>
-            <div className="mt-4 flex flex-wrap gap-3">
-              <Link href="/dashboard" className="rounded-full bg-[var(--text)] px-4 py-2 text-sm font-medium text-[var(--bg)] hover:opacity-90">
-                Retry
-              </Link>
-              <Link href="/marketplace" className="rounded-full border border-amber-300 px-4 py-2 text-sm font-medium text-amber-950 hover:bg-amber-100 dark:border-amber-400/30 dark:text-amber-100 dark:hover:bg-amber-500/10">
-                Go to marketplace
-              </Link>
-            </div>
-          </div>
-        </main>
-      </div>
-    );
+    return <RecoveryCard onReconnect={openStripeConnect} />;
   }
 
   if (loading || !summary || !dataset) {
@@ -409,7 +449,7 @@ export default function DashboardPage() {
       <div className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
         <AppHeader title="Dashboard" subtitle="Loading your workspace" />
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="h-72 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+          <DashboardSkeleton />
         </div>
       </div>
     );
@@ -420,13 +460,13 @@ export default function DashboardPage() {
 
   const quickLinks = isInvestor
     ? [
-        { label: 'Marketplace', href: '/marketplace' },
+        { label: 'Investor Discovery', href: '/marketplace' },
         { label: 'Dashboard', href: '/dashboard' },
       ]
     : [
         { label: 'Startups', href: '/startups' },
         { label: 'Create startup', href: '/create-startup' },
-        { label: 'Marketplace', href: '/marketplace' },
+      { label: 'Investor Discovery', href: '/marketplace' },
       ];
 
   const maxStageCount = Math.max(...stageCounts.map(item => item.value), 1);
@@ -436,6 +476,20 @@ export default function DashboardPage() {
       <AppHeader title={summary.title} subtitle={summary.subtitle} quickLinks={quickLinks} />
 
       <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        {!isInvestor && dataset.startups.length === 0 ? (
+          <div className="mb-8">
+            <EmptyState
+              eyebrow="Onboarding"
+              title="Create your first startup profile"
+              body="Add your company details, connect Stripe read-only, and generate your first investor-ready verification packet."
+              primaryAction={{ label: 'Create startup', href: '/create-startup' }}
+              secondaryAction={{ label: 'View Security Model', href: '/security' }}
+            >
+              <OnboardingSteps />
+            </EmptyState>
+          </div>
+        ) : null}
+
         <div className="mb-8 grid gap-4 lg:grid-cols-[minmax(0,1.4fr)_minmax(0,0.9fr)]">
           <Panel title="Workspace shortcuts" description="Your fastest path to the rest of the product.">
             <div className="space-y-3">

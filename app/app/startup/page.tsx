@@ -14,6 +14,7 @@ import StartupRevenueActions from '@/components/StartupRevenueActions';
 export default function StartupPage() {
   const searchParams = useSearchParams();
   const startupId = searchParams.get('startupId');
+  const nextStep = searchParams.get('next');
   const { userProfile } = useAuth();
 
   const [startup, setStartup] = useState<Startup | null>(null);
@@ -58,23 +59,23 @@ export default function StartupPage() {
           title="Startup details"
           subtitle="Open a startup from the marketplace or your startups list."
           quickLinks={[
-            { label: 'Marketplace', href: '/marketplace' },
+            { label: 'Investor Discovery', href: '/marketplace' },
             { label: 'My Startups', href: '/startups' },
             { label: 'Dashboard', href: '/dashboard' },
           ]}
         />
 
         <main className="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
-          <div className="rounded-3xl border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(15,23,42,0.06)]">
+          <div className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
             <h2 className="text-2xl font-semibold tracking-tight text-[var(--text)]">Select a startup</h2>
             <p className="mt-3 text-sm leading-6 text-[var(--muted)]">
-              This page uses the query parameter `startupId`, so it can be exported statically for GitHub Pages.
+              Open a startup from your list or the marketplace to review its investor-ready packet.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
-              <Link href="/marketplace" className="rounded-full bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90">
+              <Link href="/marketplace" className="rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90">
                 Browse marketplace
               </Link>
-              <Link href="/startups" className="rounded-full border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface2)]">
+              <Link href="/startups" className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface2)]">
                 My startups
               </Link>
             </div>
@@ -97,12 +98,17 @@ export default function StartupPage() {
 
   if (!startup) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg)] text-[var(--text)]">
-        <div className="text-center">
+      <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-[var(--text)]">
+        <div className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 text-center shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
           <p className="text-[var(--muted)] mb-4">Startup not found</p>
-          <Link href="/marketplace" className="text-[var(--accent)] hover:underline">
-            Back to marketplace
-          </Link>
+          <div className="flex flex-wrap justify-center gap-3">
+            <Link href="/marketplace" className="rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:opacity-90">
+              Back to marketplace
+            </Link>
+            <Link href="/startups" className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-medium text-[var(--text)] hover:bg-[var(--surface2)]">
+              My startups
+            </Link>
+          </div>
         </div>
       </div>
     );
@@ -116,16 +122,24 @@ export default function StartupPage() {
         quickLinks={[
           { label: 'Dashboard', href: '/dashboard' },
           { label: 'My Startups', href: '/startups' },
-          { label: 'Marketplace', href: '/marketplace' },
+          { label: 'Investor Discovery', href: '/marketplace' },
         ]}
       />
 
       <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {nextStep === 'connect-stripe' && (
+          <div className="mb-8 rounded-[1.5rem] border border-[var(--accent)]/20 bg-[linear-gradient(180deg,rgba(79,70,229,0.12),rgba(15,23,42,0.92))] p-6 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
+            <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Next step</p>
+            <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text)]">Connect Stripe to generate your first packet.</h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--muted)]">Your startup profile is saved. The next step is to connect Stripe with read-only access so Proofround can generate your verification packet.</p>
+          </div>
+        )}
+
         <div className="grid gap-8 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-8">
             <AnimatedCard delay={0}>
-              <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
-                <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">About</h2>
+              <section className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
+                <h2 className="mb-4 text-2xl font-semibold tracking-tight text-[var(--text)]">About</h2>
                 <p className="mb-6 text-[var(--muted)]">{startup.description}</p>
 
                 <div className="grid gap-6 sm:grid-cols-2">
@@ -157,8 +171,8 @@ export default function StartupPage() {
 
             {startup.financialMetrics && (
               <AnimatedCard delay={80}>
-                <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
-                  <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">Financial Metrics</h2>
+                <section className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
+                  <h2 className="mb-4 text-2xl font-semibold tracking-tight text-[var(--text)]">Financial Metrics</h2>
                   <div className="grid gap-6 sm:grid-cols-2">
                     {startup.financialMetrics.mrr && (
                       <div className="rounded-lg bg-[var(--accentTint)] p-4">
@@ -191,8 +205,8 @@ export default function StartupPage() {
 
             {opportunities.length > 0 && (
               <AnimatedCard delay={160}>
-                <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
-                  <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">Investment Opportunities</h2>
+                <section className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
+                  <h2 className="mb-4 text-2xl font-semibold tracking-tight text-[var(--text)]">Investment Opportunities</h2>
                   <div className="space-y-4">
                     {opportunities.map((opp) => (
                       <div key={opp.id} className="block rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4">
@@ -215,8 +229,8 @@ export default function StartupPage() {
 
             {packets.length > 0 && (
               <AnimatedCard delay={240}>
-                <section className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-8">
-                  <h2 className="mb-4 text-2xl font-bold text-[var(--text)]">Verified Financial Packets</h2>
+                <section className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
+                  <h2 className="mb-4 text-2xl font-semibold tracking-tight text-[var(--text)]">Verified Financial Packets</h2>
                   <div className="space-y-4">
                     {packets.map((packet) => (
                       <div key={packet.id} className="rounded-lg border border-[var(--accent2)]/30 bg-[var(--accent2)]/10 p-4">
@@ -239,7 +253,7 @@ export default function StartupPage() {
 
           <div className="lg:col-span-1">
             {startup.seeking_amount && (
-              <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
+              <div className="mb-6 rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
                 <h3 className="mb-3 font-semibold text-[var(--text)]">Fundraising</h3>
                 <div className="space-y-3">
                   <div>
@@ -265,7 +279,7 @@ export default function StartupPage() {
               </div>
             )}
 
-            <div className="mb-6 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
+            <div className="mb-6 rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
               <h3 className="mb-3 font-semibold text-[var(--text)]">Verified revenue packets</h3>
               <p className="mb-4 text-sm text-[var(--muted)]">
                 Request or generate the Stripe-backed PDF version of this startup&apos;s verified revenue data.
@@ -279,7 +293,7 @@ export default function StartupPage() {
               />
             </div>
 
-            <div className="rounded-lg border border-[var(--border)] bg-[var(--surface)] p-6">
+            <div className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
               <h3 className="mb-3 font-semibold text-[var(--text)]">Founder</h3>
               <div className="space-y-2 text-sm">
                 <p className="font-medium text-[var(--text)]">{startup.founderEmail}</p>
