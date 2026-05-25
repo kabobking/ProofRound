@@ -2,6 +2,33 @@ import { cert, getApps, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 
+function normalizeBucketName(raw: string) {
+  const value = raw.trim();
+
+  if (value.startsWith('gs://')) {
+    return value.replace(/^gs:\/\//, '').replace(/\/$/, '');
+  }
+
+  if (value.startsWith('http://') || value.startsWith('https://')) {
+    const parsed = new URL(value);
+    const path = parsed.pathname.replace(/\/$/, '');
+
+    // Firebase Storage REST URLs commonly include /v0/b/<bucket>/...
+    const bucketFromApiPath = path.match(/\/b\/([^/]+)/)?.[1];
+    if (bucketFromApiPath) {
+      return decodeURIComponent(bucketFromApiPath);
+    }
+
+    // Fallback: use first non-empty path segment as a best-effort bucket name.
+    const firstSegment = path.split('/').filter(Boolean)[0];
+    if (firstSegment) {
+      return decodeURIComponent(firstSegment);
+    }
+  }
+
+  return value.replace(/\/$/, '');
+}
+
 function getServiceAccount() {
   const encoded = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
   if (!encoded) {
@@ -27,10 +54,11 @@ export function getDb() {
 }
 
 export function getStorageBucket() {
-  const bucketName = process.env.FIREBASE_STORAGE_BUCKET;
-  if (!bucketName) {
-    throw new Error('FIREBASE_STORAGE_BUCKET is required for uploading files');
+  const rawBucketName = process.env.FIREBASE_STORAGE_BUCKET;
+  if (!rawBucketName) {
+    throw new Error('FIREBASE_STORAGE_BUCKET is required for uploading files (example: your-project.firebasestorage.app)');
   }
 
+  const bucketName = normalizeBucketName(rawBucketName);
   return getStorage(getAdminApp()).bucket(bucketName);
 }
