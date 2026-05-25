@@ -384,17 +384,43 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
         });
   };
 
+  const truncateMiddle = (text: string, maxChars: number) => {
+    if (text.length <= maxChars) {
+      return text;
+    }
+
+    if (maxChars <= 3) {
+      return '.'.repeat(maxChars);
+    }
+
+    const frontLength = Math.ceil((maxChars - 3) / 2);
+    const backLength = Math.floor((maxChars - 3) / 2);
+    return `${text.slice(0, frontLength)}...${text.slice(text.length - backLength)}`;
+  };
+
+  const shortReportId = (packetId: string) => truncateMiddle(packetId, 18);
+  const shortHash = (hash: string) => `${hash.slice(0, 12)}...`;
   const formatHash = (value: string) => value.match(/.{1,8}/g)?.join(' ') ?? value;
 
-  const width = pdf.page.width;
-  const height = pdf.page.height;
-  const margin = 42;
-  const contentWidth = width - margin * 2;
-  const footerHeight = 30;
+  const PAGE_WIDTH = pdf.page.width;
+  const PAGE_HEIGHT = pdf.page.height;
+  const MARGIN_X = 48;
+  const MARGIN_TOP = 48;
+  const MARGIN_BOTTOM = 56;
+  const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_X * 2;
+  const FOOTER_Y = PAGE_HEIGHT - 40;
+  const CARD_PADDING = 14;
+  const SECTION_GAP = 22;
+  const ROW_GAP = 12;
+  const LINE_HEIGHT = 14;
+  const GRID_GAP = 16;
+  const CARD_WIDTH = (CONTENT_WIDTH - GRID_GAP) / 2;
+  const PAGE1_CARD_HEIGHT = 86;
+  const PAGE3_CARD_HEIGHT = 86;
   const totalPages = 4;
 
   const paintPageBackground = () => {
-    pdf.rect(0, 0, width, height).fill(colors.paper);
+    pdf.rect(0, 0, PAGE_WIDTH, PAGE_HEIGHT).fill(colors.paper);
   };
 
   const startPage = () => {
@@ -412,10 +438,78 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
     pdf.restore();
   };
 
+  const drawTextBox = (
+    text: string,
+    x: number,
+    y: number,
+    widthValue: number,
+    options?: {
+      font?: string;
+      fontSize?: number;
+      color?: string;
+      align?: 'left' | 'center' | 'right' | 'justify';
+      lineGap?: number;
+      height?: number;
+      ellipsis?: boolean;
+      characterSpacing?: number;
+    }
+  ) => {
+    pdf.font(options?.font ?? pdfFonts.regular)
+      .fillColor(options?.color ?? colors.text)
+      .fontSize(options?.fontSize ?? 9.5)
+      .text(text, x, y, {
+        width: widthValue,
+        align: options?.align ?? 'left',
+        lineGap: options?.lineGap ?? 2,
+        height: options?.height,
+        ellipsis: options?.ellipsis ?? false,
+        characterSpacing: options?.characterSpacing,
+      });
+
+    return y + pdf.heightOfString(text, {
+      width: widthValue,
+      align: options?.align ?? 'left',
+      lineGap: options?.lineGap ?? 2,
+    });
+  };
+
+  const drawLabelValue = (label: string, value: string, x: number, y: number, widthValue: number) => {
+    drawTextBox(label.toUpperCase(), x, y, widthValue, {
+      font: pdfFonts.bold,
+      fontSize: 8.5,
+      color: colors.muted,
+      characterSpacing: 0.8,
+      ellipsis: true,
+      height: LINE_HEIGHT,
+    });
+
+    drawTextBox(value, x, y + LINE_HEIGHT, widthValue, {
+      font: 'Courier',
+      fontSize: 8.8,
+      color: colors.text,
+      ellipsis: true,
+      height: LINE_HEIGHT,
+    });
+
+    return y + LINE_HEIGHT * 2;
+  };
+
   const drawSectionHeader = (title: string, subtitle: string | undefined, x: number, y: number, widthValue: number) => {
-    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(14).text(title, x, y, { width: widthValue });
+    drawTextBox(title, x, y, widthValue, {
+      font: pdfFonts.bold,
+      fontSize: 14,
+      color: colors.text,
+      ellipsis: true,
+      height: LINE_HEIGHT + 4,
+    });
     if (subtitle) {
-      pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9.5).text(subtitle, x, y + 18, { width: widthValue, lineGap: 1.5 });
+      drawTextBox(subtitle, x, y + 18, widthValue, {
+        font: pdfFonts.regular,
+        fontSize: 9.5,
+        color: colors.muted,
+        lineGap: 1.5,
+        height: 34,
+      });
     }
   };
 
@@ -436,58 +530,84 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
       radius: 7,
     });
 
-    pdf.font(pdfFonts.bold).fillColor(colors.muted).fontSize(8.5).text(params.label.toUpperCase(), params.x + 12, params.y + 10, {
-      width: params.w - 24,
+    const innerWidth = params.w - CARD_PADDING * 2;
+    const labelY = params.y + CARD_PADDING - 1;
+    drawTextBox(params.label.toUpperCase(), params.x + CARD_PADDING, labelY, innerWidth, {
+      font: pdfFonts.bold,
+      fontSize: 8.5,
+      color: colors.muted,
       characterSpacing: 0.8,
+      ellipsis: true,
+      height: LINE_HEIGHT,
     });
-    pdf.font('Courier').fillColor(colors.text).fontSize(params.emphasis ? 24 : 17).text(params.value, params.x + 12, params.y + (params.emphasis ? 28 : 25), {
-      width: params.w - 24,
-      lineBreak: false,
+
+    drawTextBox(params.value, params.x + CARD_PADDING, params.y + CARD_PADDING + 14, innerWidth, {
+      font: 'Courier',
+      fontSize: params.emphasis ? 22 : 17,
+      color: colors.text,
+      ellipsis: true,
+      height: LINE_HEIGHT + 10,
     });
+
     if (params.detail) {
-      pdf.font(pdfFonts.regular).fillColor(colors.mutedSoft).fontSize(8.5).text(params.detail, params.x + 12, params.y + params.h - 16, {
-        width: params.w - 24,
+      drawTextBox(params.detail, params.x + CARD_PADDING, params.y + params.h - CARD_PADDING - LINE_HEIGHT + 1, innerWidth, {
+        font: pdfFonts.regular,
+        fontSize: 8.2,
+        color: colors.mutedSoft,
+        lineGap: 1,
+        height: LINE_HEIGHT,
         ellipsis: true,
       });
     }
   };
 
-  const drawStatRow = (x: number, y: number, w: number, label: string, value: string, detail?: string) => {
-    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text(label, x, y, { width: w * 0.48 });
-    pdf.font('Courier').fillColor(colors.text).fontSize(11).text(value, x, y, { width: w, align: 'right' });
-    if (detail) {
-      pdf.font(pdfFonts.regular).fillColor(colors.mutedSoft).fontSize(8).text(detail, x, y + 12, { width: w, align: 'right' });
-    }
-  };
-
   const drawFooter = (pageNumber: number) => {
-    const lineY = height - footerHeight - 10;
+    const lineY = FOOTER_Y - 10;
     pdf.save();
-    pdf.moveTo(margin, lineY).lineTo(width - margin, lineY).lineWidth(0.5).stroke(colors.border);
+    pdf.moveTo(MARGIN_X, lineY).lineTo(PAGE_WIDTH - MARGIN_X, lineY).lineWidth(0.5).stroke(colors.border);
     pdf.restore();
 
-    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(8).text(
-      `ProofRound Verified Packet · ${packet.id} · Generated ${formatDate(packet.createdAt)}`,
-      margin,
-      height - footerHeight,
-      { width: contentWidth - 90, ellipsis: true }
-    );
-    pdf.font(pdfFonts.regular).fillColor(colors.mutedSoft).fontSize(8).text(`Page ${pageNumber} of ${totalPages}`, width - margin - 72, height - footerHeight, {
-      width: 72,
-      align: 'right',
+    const footerText = `ProofRound Verified Packet · ${shortReportId(packet.id)} · Generated ${formatDate(packet.createdAt)} · Page ${pageNumber} of ${totalPages}`;
+    drawTextBox(footerText, MARGIN_X, FOOTER_Y - 3, CONTENT_WIDTH, {
+      font: pdfFonts.regular,
+      fontSize: 8,
+      color: colors.muted,
+      ellipsis: true,
+      height: LINE_HEIGHT,
     });
   };
 
-  const drawExecutiveSummary = () => {
-    drawPanel(margin, 210, contentWidth, 62, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
-    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(9).text('EXECUTIVE SUMMARY', margin + 14, 222, { width: contentWidth - 28, characterSpacing: 0.8 });
-    pdf.font(pdfFonts.regular).fillColor(colors.text).fontSize(10).text(
+  const ensureSpace = (currentY: number, sectionHeight: number) => {
+    if (currentY + sectionHeight > FOOTER_Y - 20) {
+      pdf.addPage();
+      startPage();
+      return MARGIN_TOP;
+    }
+
+    return currentY;
+  };
+
+  const drawExecutiveSummary = (x: number, y: number, widthValue: number, heightValue: number) => {
+    drawPanel(x, y, widthValue, heightValue, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
+    drawTextBox('EXECUTIVE SUMMARY', x + CARD_PADDING, y + CARD_PADDING, widthValue - CARD_PADDING * 2, {
+      font: pdfFonts.bold,
+      fontSize: 9,
+      color: colors.text,
+      characterSpacing: 0.8,
+      ellipsis: true,
+      height: LINE_HEIGHT,
+    });
+    drawTextBox(
       'This packet contains a point-in-time snapshot of Stripe-backed revenue metrics generated using read-only API access. It is intended to help founders share standardized revenue verification during fundraising and acquisition discussions.',
-      margin + 14,
-      237,
+      x + CARD_PADDING,
+      y + CARD_PADDING + 14,
+      widthValue - CARD_PADDING * 2,
       {
-        width: contentWidth - 28,
-        lineGap: 2,
+        font: pdfFonts.regular,
+        fontSize: 9.8,
+        color: colors.text,
+        lineGap: 3,
+        height: heightValue - 34,
       }
     );
   };
@@ -495,7 +615,7 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   const revenueCommentary = () => {
     const points = packet.metrics.monthlyBreakdown.slice(-6);
     if (points.length === 0) {
-      return 'No recurring monthly revenue detected during this reporting window.';
+      return 'No trend commentary is available without recurring monthly revenue data.';
     }
 
     if (points.length === 1) {
@@ -515,13 +635,42 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
 
   const drawMonthlyChart = (x: number, y: number, w: number, h: number) => {
     drawPanel(x, y, w, h, { fill: colors.surface, stroke: colors.border, radius: 7 });
-    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(12).text('Revenue history', x + 14, y + 12, { width: w - 28 });
-    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text('Monthly gross revenue based on connected Stripe data', x + 14, y + 30, { width: w - 28 });
+    drawTextBox('Revenue history', x + CARD_PADDING, y + CARD_PADDING - 1, w - CARD_PADDING * 2, {
+      font: pdfFonts.bold,
+      fontSize: 12,
+      color: colors.text,
+      ellipsis: true,
+      height: LINE_HEIGHT + 2,
+    });
+    drawTextBox('Monthly gross revenue based on connected Stripe data', x + CARD_PADDING, y + CARD_PADDING + 14, w - CARD_PADDING * 2, {
+      font: pdfFonts.regular,
+      fontSize: 9,
+      color: colors.muted,
+      lineGap: 2,
+      height: 28,
+    });
 
     const points = packet.metrics.monthlyBreakdown.slice(-6);
     if (points.length === 0) {
-      pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(10).text('No recurring monthly revenue detected during this reporting window.', x + 14, y + 62, {
-        width: w - 28,
+      const emptyCardWidth = Math.min(w - 64, 360);
+      const emptyCardX = x + (w - emptyCardWidth) / 2;
+      const emptyCardY = y + 74;
+      drawPanel(emptyCardX, emptyCardY, emptyCardWidth, 112, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
+      drawTextBox('No recurring monthly revenue detected during this reporting window.', emptyCardX + CARD_PADDING, emptyCardY + 26, emptyCardWidth - CARD_PADDING * 2, {
+        font: pdfFonts.bold,
+        fontSize: 10,
+        color: colors.text,
+        align: 'center',
+        lineGap: 2,
+        height: 28,
+      });
+      drawTextBox('The revenue history section is intentionally left blank because the connected Stripe account did not produce recurring monthly observations in this period.', emptyCardX + CARD_PADDING, emptyCardY + 54, emptyCardWidth - CARD_PADDING * 2, {
+        font: pdfFonts.regular,
+        fontSize: 9,
+        color: colors.muted,
+        align: 'center',
+        lineGap: 2,
+        height: 36,
       });
       return;
     }
@@ -566,29 +715,73 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
       pdf.save();
       pdf.circle(px, py, 2.5).fillAndStroke(colors.paper, colors.text);
       pdf.restore();
-      pdf.font(pdfFonts.regular).fillColor(colors.mutedSoft).fontSize(8).text(point.period, px - 16, baseline + 6, { width: 32, align: 'center' });
+      drawTextBox(point.period, px - 16, baseline + 6, 32, {
+        font: pdfFonts.regular,
+        fontSize: 8,
+        color: colors.mutedSoft,
+        align: 'center',
+        height: LINE_HEIGHT,
+        ellipsis: true,
+      });
     });
 
-    pdf.font('Courier').fillColor(colors.text).fontSize(8.5).text(currency.format(Math.max(minValue, 0)), x + 12, chartY + chartH - 4, { width: 38, align: 'right' });
-    pdf.font('Courier').fillColor(colors.text).fontSize(8.5).text(currency.format(paddedMax), x + 12, chartY - 4, { width: 38, align: 'right' });
+    drawTextBox(currency.format(Math.max(minValue, 0)), x + 12, chartY + chartH - 4, 38, {
+      font: 'Courier',
+      fontSize: 8.5,
+      color: colors.text,
+      align: 'right',
+      height: LINE_HEIGHT,
+      ellipsis: true,
+    });
+    drawTextBox(currency.format(paddedMax), x + 12, chartY - 4, 38, {
+      font: 'Courier',
+      fontSize: 8.5,
+      color: colors.text,
+      align: 'right',
+      height: LINE_HEIGHT,
+      ellipsis: true,
+    });
   };
 
   const drawReferenceList = (title: string, values: string[], x: number, y: number, w: number, maxItems = 6) => {
-    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(10).text(title, x, y, { width: w });
+    drawTextBox(title, x, y, w, {
+      font: pdfFonts.bold,
+      fontSize: 10,
+      color: colors.text,
+      ellipsis: true,
+      height: LINE_HEIGHT,
+    });
     const items = values.slice(0, maxItems);
     let cursorY = y + 14;
     if (items.length === 0) {
-      pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(8.5).text('No references captured in this category.', x, cursorY, { width: w });
+      drawTextBox('No Stripe object references captured for this category.', x, cursorY, w, {
+        font: pdfFonts.regular,
+        fontSize: 8.5,
+        color: colors.muted,
+        lineGap: 1.5,
+        height: 28,
+      });
       return cursorY + 14;
     }
 
     items.forEach(value => {
-      pdf.font('Courier').fillColor(colors.muted).fontSize(8.5).text(value, x, cursorY, { width: w, ellipsis: true });
+      drawTextBox(value, x, cursorY, w, {
+        font: 'Courier',
+        fontSize: 8.3,
+        color: colors.muted,
+        ellipsis: true,
+        height: LINE_HEIGHT,
+      });
       cursorY += 12;
     });
 
     if (values.length > items.length) {
-      pdf.font(pdfFonts.regular).fillColor(colors.mutedSoft).fontSize(8).text(`and ${values.length - items.length} more`, x, cursorY, { width: w });
+      drawTextBox(`and ${values.length - items.length} more`, x, cursorY, w, {
+        font: pdfFonts.regular,
+        fontSize: 8,
+        color: colors.mutedSoft,
+        height: LINE_HEIGHT,
+      });
       cursorY += 12;
     }
 
@@ -597,12 +790,19 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
 
   const drawDisclaimerBlock = (x: number, y: number, w: number, h: number) => {
     drawPanel(x, y, w, h, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
-    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(10).text('LIMITATIONS / DISCLAIMER', x + 14, y + 12, { width: w - 28 });
-    pdf.font(pdfFonts.regular).fillColor(colors.text).fontSize(9.5).text(
+    drawTextBox('LIMITATIONS / DISCLAIMER', x + 14, y + 12, w - 28, {
+      font: pdfFonts.bold,
+      fontSize: 10,
+      color: colors.text,
+      ellipsis: true,
+      height: LINE_HEIGHT,
+    });
+    drawTextBox(
       'This report reflects a point-in-time snapshot of revenue processed through a connected Stripe account using read-only API access. Metrics may exclude revenue processed outside Stripe.',
       x + 14,
       y + 28,
-      { width: w - 28, lineGap: 2 }
+      w - 28,
+      { font: pdfFonts.regular, fontSize: 9.3, color: colors.text, lineGap: 2, height: h - 38 }
     );
   };
 
@@ -612,101 +812,202 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
 
   startPage();
 
-  drawPanel(margin, 42, contentWidth, 148, { fill: colors.surface, stroke: colors.borderStrong, radius: 8 });
-  pdf.font(pdfFonts.bold).fillColor(colors.accent).fontSize(9).text('STRIPE-VERIFIED SNAPSHOT', margin + 16, 56, { width: 180, characterSpacing: 0.9 });
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(22).text('✅ Stripe-Verified Snapshot', margin + 16, 74, { width: 360 });
-  pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(10).text('Generated from connected Stripe API data', margin + 16, 104, { width: 260 });
-  pdf.font(pdfFonts.regular).fillColor(colors.text).fontSize(11).text('Point-in-time revenue verification', margin + 16, 122, { width: 260 });
-  pdf.font(pdfFonts.regular).fillColor(colors.mutedSoft).fontSize(9).text(startup.name, margin + 16, 140, { width: 260, ellipsis: true });
+  let currentY = MARGIN_TOP;
+  const headerHeight = 164;
+  drawPanel(MARGIN_X, currentY, CONTENT_WIDTH, headerHeight, { fill: colors.surface, stroke: colors.borderStrong, radius: 8 });
+  drawTextBox('Stripe-Verified Snapshot', MARGIN_X + CARD_PADDING, currentY + 16, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 22,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 8,
+  });
+  drawTextBox('Generated from connected Stripe API data', MARGIN_X + CARD_PADDING, currentY + 46, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.regular,
+    fontSize: 10,
+    color: colors.muted,
+    height: LINE_HEIGHT + 2,
+  });
+  drawTextBox('Point-in-time revenue verification', MARGIN_X + CARD_PADDING, currentY + 64, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.regular,
+    fontSize: 11,
+    color: colors.text,
+    height: LINE_HEIGHT + 2,
+  });
+  drawTextBox(startup.name, MARGIN_X + CARD_PADDING, currentY + 82, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.regular,
+    fontSize: 9.2,
+    color: colors.mutedSoft,
+    ellipsis: true,
+    height: LINE_HEIGHT,
+  });
 
-  const headerMetaX = margin + contentWidth - 260;
-  drawPanel(headerMetaX, 58, 244, 114, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
-  drawStatRow(headerMetaX + 12, 72, 220, 'Generated timestamp', formatDate(packet.createdAt), undefined);
-  drawStatRow(headerMetaX + 12, 96, 220, 'Verification ID', packet.id, undefined);
-  pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text('Report integrity hash', headerMetaX + 12, 120, { width: 220 });
-  pdf.font('Courier').fillColor(colors.text).fontSize(8.3).text(formatHash(packet.verificationHash), headerMetaX + 12, 134, { width: 220, lineGap: 1.2 });
+  const metaGridY = currentY + 102;
+  const metaGridWidth = CONTENT_WIDTH - CARD_PADDING * 2;
+  const metaColWidth = (metaGridWidth - GRID_GAP) / 2;
+  drawLabelValue('Startup', truncateMiddle(startup.name, 36), MARGIN_X + CARD_PADDING, metaGridY, metaColWidth);
+  drawLabelValue('Generated', formatDate(packet.createdAt), MARGIN_X + CARD_PADDING + metaColWidth + GRID_GAP, metaGridY, metaColWidth);
+  drawLabelValue('Verification ID', shortReportId(packet.id), MARGIN_X + CARD_PADDING, metaGridY + 34, metaColWidth);
+  drawLabelValue('Integrity Hash', shortHash(packet.verificationHash), MARGIN_X + CARD_PADDING + metaColWidth + GRID_GAP, metaGridY + 34, metaColWidth);
 
-  drawExecutiveSummary();
+  currentY += headerHeight + SECTION_GAP;
+  const summaryHeight = 76;
+  currentY = ensureSpace(currentY, summaryHeight);
+  drawExecutiveSummary(MARGIN_X, currentY, CONTENT_WIDTH, summaryHeight);
 
-  drawSectionHeader('Revenue Metrics', 'Gross revenue is presented as the primary figure, followed by the remaining revenue indicators.', margin, 288, contentWidth);
-  drawMetricCard({ x: margin, y: 312, w: contentWidth, h: 104, label: 'Gross Revenue', value: currency.format(packet.metrics.grossRevenue), detail: 'Primary revenue figure for diligence review', emphasis: true, fill: colors.surface });
-  const metricGap = 12;
-  const smallMetricWidth = (contentWidth - metricGap * 2) / 3;
-  const smallMetricY = 428;
-  drawMetricCard({ x: margin, y: smallMetricY, w: smallMetricWidth, h: 82, label: 'Net Revenue', value: currency.format(packet.metrics.netRevenue), detail: 'After refunds and chargebacks' });
-  drawMetricCard({ x: margin + smallMetricWidth + metricGap, y: smallMetricY, w: smallMetricWidth, h: 82, label: 'MRR', value: currency.format(packet.metrics.mrr), detail: 'Monthly recurring revenue' });
-  drawMetricCard({ x: margin + (smallMetricWidth + metricGap) * 2, y: smallMetricY, w: smallMetricWidth, h: 82, label: 'ARR', value: currency.format(packet.metrics.arr), detail: 'Annualized recurring revenue' });
+  currentY += summaryHeight + SECTION_GAP;
+  const page1SectionHeight = 24 + PAGE1_CARD_HEIGHT * 2 + ROW_GAP;
+  currentY = ensureSpace(currentY, page1SectionHeight);
+  drawSectionHeader('Revenue Metrics', 'Gross revenue is presented as the primary figure, followed by the remaining revenue indicators.', MARGIN_X, currentY, CONTENT_WIDTH);
+  currentY += 24;
+  const grossCardY = currentY;
+  const grossCardX = MARGIN_X;
+  const netCardX = MARGIN_X + CARD_WIDTH + GRID_GAP;
+  drawMetricCard({ x: grossCardX, y: grossCardY, w: CARD_WIDTH, h: PAGE1_CARD_HEIGHT, label: 'Gross Revenue', value: currency.format(packet.metrics.grossRevenue), detail: 'Primary revenue figure for diligence review', emphasis: true, fill: colors.surface });
+  drawMetricCard({ x: netCardX, y: grossCardY, w: CARD_WIDTH, h: PAGE1_CARD_HEIGHT, label: 'Net Revenue', value: currency.format(packet.metrics.netRevenue), detail: 'After refunds and chargebacks' });
+  drawMetricCard({ x: grossCardX, y: grossCardY + PAGE1_CARD_HEIGHT + ROW_GAP, w: CARD_WIDTH, h: PAGE1_CARD_HEIGHT, label: 'MRR', value: currency.format(packet.metrics.mrr), detail: 'Monthly recurring revenue' });
+  drawMetricCard({ x: netCardX, y: grossCardY + PAGE1_CARD_HEIGHT + ROW_GAP, w: CARD_WIDTH, h: PAGE1_CARD_HEIGHT, label: 'ARR', value: currency.format(packet.metrics.arr), detail: 'Annualized recurring revenue' });
   drawFooter(1);
 
   pdf.addPage();
   startPage();
-  drawSectionHeader('Revenue History', 'The chart is intentionally minimal, monochrome, and audit-oriented.', margin, 44, contentWidth);
-  drawMonthlyChart(margin, 74, contentWidth, 250);
+  currentY = MARGIN_TOP;
+  drawSectionHeader('Revenue History', 'The chart is intentionally minimal, monochrome, and audit-oriented.', MARGIN_X, currentY, CONTENT_WIDTH);
+  currentY += 24;
+  drawMonthlyChart(MARGIN_X, currentY, CONTENT_WIDTH, 250);
 
-  drawPanel(margin, 340, contentWidth, 210, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(12).text('Revenue Trend Commentary', margin + 14, 354, { width: contentWidth - 28 });
-  pdf.font(pdfFonts.regular).fillColor(colors.text).fontSize(10).text(revenueCommentary(), margin + 14, 374, {
-    width: contentWidth - 28,
-    lineGap: 2,
+  currentY += 268;
+  const monthlyPoints = packet.metrics.monthlyBreakdown.slice(-6);
+  const page2CommentaryHeight = monthlyPoints.length > 0 ? 220 : 150;
+  currentY = ensureSpace(currentY + SECTION_GAP, page2CommentaryHeight);
+  drawPanel(MARGIN_X, currentY, CONTENT_WIDTH, page2CommentaryHeight, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
+  drawTextBox('Revenue Trend Commentary', MARGIN_X + CARD_PADDING, currentY + CARD_PADDING - 1, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 12,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 2,
+  });
+  drawTextBox(revenueCommentary(), MARGIN_X + CARD_PADDING, currentY + 34, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.regular,
+    fontSize: 10,
+    color: colors.text,
+    lineGap: 2.5,
+    height: 44,
   });
 
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(10).text('Monthly revenue points', margin + 14, 438, { width: contentWidth - 28 });
-  const monthlyPoints = packet.metrics.monthlyBreakdown.slice(-6);
   if (monthlyPoints.length === 0) {
-    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9.5).text('No recurring monthly revenue detected during this reporting window.', margin + 14, 456, {
-      width: contentWidth - 28,
+    drawTextBox('If no recurring monthly revenue is present, the history section remains intentionally blank apart from the empty-state card above.', MARGIN_X + CARD_PADDING, currentY + 82, CONTENT_WIDTH - CARD_PADDING * 2, {
+      font: pdfFonts.regular,
+      fontSize: 9,
+      color: colors.muted,
+      lineGap: 2,
+      height: 30,
     });
   } else {
-    const tableLeft = margin + 14;
-    const tableTop = 456;
-    const tableWidth = contentWidth - 28;
+    drawTextBox('Monthly revenue points', MARGIN_X + CARD_PADDING, currentY + 84, CONTENT_WIDTH - CARD_PADDING * 2, {
+      font: pdfFonts.bold,
+      fontSize: 10,
+      color: colors.text,
+      height: LINE_HEIGHT,
+    });
+    const tableTop = currentY + 104;
+    const tableLeft = MARGIN_X + CARD_PADDING;
+    const tableWidth = CONTENT_WIDTH - CARD_PADDING * 2;
     pdf.save();
-    pdf.moveTo(tableLeft, tableTop + 12).lineTo(tableLeft + tableWidth, tableTop + 12).lineWidth(0.5).stroke(colors.border);
+    pdf.moveTo(tableLeft, tableTop + 14).lineTo(tableLeft + tableWidth, tableTop + 14).lineWidth(0.5).stroke(colors.border);
     pdf.restore();
     monthlyPoints.forEach((point, index) => {
-      const rowY = tableTop + 18 + index * 18;
-      pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text(point.period, tableLeft, rowY, { width: 70 });
-      pdf.font('Courier').fillColor(colors.text).fontSize(9).text(currency.format(point.value), tableLeft + 90, rowY, { width: tableWidth - 90, align: 'right' });
+      const rowY = tableTop + 20 + index * 18;
+      drawTextBox(point.period, tableLeft, rowY, 70, {
+        font: pdfFonts.regular,
+        fontSize: 9,
+        color: colors.muted,
+        height: LINE_HEIGHT,
+        ellipsis: true,
+      });
+      drawTextBox(currency.format(point.value), tableLeft + 90, rowY, tableWidth - 90, {
+        font: 'Courier',
+        fontSize: 9,
+        color: colors.text,
+        align: 'right',
+        height: LINE_HEIGHT,
+        ellipsis: true,
+      });
     });
   }
   drawFooter(2);
 
   pdf.addPage();
   startPage();
-  drawSectionHeader('Customer and Subscription Metrics', 'Customer counts and per-account metrics are presented with audit-style restraint.', margin, 44, contentWidth);
+  currentY = MARGIN_TOP;
+  drawSectionHeader('Customer and Subscription Metrics', 'Customer counts and per-account metrics are presented with audit-style restraint.', MARGIN_X, currentY, CONTENT_WIDTH);
+  currentY += 24;
 
-  const columnGap = 12;
-  const leftWidth = (contentWidth - columnGap) / 2;
-  const rightWidth = leftWidth;
-  drawPanel(margin, 76, leftWidth, 212, { fill: colors.surface, stroke: colors.border, radius: 7 });
-  drawPanel(margin + leftWidth + columnGap, 76, rightWidth, 212, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
+  const columnGap = GRID_GAP;
+  const columnWidth = (CONTENT_WIDTH - columnGap) / 2;
+  const sectionBlockHeight = 324;
+  drawPanel(MARGIN_X, currentY, columnWidth, sectionBlockHeight, { fill: colors.surface, stroke: colors.border, radius: 7 });
+  drawPanel(MARGIN_X + columnWidth + columnGap, currentY, columnWidth, sectionBlockHeight, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
 
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(12).text('Customer metrics', margin + 14, 90, { width: leftWidth - 28 });
-  drawMetricCard({ x: margin + 14, y: 116, w: leftWidth - 28, h: 50, label: 'Active Customers', value: wholeNumber.format(packet.metrics.activeCustomers), detail: 'Unique customer count in the reporting window' });
-  drawMetricCard({ x: margin + 14, y: 172, w: leftWidth - 28, h: 50, label: 'ARPC', value: decimalCurrency.format(packet.metrics.arpc), detail: 'Average revenue per customer' });
-  drawMetricCard({ x: margin + 14, y: 228, w: leftWidth - 28, h: 50, label: 'Repeat Customer Rate', value: repeatCustomerRate === null ? 'N/A' : percent.format(repeatCustomerRate), detail: repeatCustomerRate === null ? 'Placeholder if unavailable from the current Stripe snapshot' : 'Calculated from repeat purchases' });
+  drawTextBox('Customer metrics', MARGIN_X + CARD_PADDING, currentY + CARD_PADDING - 1, columnWidth - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 12,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 2,
+  });
+  drawMetricCard({ x: MARGIN_X + CARD_PADDING, y: currentY + 38, w: columnWidth - CARD_PADDING * 2, h: PAGE3_CARD_HEIGHT, label: 'Active Customers', value: wholeNumber.format(packet.metrics.activeCustomers), detail: 'Unique customer count in the reporting window' });
+  drawMetricCard({ x: MARGIN_X + CARD_PADDING, y: currentY + 136, w: columnWidth - CARD_PADDING * 2, h: PAGE3_CARD_HEIGHT, label: 'ARPC', value: decimalCurrency.format(packet.metrics.arpc), detail: 'Average revenue per customer' });
+  drawMetricCard({ x: MARGIN_X + CARD_PADDING, y: currentY + 234, w: columnWidth - CARD_PADDING * 2, h: PAGE3_CARD_HEIGHT, label: 'Repeat Customer Rate', value: repeatCustomerRate === null ? 'N/A' : percent.format(repeatCustomerRate), detail: repeatCustomerRate === null ? 'Placeholder if unavailable from the current Stripe snapshot' : 'Calculated from repeat purchases' });
 
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(12).text('Risk & quality', margin + leftWidth + columnGap + 14, 90, { width: rightWidth - 28 });
-  drawMetricCard({ x: margin + leftWidth + columnGap + 14, y: 116, w: rightWidth - 28, h: 50, label: 'Refunds', value: currency.format(packet.metrics.refunds), detail: 'Refunded volume during the period' });
-  drawMetricCard({ x: margin + leftWidth + columnGap + 14, y: 172, w: rightWidth - 28, h: 50, label: 'Chargebacks', value: currency.format(packet.metrics.chargebacks), detail: 'Disputed volume during the period' });
-  drawMetricCard({ x: margin + leftWidth + columnGap + 14, y: 228, w: rightWidth - 28, h: 50, label: 'Dispute Rate', value: percent.format(disputeRate), detail: 'Chargebacks divided by gross revenue' });
+  drawTextBox('Risk & quality', MARGIN_X + columnWidth + columnGap + CARD_PADDING, currentY + CARD_PADDING - 1, columnWidth - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 12,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 2,
+  });
+  drawMetricCard({ x: MARGIN_X + columnWidth + columnGap + CARD_PADDING, y: currentY + 38, w: columnWidth - CARD_PADDING * 2, h: PAGE3_CARD_HEIGHT, label: 'Refunds', value: currency.format(packet.metrics.refunds), detail: 'Refunded volume during the period' });
+  drawMetricCard({ x: MARGIN_X + columnWidth + columnGap + CARD_PADDING, y: currentY + 136, w: columnWidth - CARD_PADDING * 2, h: PAGE3_CARD_HEIGHT, label: 'Chargebacks', value: currency.format(packet.metrics.chargebacks), detail: 'Disputed volume during the period' });
+  drawMetricCard({ x: MARGIN_X + columnWidth + columnGap + CARD_PADDING, y: currentY + 234, w: columnWidth - CARD_PADDING * 2, h: PAGE3_CARD_HEIGHT, label: 'Dispute Rate', value: percent.format(disputeRate), detail: 'Chargebacks divided by gross revenue' });
 
-  drawPanel(margin, 306, contentWidth, 124, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(11).text('Quality context', margin + 14, 320, { width: contentWidth - 28 });
-  pdf.font(pdfFonts.regular).fillColor(colors.text).fontSize(9.5).text(
+  currentY += sectionBlockHeight + SECTION_GAP;
+  const qualityContextHeight = 112;
+  currentY = ensureSpace(currentY, qualityContextHeight);
+  drawPanel(MARGIN_X, currentY, CONTENT_WIDTH, qualityContextHeight, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
+  drawTextBox('Quality context', MARGIN_X + CARD_PADDING, currentY + CARD_PADDING - 1, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 11,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 2,
+  });
+  drawTextBox(
     'Refunds and chargebacks are shown separately so diligence reviewers can distinguish customer-favorable adjustments from disputed payment volume. The packet remains intentionally conservative and does not infer any off-Stripe revenue quality measures.',
-    margin + 14,
-    338,
-    { width: contentWidth - 28, lineGap: 2 }
+    MARGIN_X + CARD_PADDING,
+    currentY + 34,
+    CONTENT_WIDTH - CARD_PADDING * 2,
+    { font: pdfFonts.regular, fontSize: 9.5, color: colors.text, lineGap: 2, height: 52 }
   );
   drawFooter(3);
 
   pdf.addPage();
   startPage();
-  drawSectionHeader('Verification Methodology', 'The last page documents how the packet is derived and what it does not attempt to prove.', margin, 44, contentWidth);
+  currentY = MARGIN_TOP;
+  drawSectionHeader('Verification Methodology', 'The last page documents how the packet is derived and what it does not attempt to prove.', MARGIN_X, currentY, CONTENT_WIDTH);
+  currentY += 24;
 
-  drawPanel(margin, 76, contentWidth, 126, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(11).text('Methodology', margin + 14, 90, { width: contentWidth - 28 });
+  const methodologyHeight = 120;
+  currentY = ensureSpace(currentY, methodologyHeight);
+  drawPanel(MARGIN_X, currentY, CONTENT_WIDTH, methodologyHeight, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
+  drawTextBox('Methodology', MARGIN_X + CARD_PADDING, currentY + CARD_PADDING - 1, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 11,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 2,
+  });
   const methodologyNotes = [
     'Metrics are generated from a connected Stripe account using read-only API access.',
     'Gross revenue combines succeeded charges and paid invoices within the selected time window.',
@@ -714,21 +1015,59 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
     'MRR and ARR are derived from active subscription pricing intervals.',
     'The integrity hash is derived from the startup, time window, metrics, references, and generation timestamp.',
   ];
-  let noteY = 110;
+  let noteY = currentY + 32;
   methodologyNotes.forEach(note => {
-    pdf.font(pdfFonts.regular).fillColor(colors.text).fontSize(9.2).text(`• ${note}`, margin + 14, noteY, { width: contentWidth - 28, lineGap: 1.2 });
-    noteY = pdf.y + 4;
+    drawTextBox(`• ${note}`, MARGIN_X + CARD_PADDING, noteY, CONTENT_WIDTH - CARD_PADDING * 2, {
+      font: pdfFonts.regular,
+      fontSize: 9.1,
+      color: colors.text,
+      lineGap: 1.3,
+      height: 18,
+    });
+    noteY += 18;
   });
 
-  drawPanel(margin, 214, contentWidth, 140, { fill: colors.surface, stroke: colors.border, radius: 7 });
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(11).text('Verification metadata', margin + 14, 228, { width: contentWidth - 28 });
-  drawStatRow(margin + 14, 248, contentWidth - 28, 'Startup', startup.name, startup.tagline || startup.stage || startup.industry || 'Investor verification packet');
-  drawStatRow(margin + 14, 272, contentWidth - 28, 'Reporting window', `${formatDate(packet.timeRangeStart)} to ${formatDate(packet.timeRangeEnd)}`);
-  drawStatRow(margin + 14, 296, contentWidth - 28, 'Generated by', packet.generatedBy);
-  pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text('Verification hash', margin + 14, 320, { width: contentWidth - 28 });
-  pdf.font('Courier').fillColor(colors.text).fontSize(7.8).text(formatHash(packet.verificationHash), margin + 14, 333, {
-    width: contentWidth - 28,
+  currentY += methodologyHeight + SECTION_GAP;
+  const metadataHeight = 192;
+  currentY = ensureSpace(currentY, metadataHeight);
+  drawPanel(MARGIN_X, currentY, CONTENT_WIDTH, metadataHeight, { fill: colors.surface, stroke: colors.border, radius: 7 });
+  drawTextBox('Verification Metadata', MARGIN_X + CARD_PADDING, currentY + CARD_PADDING - 1, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 11,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 2,
+  });
+  const metadataColWidth = (CONTENT_WIDTH - CARD_PADDING * 2 - GRID_GAP) / 2;
+  drawLabelValue('Startup', truncateMiddle(startup.name, 36), MARGIN_X + CARD_PADDING, currentY + 34, metadataColWidth);
+  drawLabelValue('Generated', formatDate(packet.createdAt), MARGIN_X + CARD_PADDING + metadataColWidth + GRID_GAP, currentY + 34, metadataColWidth);
+  drawLabelValue('Report ID', shortReportId(packet.id), MARGIN_X + CARD_PADDING, currentY + 68, metadataColWidth);
+  drawLabelValue('Integrity Hash', shortHash(packet.verificationHash), MARGIN_X + CARD_PADDING + metadataColWidth + GRID_GAP, currentY + 68, metadataColWidth);
+  drawTextBox('Full report ID', MARGIN_X + CARD_PADDING, currentY + 106, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 8.5,
+    color: colors.muted,
+    height: LINE_HEIGHT,
+  });
+  drawTextBox(packet.id, MARGIN_X + CARD_PADDING, currentY + 120, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: 'Courier',
+    fontSize: 8.2,
+    color: colors.text,
     lineGap: 1.1,
+    height: 22,
+  });
+  drawTextBox('Full integrity hash', MARGIN_X + CARD_PADDING, currentY + 146, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 8.5,
+    color: colors.muted,
+    height: LINE_HEIGHT,
+  });
+  drawTextBox(packet.verificationHash, MARGIN_X + CARD_PADDING, currentY + 160, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: 'Courier',
+    fontSize: 7.9,
+    color: colors.text,
+    lineGap: 1.1,
+    height: 24,
   });
 
   const referenceGroups: Array<{ title: string; values: string[] }> = [
@@ -738,21 +1077,34 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
     { title: 'Stripe Customer IDs', values: packet.references.customerIds },
   ];
 
-  drawPanel(margin, 364, contentWidth, 166, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
-  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(11).text('Stripe read-only evidence', margin + 14, 366, { width: contentWidth - 28 });
-  const leftEvidenceWidth = (contentWidth - 36) / 2;
-  const rightEvidenceX = margin + leftEvidenceWidth + 22;
-  drawReferenceList(referenceGroups[0].title, referenceGroups[0].values, margin + 14, 386, leftEvidenceWidth, 3);
-  drawReferenceList(referenceGroups[1].title, referenceGroups[1].values, rightEvidenceX, 386, leftEvidenceWidth, 3);
-  drawReferenceList(referenceGroups[2].title, referenceGroups[2].values, margin + 14, 448, leftEvidenceWidth, 3);
-  drawReferenceList(referenceGroups[3].title, referenceGroups[3].values, rightEvidenceX, 448, leftEvidenceWidth, 3);
+  currentY += metadataHeight + SECTION_GAP;
+  const evidenceHeight = 168;
+  currentY = ensureSpace(currentY, evidenceHeight);
+  drawPanel(MARGIN_X, currentY, CONTENT_WIDTH, evidenceHeight, { fill: colors.surfaceMuted, stroke: colors.border, radius: 7 });
+  drawTextBox('Stripe Evidence References', MARGIN_X + CARD_PADDING, currentY + CARD_PADDING - 1, CONTENT_WIDTH - CARD_PADDING * 2, {
+    font: pdfFonts.bold,
+    fontSize: 11,
+    color: colors.text,
+    ellipsis: true,
+    height: LINE_HEIGHT + 2,
+  });
+  const leftEvidenceWidth = (CONTENT_WIDTH - CARD_PADDING * 2 - GRID_GAP) / 2;
+  const rightEvidenceX = MARGIN_X + CARD_PADDING + leftEvidenceWidth + GRID_GAP;
+  drawReferenceList(referenceGroups[0].title, referenceGroups[0].values, MARGIN_X + CARD_PADDING, currentY + 34, leftEvidenceWidth, 3);
+  drawReferenceList(referenceGroups[1].title, referenceGroups[1].values, rightEvidenceX, currentY + 34, leftEvidenceWidth, 3);
+  drawReferenceList(referenceGroups[2].title, referenceGroups[2].values, MARGIN_X + CARD_PADDING, currentY + 94, leftEvidenceWidth, 3);
+  drawReferenceList(referenceGroups[3].title, referenceGroups[3].values, rightEvidenceX, currentY + 94, leftEvidenceWidth, 3);
 
-  drawDisclaimerBlock(margin, 542, contentWidth, 72);
-  pdf.font(pdfFonts.regular).fillColor(colors.mutedSoft).fontSize(8.5).text(
+  currentY += evidenceHeight + SECTION_GAP;
+  const disclaimerHeight = 92;
+  currentY = ensureSpace(currentY, disclaimerHeight);
+  drawDisclaimerBlock(MARGIN_X, currentY, CONTENT_WIDTH, disclaimerHeight);
+  drawTextBox(
     'The packet is informational only and does not replace accounting, legal, or investment diligence. All references are included for traceability and do not grant write access to the Stripe account.',
-    margin + 14,
-    562,
-    { width: contentWidth - 28, lineGap: 1.2 }
+    MARGIN_X + CARD_PADDING,
+    currentY + 56,
+    CONTENT_WIDTH - CARD_PADDING * 2,
+    { font: pdfFonts.regular, fontSize: 8.5, color: colors.mutedSoft, lineGap: 1.2, height: 28 }
   );
   drawFooter(4);
 
