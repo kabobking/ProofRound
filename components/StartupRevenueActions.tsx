@@ -1,6 +1,6 @@
 'use client';
 
-import { MouseEvent } from 'react';
+import { MouseEvent, useMemo, useState } from 'react';
 
 interface StartupRevenueActionsProps {
   startupId: string;
@@ -14,6 +14,8 @@ type PacketRange = {
   start?: string;
   end?: string;
 };
+
+type RangePreset = '30d' | '90d' | '365d' | 'all' | 'custom';
 
 const packetPriceLabel = process.env.NEXT_PUBLIC_VERIFIED_PACKET_PRICE_USD || '49';
 
@@ -72,67 +74,43 @@ function parseIsoDate(input: string, isEnd = false) {
   return parsed;
 }
 
-function promptForPacketRange(): PacketRange | null {
-  const answer = window.prompt(
-    'Choose packet time range: 30d, 90d, 365d, custom, or all.\nExamples: 30d or custom',
-    '30d'
-  );
-
-  if (answer === null) {
-    return null;
+function resolveRangeSelection(preset: RangePreset, customStart: string, customEnd: string): { range?: PacketRange; error?: string } {
+  if (preset === '30d') {
+    return { range: createPresetRange(30) };
   }
 
-  const selection = answer.trim().toLowerCase() || '30d';
-
-  if (selection === '30d' || selection === '30' || selection === '1') {
-    return createPresetRange(30);
+  if (preset === '90d') {
+    return { range: createPresetRange(90) };
   }
 
-  if (selection === '90d' || selection === '90' || selection === '2') {
-    return createPresetRange(90);
+  if (preset === '365d') {
+    return { range: createPresetRange(365) };
   }
 
-  if (selection === '365d' || selection === '365' || selection === '3' || selection === '1y') {
-    return createPresetRange(365);
+  if (preset === 'all') {
+    return { range: {} };
   }
 
-  if (selection === 'all' || selection === 'lifetime' || selection === '4') {
-    return {};
+  const startDate = parseIsoDate(customStart);
+  if (!startDate) {
+    return { error: 'Enter a valid custom start date (YYYY-MM-DD).' };
   }
 
-  if (selection === 'custom' || selection === 'c') {
-    const startInput = window.prompt('Enter start date (YYYY-MM-DD):');
-    if (startInput === null) {
-      return null;
-    }
-
-    const endInput = window.prompt('Enter end date (YYYY-MM-DD), or leave blank for today:', '');
-    if (endInput === null) {
-      return null;
-    }
-
-    const startDate = parseIsoDate(startInput);
-    if (!startDate) {
-      window.alert('Invalid start date. Use YYYY-MM-DD.');
-      return null;
-    }
-
-    const endDate = endInput.trim() ? parseIsoDate(endInput, true) : new Date();
-    if (!endDate) {
-      window.alert('Invalid end date. Use YYYY-MM-DD.');
-      return null;
-    }
-
-    if (startDate.getTime() > endDate.getTime()) {
-      window.alert('Start date must be on or before end date.');
-      return null;
-    }
-
-    return { start: startDate.toISOString(), end: endDate.toISOString() };
+  const endDate = customEnd.trim() ? parseIsoDate(customEnd, true) : new Date();
+  if (!endDate) {
+    return { error: 'Enter a valid custom end date (YYYY-MM-DD), or leave it blank.' };
   }
 
-  window.alert('Range not recognized. Use 30d, 90d, 365d, custom, or all.');
-  return null;
+  if (startDate.getTime() > endDate.getTime()) {
+    return { error: 'Custom start date must be on or before the end date.' };
+  }
+
+  return {
+    range: {
+      start: startDate.toISOString(),
+      end: endDate.toISOString(),
+    },
+  };
 }
 
 function appendPacketRange(url: string | undefined, range: PacketRange) {
@@ -164,6 +142,27 @@ export default function StartupRevenueActions({
   stripeConnected = false,
   variant = 'founder',
 }: StartupRevenueActionsProps) {
+  const [isRangeModalOpen, setIsRangeModalOpen] = useState(false);
+  const [rangePreset, setRangePreset] = useState<RangePreset>('30d');
+  const [customStartDate, setCustomStartDate] = useState('');
+  const [customEndDate, setCustomEndDate] = useState('');
+  const [rangeError, setRangeError] = useState<string | null>(null);
+  const [pendingGenerateUrl, setPendingGenerateUrl] = useState<string | null>(null);
+
+  const isCustomRange = rangePreset === 'custom';
+
+  const presetDescription = useMemo(() => {
+    if (rangePreset === '30d') return 'Includes the last 30 days up to now.';
+    if (rangePreset === '90d') return 'Includes the last 90 days up to now.';
+    if (rangePreset === '365d') return 'Includes the last 12 months up to now.';
+    if (rangePreset === 'all') return 'Uses the full available Stripe history for this startup.';
+    return 'Choose start/end dates to define a custom reporting window.';
+  }, [rangePreset]);
+
+  const closeRangeModal = () => {
+    setIsRangeModalOpen(false);
+    setRangeError(null);
+  };
   const appendStartupId = (url: string | undefined) => {
     if (!url) return undefined;
 
@@ -210,15 +209,32 @@ export default function StartupRevenueActions({
       return;
     }
 
-    const selectedRange = promptForPacketRange();
-    if (selectedRange === null) {
+    setPendingGenerateUrl(configuredUrl);
+    setRangePreset('30d');
+    setCustomStartDate('');
+    setCustomEndDate('');
+    setRangeError(null);
+    setIsRangeModalOpen(true);
+  };
+
+  const handleConfirmRange = () => {
+    if (!pendingGenerateUrl) {
+      setRangeError('Could not find a packet generation URL. Please try again.');
+      return;
+    }
+
+    const { range, error } = resolveRangeSelection(rangePreset, customStartDate, customEndDate);
+    if (error || !range) {
+      setRangeError(error || 'Choose a valid range before continuing.');
       return;
     }
 
     openExternalTarget(
-      appendPacketRange(configuredUrl, selectedRange),
+      appendPacketRange(pendingGenerateUrl, range),
       'Could not build a packet generation URL. Please check your configuration and try again.'
     );
+
+    closeRangeModal();
   };
 
   const handleRequestPacket = (event: MouseEvent<HTMLButtonElement>) => {
@@ -259,28 +275,121 @@ export default function StartupRevenueActions({
 
   if (variant === 'founder') {
     return (
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          onClick={handleConnectStripe}
-          className="inline-flex items-center rounded-full border border-[var(--accent)] bg-[var(--accentTint)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:opacity-90"
-        >
-          {stripeConnected ? 'Manage Stripe' : 'Connect with Stripe'}
-        </button>
-        <button
-          type="button"
-          onClick={handleGeneratePacket}
-          className="inline-flex items-center rounded-full border border-[var(--accent2)]/40 bg-[var(--accent2)]/10 px-4 py-2 text-sm font-medium text-[var(--accent2)] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
-          disabled={!stripeConnected}
-        >
-          Generate verified PDF
-        </button>
-        {!stripeConnected && (
-          <span className="self-center text-xs text-[var(--muted)]">
-            Stripe access is required before generating verified packets.
-          </span>
+      <>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={handleConnectStripe}
+            className="inline-flex items-center rounded-full border border-[var(--accent)] bg-[var(--accentTint)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:opacity-90"
+          >
+            {stripeConnected ? 'Manage Stripe' : 'Connect with Stripe'}
+          </button>
+          <button
+            type="button"
+            onClick={handleGeneratePacket}
+            className="inline-flex items-center rounded-full border border-[var(--accent2)]/40 bg-[var(--accent2)]/10 px-4 py-2 text-sm font-medium text-[var(--accent2)] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            disabled={!stripeConnected}
+          >
+            Generate verified PDF
+          </button>
+          {!stripeConnected && (
+            <span className="self-center text-xs text-[var(--muted)]">
+              Stripe access is required before generating verified packets.
+            </span>
+          )}
+        </div>
+
+        {isRangeModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <button
+              type="button"
+              aria-label="Close date range picker"
+              className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]"
+              onClick={closeRangeModal}
+            />
+            <div className="relative w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.25)]">
+              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Verification packet</p>
+              <h3 className="mt-2 text-xl font-semibold tracking-tight text-[var(--text)]">Choose a date range</h3>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Select the reporting window for this generated PDF.</p>
+
+              <label htmlFor="packet-range" className="mt-5 block text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
+                Date range
+              </label>
+              <select
+                id="packet-range"
+                value={rangePreset}
+                onChange={event => {
+                  setRangePreset(event.target.value as RangePreset);
+                  setRangeError(null);
+                }}
+                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+              >
+                <option value="30d">Last 30 days</option>
+                <option value="90d">Last 90 days</option>
+                <option value="365d">Last 12 months</option>
+                <option value="all">All available history</option>
+                <option value="custom">Custom range</option>
+              </select>
+
+              <p className="mt-2 text-xs text-[var(--muted)]">{presetDescription}</p>
+
+              {isCustomRange && (
+                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                  <div>
+                    <label htmlFor="packet-start" className="block text-xs font-medium uppercase tracking-[0.16em] text-[var(--muted)]">Start date</label>
+                    <input
+                      id="packet-start"
+                      type="date"
+                      value={customStartDate}
+                      onChange={event => {
+                        setCustomStartDate(event.target.value);
+                        setRangeError(null);
+                      }}
+                      className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="packet-end" className="block text-xs font-medium uppercase tracking-[0.16em] text-[var(--muted)]">End date</label>
+                    <input
+                      id="packet-end"
+                      type="date"
+                      value={customEndDate}
+                      onChange={event => {
+                        setCustomEndDate(event.target.value);
+                        setRangeError(null);
+                      }}
+                      className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {rangeError && (
+                <p className="mt-4 rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300">
+                  {rangeError}
+                </p>
+              )}
+
+              <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+                <button
+                  type="button"
+                  onClick={closeRangeModal}
+                  className="inline-flex min-h-[42px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-colors hover:bg-[var(--surface)]"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={handleConfirmRange}
+                  className="inline-flex min-h-[42px] items-center justify-center rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-foreground)] transition-opacity hover:opacity-90"
+                >
+                  Generate PDF
+                </button>
+              </div>
+            </div>
+          </div>
         )}
-      </div>
+      </>
     );
   }
 

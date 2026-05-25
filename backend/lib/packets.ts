@@ -1,4 +1,6 @@
 import crypto from 'crypto';
+import fs from 'fs';
+import path from 'path';
 import PDFDocument from 'pdfkit';
 import { getDb } from './firebase-admin.js';
 import { getStripeClient } from './stripe.js';
@@ -51,6 +53,57 @@ type PacketRecord = {
   expiresAt: string;
   views: number;
 };
+
+type PdfFontSelection = {
+  regular: string;
+  bold: string;
+};
+
+function resolveFontFile(baseDirs: string[], names: string[]) {
+  for (const dir of baseDirs) {
+    for (const name of names) {
+      const candidate = path.join(dir, name);
+      if (fs.existsSync(candidate)) {
+        return candidate;
+      }
+    }
+  }
+
+  return null;
+}
+
+function configurePdfFonts(pdf: PDFKit.PDFDocument): PdfFontSelection {
+  const fontDirs = [
+    path.resolve(process.cwd(), 'assets', 'fonts'),
+    path.resolve(process.cwd(), 'backend', 'assets', 'fonts'),
+  ];
+
+  const regularFile = resolveFontFile(fontDirs, [
+    'Geist-Regular.ttf',
+    'Geist-Regular.otf',
+    'Geist-Variable.ttf',
+  ]);
+  const boldFile = resolveFontFile(fontDirs, [
+    'Geist-SemiBold.ttf',
+    'Geist-SemiBold.otf',
+    'Geist-Bold.ttf',
+    'Geist-Bold.otf',
+  ]);
+
+  if (regularFile && boldFile) {
+    pdf.registerFont('ProofroundGeistRegular', regularFile);
+    pdf.registerFont('ProofroundGeistBold', boldFile);
+    return {
+      regular: 'ProofroundGeistRegular',
+      bold: 'ProofroundGeistBold',
+    };
+  }
+
+  return {
+    regular: 'Helvetica',
+    bold: 'Helvetica-Bold',
+  };
+}
 
 async function fetchAllCharges(stripeAccountId: string, startTs: number, endTs: number) {
   const stripe = getStripeClient();
@@ -273,6 +326,7 @@ export async function createVerifiedPacket(startupId: string, range?: { start?: 
 
 export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord): Promise<Buffer> {
   const pdf = new PDFDocument({ size: 'A4', margin: 48 });
+  const pdfFonts = configurePdfFonts(pdf);
   const chunks: Buffer[] = [];
 
   const output = new Promise<Buffer>((resolve, reject) => {
@@ -282,15 +336,15 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   });
 
   const colors = {
-    page: '#07101d',
-    surface: '#0e1728',
-    surface2: '#132038',
-    border: '#2f3f5a',
-    text: '#f8fafc',
-    muted: '#cbd5e1',
-    accent: '#818cf8',
-    accent2: '#2dd4bf',
-    badgeBg: '#1e293b',
+    page: '#f6f8fc',
+    surface: '#ffffff',
+    surface2: '#f1f5f9',
+    border: '#d8e1ec',
+    text: '#0f172a',
+    muted: '#475569',
+    accent: '#4f46e5',
+    accent2: '#0f9d8c',
+    badgeBg: '#ecfeff',
   };
 
   const currency = new Intl.NumberFormat('en-US', {
@@ -335,20 +389,21 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   };
 
   paintPageBackground();
+  pdf.font(pdfFonts.regular);
 
   // Header panel
   const headerHeight = 122;
   drawPanel(margin, margin, contentWidth, headerHeight, 16);
 
-  pdf.fillColor(colors.muted).fontSize(9).text('PROOFROUND · VERIFICATION PACKET', margin + 18, margin + 14, {
+  pdf.font(pdfFonts.bold).fillColor(colors.muted).fontSize(9).text('PROOFROUND · VERIFICATION PACKET', margin + 18, margin + 14, {
     width: 280,
     characterSpacing: 1.3,
   });
-  pdf.fillColor(colors.text).fontSize(26).text(startup.name, margin + 18, margin + 30, {
+  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(26).text(startup.name, margin + 18, margin + 30, {
     width: contentWidth - 190,
   });
   if (startup.tagline) {
-    pdf.fillColor(colors.muted).fontSize(11).text(startup.tagline, margin + 18, margin + 67, {
+    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(11).text(startup.tagline, margin + 18, margin + 67, {
       width: contentWidth - 220,
       lineGap: 2,
     });
@@ -359,13 +414,13 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   const badgeY = margin + 18;
   pdf.roundedRect(badgeX, badgeY, badgeWidth, 30, 15).fill(colors.badgeBg);
   pdf.roundedRect(badgeX, badgeY, badgeWidth, 30, 15).lineWidth(1).stroke(colors.accent2);
-  pdf.fillColor(colors.accent2).fontSize(11).text('VERIFIED', badgeX, badgeY + 10, {
+  pdf.font(pdfFonts.bold).fillColor(colors.accent2).fontSize(11).text('VERIFIED', badgeX, badgeY + 10, {
     width: badgeWidth,
     align: 'center',
     characterSpacing: 0.8,
   });
 
-  pdf.fillColor(colors.muted).fontSize(9).text(`Generated ${formatDate(packet.createdAt)}`, badgeX, badgeY + 40, {
+  pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text(`Generated ${formatDate(packet.createdAt)}`, badgeX, badgeY + 40, {
     width: badgeWidth,
     align: 'center',
   });
@@ -377,9 +432,9 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   // Metadata row
   const metaY = margin + headerHeight + 14;
   drawPanel(margin, metaY, contentWidth, 48, 10, true);
-  pdf.fillColor(colors.muted).fontSize(10);
+  pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(10);
   pdf.text('Time range', margin + 14, metaY + 7);
-  pdf.fillColor(colors.text).fontSize(10).text(`${formatDate(packet.timeRangeStart)} -> ${formatDate(packet.timeRangeEnd)}`, margin + 14, metaY + 22, {
+  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(10).text(`${formatDate(packet.timeRangeStart)} -> ${formatDate(packet.timeRangeEnd)}`, margin + 14, metaY + 22, {
     width: contentWidth - 28,
   });
 
@@ -408,14 +463,14 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
 
     drawPanel(x, y, cardWidth, cardHeight, 10);
 
-    pdf.fillColor(colors.muted).fontSize(9).text(metric.label.toUpperCase(), x + 12, y + 10, {
+    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text(metric.label.toUpperCase(), x + 12, y + 10, {
       width: cardWidth - 24,
       characterSpacing: 0.7,
     });
-    pdf.fillColor(colors.text).fontSize(18).text(metric.value, x + 12, y + 23, {
+    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(18).text(metric.value, x + 12, y + 23, {
       width: cardWidth - 24,
     });
-    pdf.fillColor(colors.muted).fontSize(8.5).text(metric.detail, x + 12, y + 50, {
+    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(8.5).text(metric.detail, x + 12, y + 50, {
       width: cardWidth - 24,
     });
   });
@@ -425,7 +480,7 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   const breakdownHeight = 138;
   drawPanel(margin, breakdownY, contentWidth, breakdownHeight, 12, true);
 
-  pdf.fillColor(colors.text).fontSize(13).text('Revenue Trend (Monthly)', margin + 14, breakdownY + 12);
+  pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(13).text('Revenue Trend (Monthly)', margin + 14, breakdownY + 12);
 
   const points = packet.metrics.monthlyBreakdown.slice(-6);
   if (points.length === 0) {
@@ -441,10 +496,10 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
       const y = startY + i * rowGap;
       const barWidth = Math.max(6, (point.value / maxValue) * barMaxWidth);
 
-      pdf.fillColor(colors.muted).fontSize(9).text(point.period, margin + 14, y - 1, { width: 88 });
-      pdf.roundedRect(barX, y + 1, barMaxWidth, 8, 4).fill('#1c2a42');
+      pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9).text(point.period, margin + 14, y - 1, { width: 88 });
+      pdf.roundedRect(barX, y + 1, barMaxWidth, 8, 4).fill('#e2e8f0');
       pdf.roundedRect(barX, y + 1, barWidth, 8, 4).fill(colors.accent);
-      pdf.fillColor(colors.text).fontSize(9).text(currency.format(point.value), barX + barMaxWidth - 76, y - 1, {
+      pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(9).text(currency.format(point.value), barX + barMaxWidth - 76, y - 1, {
         width: 72,
         align: 'right',
       });
@@ -454,10 +509,10 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   // Footer trust note
   const footerY = height - 78;
   drawPanel(margin, footerY, contentWidth, 34, 9);
-  pdf.fillColor(colors.accent2).fontSize(9).text('READ-ONLY STRIPE ACCESS', margin + 12, footerY + 7, {
+  pdf.font(pdfFonts.bold).fillColor(colors.accent2).fontSize(9).text('READ-ONLY STRIPE ACCESS', margin + 12, footerY + 7, {
     characterSpacing: 0.8,
   });
-  pdf.fillColor(colors.muted).fontSize(8).text(`Hash ${packet.verificationHash.slice(0, 20)}... | Packet ID ${packet.id}`, margin + 200, footerY + 8, {
+  pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(8).text(`Hash ${packet.verificationHash.slice(0, 20)}... | Packet ID ${packet.id}`, margin + 200, footerY + 8, {
     width: contentWidth - 210,
     align: 'right',
   });
@@ -482,14 +537,14 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
     paintPageBackground();
 
     drawPanel(margin, margin, contentWidth, 94, 16);
-    pdf.fillColor(colors.muted).fontSize(9).text('PROOFROUND · SOURCE REFERENCES', margin + 18, margin + 14, {
+    pdf.font(pdfFonts.bold).fillColor(colors.muted).fontSize(9).text('PROOFROUND · SOURCE REFERENCES', margin + 18, margin + 14, {
       width: 300,
       characterSpacing: 1.3,
     });
-    pdf.fillColor(colors.text).fontSize(22).text('Audit Trail & Stripe References', margin + 18, margin + 32, {
+    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(22).text('Audit Trail & Stripe References', margin + 18, margin + 32, {
       width: contentWidth - 36,
     });
-    pdf.fillColor(colors.muted).fontSize(10).text('Use these IDs to trace packet figures to Stripe records during investor diligence.', margin + 18, margin + 62, {
+    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(10).text('Use these IDs to trace packet figures to Stripe records during investor diligence.', margin + 18, margin + 62, {
       width: contentWidth - 36,
     });
 
@@ -506,7 +561,7 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
         return;
       }
 
-      pdf.fillColor(colors.accent2).fontSize(10).text(group.title, margin + 14, cursorY, {
+      pdf.font(pdfFonts.bold).fillColor(colors.accent2).fontSize(10).text(group.title, margin + 14, cursorY, {
         width: leftWidth - 28,
       });
       cursorY += 14;
@@ -517,7 +572,7 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
           return;
         }
 
-        pdf.fillColor(colors.muted).fontSize(8.5).text(`• ${value}`, margin + 18, cursorY, {
+        pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(8.5).text(`• ${value}`, margin + 18, cursorY, {
           width: leftWidth - 32,
           ellipsis: true,
         });
@@ -535,7 +590,7 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
     });
 
     const rightX = margin + leftWidth + 26;
-    pdf.fillColor(colors.text).fontSize(12).text('Methodology', rightX, sectionTop + 16, { width: rightWidth - 28 });
+    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(12).text('Methodology', rightX, sectionTop + 16, { width: rightWidth - 28 });
     const notes = [
       'Metrics are generated from Stripe account data connected by the founder.',
       'MRR/ARR are derived from active subscription pricing intervals.',
@@ -546,7 +601,7 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
 
     let noteY = sectionTop + 42;
     notes.forEach(note => {
-      pdf.fillColor(colors.muted).fontSize(9.2).text(`• ${note}`, rightX, noteY, {
+      pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(9.2).text(`• ${note}`, rightX, noteY, {
         width: rightWidth - 34,
         lineGap: 1,
       });
@@ -554,8 +609,8 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
     });
 
     drawPanel(margin + leftWidth + 12 + 14, sectionTop + 370, rightWidth - 28, 170, 10, true);
-    pdf.fillColor(colors.text).fontSize(10).text('Packet Metadata', rightX, sectionTop + 384, { width: rightWidth - 34 });
-    pdf.fillColor(colors.muted).fontSize(8.8).text(`Packet ID: ${packet.id}`, rightX, sectionTop + 404, { width: rightWidth - 34, ellipsis: true });
+    pdf.font(pdfFonts.bold).fillColor(colors.text).fontSize(10).text('Packet Metadata', rightX, sectionTop + 384, { width: rightWidth - 34 });
+    pdf.font(pdfFonts.regular).fillColor(colors.muted).fontSize(8.8).text(`Packet ID: ${packet.id}`, rightX, sectionTop + 404, { width: rightWidth - 34, ellipsis: true });
     pdf.text(`Startup ID: ${packet.startupId || startup.id}`, rightX, sectionTop + 420, { width: rightWidth - 34, ellipsis: true });
     pdf.text(`Generated By: ${packet.generatedBy}`, rightX, sectionTop + 436, { width: rightWidth - 34, ellipsis: true });
     pdf.text(`Created At: ${formatDate(packet.createdAt)}`, rightX, sectionTop + 452, { width: rightWidth - 34, ellipsis: true });
