@@ -10,6 +10,11 @@ interface StartupRevenueActionsProps {
   variant?: 'founder' | 'investor';
 }
 
+type PacketRange = {
+  start?: string;
+  end?: string;
+};
+
 const packetPriceLabel = process.env.NEXT_PUBLIC_VERIFIED_PACKET_PRICE_USD || '49';
 
 function openExternalTarget(url: string | undefined, fallbackMessage: string) {
@@ -45,6 +50,111 @@ function resolveGeneratePacketUrl() {
   }
 
   return undefined;
+}
+
+function createPresetRange(days: number): PacketRange {
+  const end = new Date();
+  const start = new Date(end.getTime() - days * 24 * 60 * 60 * 1000);
+  return { start: start.toISOString(), end: end.toISOString() };
+}
+
+function parseIsoDate(input: string, isEnd = false) {
+  const text = input.trim();
+  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(text)
+    ? `${text}${isEnd ? 'T23:59:59.999Z' : 'T00:00:00.000Z'}`
+    : text;
+  const parsed = new Date(normalized);
+
+  if (Number.isNaN(parsed.getTime())) {
+    return null;
+  }
+
+  return parsed;
+}
+
+function promptForPacketRange(): PacketRange | null {
+  const answer = window.prompt(
+    'Choose packet time range: 30d, 90d, 365d, custom, or all.\nExamples: 30d or custom',
+    '30d'
+  );
+
+  if (answer === null) {
+    return null;
+  }
+
+  const selection = answer.trim().toLowerCase() || '30d';
+
+  if (selection === '30d' || selection === '30' || selection === '1') {
+    return createPresetRange(30);
+  }
+
+  if (selection === '90d' || selection === '90' || selection === '2') {
+    return createPresetRange(90);
+  }
+
+  if (selection === '365d' || selection === '365' || selection === '3' || selection === '1y') {
+    return createPresetRange(365);
+  }
+
+  if (selection === 'all' || selection === 'lifetime' || selection === '4') {
+    return {};
+  }
+
+  if (selection === 'custom' || selection === 'c') {
+    const startInput = window.prompt('Enter start date (YYYY-MM-DD):');
+    if (startInput === null) {
+      return null;
+    }
+
+    const endInput = window.prompt('Enter end date (YYYY-MM-DD), or leave blank for today:', '');
+    if (endInput === null) {
+      return null;
+    }
+
+    const startDate = parseIsoDate(startInput);
+    if (!startDate) {
+      window.alert('Invalid start date. Use YYYY-MM-DD.');
+      return null;
+    }
+
+    const endDate = endInput.trim() ? parseIsoDate(endInput, true) : new Date();
+    if (!endDate) {
+      window.alert('Invalid end date. Use YYYY-MM-DD.');
+      return null;
+    }
+
+    if (startDate.getTime() > endDate.getTime()) {
+      window.alert('Start date must be on or before end date.');
+      return null;
+    }
+
+    return { start: startDate.toISOString(), end: endDate.toISOString() };
+  }
+
+  window.alert('Range not recognized. Use 30d, 90d, 365d, custom, or all.');
+  return null;
+}
+
+function appendPacketRange(url: string | undefined, range: PacketRange) {
+  if (!url) {
+    return undefined;
+  }
+
+  const nextUrl = new URL(url);
+
+  if (range.start) {
+    nextUrl.searchParams.set('start', range.start);
+  } else {
+    nextUrl.searchParams.delete('start');
+  }
+
+  if (range.end) {
+    nextUrl.searchParams.set('end', range.end);
+  } else {
+    nextUrl.searchParams.delete('end');
+  }
+
+  return nextUrl.toString();
 }
 
 export default function StartupRevenueActions({
@@ -92,9 +202,22 @@ export default function StartupRevenueActions({
       return;
     }
 
+    const configuredUrl = appendStartupId(resolveGeneratePacketUrl());
+    if (!configuredUrl) {
+      window.alert(
+        'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL, or set NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL to the matching backend host so ProofRound can derive /api/packets/generate automatically.'
+      );
+      return;
+    }
+
+    const selectedRange = promptForPacketRange();
+    if (selectedRange === null) {
+      return;
+    }
+
     openExternalTarget(
-      appendStartupId(resolveGeneratePacketUrl()),
-      'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL, or set NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL to the matching backend host so ProofRound can derive /api/packets/generate automatically.'
+      appendPacketRange(configuredUrl, selectedRange),
+      'Could not build a packet generation URL. Please check your configuration and try again.'
     );
   };
 
