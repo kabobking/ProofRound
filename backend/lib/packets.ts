@@ -415,7 +415,9 @@ export async function createVerifiedPacket(startupId: string, range?: { start?: 
 
 export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord): Promise<Buffer> {
   return renderInvestorPacketPdf(startup, packet);
+}
 
+/*
   const pdf = new PDFDocument({ size: 'A4', margin: 0 });
   const pdfFonts = configurePdfFonts(pdf);
   const chunks: Buffer[] = [];
@@ -1206,8 +1208,11 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
   pdf.end();
 
   return output;
+
+  if (false) {
 }
 
+/*
 export async function renderInvestorPacketPdf(startup: StartupDoc, packet: PacketRecord): Promise<Buffer> {
   const pdf = new PDFDocument({ size: 'A4', margin: 0 });
   const pdfFonts = configurePdfFonts(pdf);
@@ -1218,6 +1223,237 @@ export async function renderInvestorPacketPdf(startup: StartupDoc, packet: Packe
     pdf.on('end', () => resolve(Buffer.concat(chunks)));
     pdf.on('error', reject);
   });
+
+  const margin = 56;
+  const contentWidth = pdf.page.width - margin * 2;
+  const bottom = pdf.page.height - margin;
+  const state = { page: 1, y: margin };
+
+  const formatDate = (value: string) => {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime())
+      ? value
+      : parsed.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short',
+        });
+  };
+
+  const ensureSpace = (height: number) => {
+    if (state.y + height > bottom - 18) {
+      writeFooter();
+      pdf.addPage();
+      state.page += 1;
+      state.y = margin;
+    }
+  };
+
+  const writeText = (text: string, options?: { font?: string; size?: number; lineGap?: number; bold?: boolean; indent?: number }) => {
+    const font = options?.bold ? 'Helvetica-Bold' : options?.font ?? 'Helvetica';
+    const size = options?.size ?? 10;
+    const textHeight = pdf.heightOfString(text, { width: contentWidth - (options?.indent ?? 0), lineGap: options?.lineGap ?? 3 });
+    pdf.font(font).fontSize(size).fillColor('black').text(text, margin + (options?.indent ?? 0), state.y, {
+      width: contentWidth - (options?.indent ?? 0),
+      lineGap: options?.lineGap ?? 3,
+    });
+    state.y += textHeight + 8;
+  };
+
+  const writeHeading = (text: string) => {
+    ensureSpace(28);
+    writeText(text, { bold: true, size: 16, lineGap: 2 });
+    state.y -= 2;
+  };
+
+  const writeSubheading = (text: string) => {
+    ensureSpace(22);
+    writeText(text, { size: 10.5, lineGap: 3 });
+  };
+
+  const writeLine = () => {
+    ensureSpace(12);
+    pdf.moveTo(margin, state.y + 2).lineTo(pdf.page.width - margin, state.y + 2).lineWidth(0.5).stroke('black');
+    state.y += 14;
+  };
+
+  const writeKeyValue = (label: string, value: string) => {
+    const line = `${label}: ${value}`;
+    ensureSpace(pdf.heightOfString(line, { width: contentWidth, lineGap: 3 }) + 10);
+    writeText(line, { size: 10, lineGap: 3, bold: true });
+  };
+
+  const writeBullets = (items: string[]) => {
+    items.forEach(item => {
+      ensureSpace(pdf.heightOfString(`• ${item}`, { width: contentWidth - 14, lineGap: 3 }) + 8);
+      pdf.font('Helvetica').fontSize(10).fillColor('black').text(`• ${item}`, margin, state.y, {
+        width: contentWidth,
+        lineGap: 3,
+      });
+      state.y += pdf.heightOfString(`• ${item}`, { width: contentWidth - 14, lineGap: 3 }) + 8;
+    });
+  };
+
+  const writeFooter = () => {
+    const footerY = pdf.page.height - margin + 6;
+    const reportId = packet.id.length > 18 ? `${packet.id.slice(0, 15)}...` : packet.id;
+    pdf.font('Helvetica').fontSize(8.5).fillColor('black').text(`ProofRound Verified Packet | ${reportId} | Page ${state.page} of 4`, margin, footerY, {
+      width: contentWidth,
+    });
+  };
+
+  pdf.font('Helvetica').fontSize(10).fillColor('black');
+
+  const writePage1 = () => {
+    writeHeading('ProofRound Verified Investor Snapshot');
+    writeSubheading('Stripe-connected revenue verification for seed-stage diligence');
+    writeText('Verified via read-only Stripe API', { bold: true, size: 10 });
+    writeLine();
+    writeKeyValue('Startup name', startup.name);
+    writeKeyValue('Generated date', formatDate(packet.createdAt));
+    writeKeyValue('Verification / report ID', packet.id);
+    writeKeyValue('Integrity hash', packet.verificationHash);
+    writeLine();
+    writeHeading('Investor Summary');
+    writeBullets([
+      'This is a point-in-time Stripe-backed verification packet designed for seed-stage diligence.',
+      'It helps investors verify revenue claims from source-linked Stripe data instead of screenshots or manual exports.',
+      'It does not replace accounting, legal, or broader commercial diligence.',
+    ]);
+    writeLine();
+    writeHeading('Traction Snapshot');
+    const metricLines = [
+      `Gross Revenue: ${packet.metrics.grossRevenue === 0 ? '$0' : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.grossRevenue)}`,
+      `Net Revenue: ${packet.metrics.netRevenue === 0 ? '$0' : new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.netRevenue)}`,
+      `MRR: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.mrr)}`,
+      `ARR: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.arr)}`,
+      `Active customers: ${new Intl.NumberFormat('en-US').format(packet.metrics.activeCustomers)}`,
+      `Refunds / disputes: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.refunds)} / ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.chargebacks)}`,
+    ];
+    writeBullets(metricLines);
+    if (packet.metrics.grossRevenue === 0) {
+      writeText('No verified Stripe revenue was detected during the selected reporting window.', { bold: true, size: 10 });
+    }
+  };
+
+  const writePage2 = () => {
+    writeHeading('Revenue & Growth Verification');
+    writeSubheading('Monthly Stripe revenue observations and directional growth signals');
+    writeLine();
+    writeHeading('Revenue history');
+    if (packet.metrics.monthlyBreakdown.length === 0) {
+      writeText('No recurring monthly revenue detected.', { bold: true, size: 11 });
+      writeBullets([
+        'This means ProofRound did not find recurring monthly Stripe observations in the selected window.',
+        'It does not imply the company has no revenue outside Stripe.',
+      ]);
+    } else {
+      writeBullets(packet.metrics.monthlyBreakdown.map(point => `${point.period}: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(point.value)}`));
+    }
+    writeLine();
+    writeHeading('Growth Signals');
+    writeBullets([
+      `1-month growth: ${packet.metrics.growth.oneMonth === null ? 'Not available' : new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.growth.oneMonth)}`,
+      `3-month growth: ${packet.metrics.growth.threeMonth === null ? 'Not available' : new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.growth.threeMonth)}`,
+      `6-month growth: ${packet.metrics.growth.sixMonth === null ? 'Not available' : new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.growth.sixMonth)}`,
+      packet.metrics.growth.commentary,
+    ]);
+  };
+
+  const writePage3 = () => {
+    writeHeading('Customer & Revenue Quality');
+    writeSubheading('Customer counts, concentration, refunds, disputes, and subscription context');
+    writeLine();
+    writeHeading('Customer Metrics');
+    writeBullets([
+      `Active customers: ${new Intl.NumberFormat('en-US').format(packet.metrics.activeCustomers)}`,
+      `Average revenue per customer: ${packet.metrics.activeCustomers > 0 ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(packet.metrics.arpc) : 'Not available'}`,
+      `Repeat customer rate: ${packet.metrics.repeatCustomerRate === null ? 'Not available' : new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.repeatCustomerRate)}`,
+      `Subscription count: ${new Intl.NumberFormat('en-US').format(packet.metrics.subscriptionCount)}`,
+    ]);
+    writeHeading('Revenue Quality');
+    writeBullets([
+      `Refunds: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.refunds)}`,
+      `Chargebacks / disputes: ${new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(packet.metrics.chargebacks)}`,
+      `Dispute rate: ${packet.metrics.grossRevenue > 0 ? new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.chargebacks / packet.metrics.grossRevenue) : 'Not available'}`,
+      `Net revenue ratio: ${packet.metrics.grossRevenue > 0 ? new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.netRevenue / packet.metrics.grossRevenue) : 'Not available'}`,
+    ]);
+    writeHeading('Customer Concentration');
+    if (packet.metrics.customerConcentration.available) {
+      writeBullets([
+        `Largest customer % of revenue: ${packet.metrics.customerConcentration.largestCustomerShare === null ? 'Not available' : new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.customerConcentration.largestCustomerShare)}`,
+        `Top 5 customers % of revenue: ${packet.metrics.customerConcentration.topFiveCustomerShare === null ? 'Not available' : new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 }).format(packet.metrics.customerConcentration.topFiveCustomerShare)}`,
+      ]);
+    } else {
+      writeText('Customer concentration not available from current Stripe dataset.', { bold: true, size: 10 });
+    }
+    writeHeading('Investor read');
+    writeText(
+      packet.metrics.refunds === 0 && packet.metrics.chargebacks === 0
+        ? 'Green/neutral: no refunds or disputes were detected in the selected reporting window. That is a positive operational signal, but it does not prove product-market fit or durable revenue quality.'
+        : 'Neutral/conservative: payment adjustments were observed, so investors should review refunds and disputes alongside bank statements, churn, and underlying customer contracts.',
+      { size: 10 }
+    );
+  };
+
+  const writePage4 = () => {
+    writeHeading('Verification Methodology');
+    writeSubheading('How the packet was generated and what it does not attempt to prove');
+    writeLine();
+    writeHeading('How data was verified');
+    writeBullets([
+      'Connected Stripe account verified through read-only API access.',
+      'Report generated from a timestamped window and tied to the selected startup.',
+      'Integrity hash computed from the startup, time window, metrics, references, and generation timestamp.',
+      'No write access, charging capability, or account modification rights were used.',
+    ]);
+    writeHeading('Evidence references');
+    writeBullets([
+      packet.references.chargeIds.length > 0 ? `Stripe charge IDs: ${packet.references.chargeIds.join(', ')}` : 'Stripe charge IDs: none captured',
+      packet.references.invoiceIds.length > 0 ? `Stripe invoice IDs: ${packet.references.invoiceIds.join(', ')}` : 'Stripe invoice IDs: none captured',
+      packet.references.subscriptionIds.length > 0 ? `Stripe subscription IDs: ${packet.references.subscriptionIds.join(', ')}` : 'Stripe subscription IDs: none captured',
+      packet.references.customerIds.length > 0 ? `Stripe customer IDs: ${packet.references.customerIds.join(', ')}` : 'Stripe customer IDs: none captured',
+    ]);
+    writeHeading('Limitations');
+    writeBullets([
+      'Only Stripe-processed revenue is included.',
+      'Off-platform revenue is excluded from the packet.',
+      'This packet is not tax, legal, accounting, or investment advice.',
+      'Investors should still review bank statements, contracts, churn, CAC, cap table, and founder materials.',
+    ]);
+  };
+
+  pdf.font('Helvetica').fontSize(10).fillColor('black');
+  startPage();
+  writePage1();
+  writeFooter();
+
+  pdf.addPage();
+  state.page = 2;
+  state.y = margin;
+  startPage();
+  writePage2();
+  writeFooter();
+
+  pdf.addPage();
+  state.page = 3;
+  state.y = margin;
+  startPage();
+  writePage3();
+  writeFooter();
+
+  pdf.addPage();
+  state.page = 4;
+  state.y = margin;
+  startPage();
+  writePage4();
+  writeFooter();
+
+  pdf.end();
+  return output;
 
   const colors = {
     paper: '#ffffff',
@@ -2090,6 +2326,257 @@ export async function renderInvestorPacketPdf(startup: StartupDoc, packet: Packe
   startPage();
   methodologyPage();
   drawFooter(4);
+
+  pdf.end();
+  return output;
+  }
+}
+
+*/
+
+export async function renderInvestorPacketPdf(startup: StartupDoc, packet: PacketRecord): Promise<Buffer> {
+  const pdf = new PDFDocument({ size: 'A4', margin: 0 });
+  const chunks: Buffer[] = [];
+
+  const output = new Promise<Buffer>((resolve, reject) => {
+    pdf.on('data', chunk => chunks.push(Buffer.from(chunk)));
+    pdf.on('end', () => resolve(Buffer.concat(chunks)));
+    pdf.on('error', reject);
+  });
+
+  const margin = 56;
+  const contentWidth = pdf.page.width - margin * 2;
+  const bottom = pdf.page.height - margin;
+  const percent = new Intl.NumberFormat('en-US', { style: 'percent', minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const currency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
+  const decimalCurrency = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  const wholeNumber = new Intl.NumberFormat('en-US');
+  const state = { page: 1, y: margin };
+
+  const formatDate = (value: string) => {
+    const parsed = new Date(value);
+    return Number.isNaN(parsed.getTime())
+      ? value
+      : parsed.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          timeZoneName: 'short',
+        });
+  };
+
+  const startPage = () => {
+    pdf.fillColor('black').font('Helvetica').fontSize(10);
+  };
+
+  const ensureSpace = (height: number) => {
+    if (state.y + height > bottom - 18) {
+      writeFooter();
+      pdf.addPage();
+      state.page += 1;
+      state.y = margin;
+      startPage();
+    }
+  };
+
+  const writeText = (text: string, options?: { bold?: boolean; size?: number; indent?: number; lineGap?: number }) => {
+    const font = options?.bold ? 'Helvetica-Bold' : 'Helvetica';
+    const size = options?.size ?? 10;
+    const indent = options?.indent ?? 0;
+    const lineGap = options?.lineGap ?? 3;
+    pdf.font(font).fontSize(size).fillColor('black').text(text, margin + indent, state.y, {
+      width: contentWidth - indent,
+      lineGap,
+    });
+    const textHeight = pdf.heightOfString(text, { width: contentWidth - indent, lineGap });
+    state.y += textHeight + 8;
+  };
+
+  const writeLine = () => {
+    ensureSpace(12);
+    pdf.moveTo(margin, state.y + 2).lineTo(pdf.page.width - margin, state.y + 2).lineWidth(0.5).stroke('black');
+    state.y += 14;
+  };
+
+  const writeHeading = (text: string) => {
+    ensureSpace(26);
+    writeText(text, { bold: true, size: 16, lineGap: 2 });
+  };
+
+  const writeSubheading = (text: string) => {
+    ensureSpace(20);
+    writeText(text, { size: 10.5, lineGap: 3 });
+  };
+
+  const writeBullets = (items: string[]) => {
+    items.forEach(item => {
+      ensureSpace(pdf.heightOfString(`• ${item}`, { width: contentWidth - 12, lineGap: 3 }) + 10);
+      pdf.font('Helvetica').fontSize(10).fillColor('black').text(`• ${item}`, margin, state.y, {
+        width: contentWidth,
+        lineGap: 3,
+      });
+      state.y += pdf.heightOfString(`• ${item}`, { width: contentWidth - 12, lineGap: 3 }) + 8;
+    });
+  };
+
+  const writeKeyValue = (label: string, value: string) => {
+    const line = `${label}: ${value}`;
+    ensureSpace(pdf.heightOfString(line, { width: contentWidth, lineGap: 3 }) + 10);
+    writeText(line, { bold: true, size: 10, lineGap: 3 });
+  };
+
+  const writeFooter = () => {
+    const footerY = pdf.page.height - margin + 6;
+    const reportId = packet.id.length > 18 ? `${packet.id.slice(0, 15)}...` : packet.id;
+    pdf.font('Helvetica').fontSize(8.5).fillColor('black').text(`ProofRound Verified Packet | ${reportId} | Page ${state.page} of 4`, margin, footerY, {
+      width: contentWidth,
+    });
+  };
+
+  const page1 = () => {
+    writeHeading('ProofRound Verified Investor Snapshot');
+    writeSubheading('Stripe-connected revenue verification for seed-stage diligence');
+    writeText('Verified via read-only Stripe API', { bold: true, size: 10 });
+    writeLine();
+    writeKeyValue('Startup name', startup.name);
+    writeKeyValue('Generated date', formatDate(packet.createdAt));
+    writeKeyValue('Verification / report ID', packet.id);
+    writeKeyValue('Integrity hash', packet.verificationHash);
+    writeLine();
+    writeHeading('Investor Summary');
+    writeBullets([
+      'This is a point-in-time Stripe-backed verification packet designed for seed-stage diligence.',
+      'It helps investors verify revenue claims from source-linked Stripe data instead of screenshots or manual exports.',
+      'It does not replace accounting, legal, or broader commercial diligence.',
+    ]);
+    writeLine();
+    writeHeading('Traction Snapshot');
+    writeBullets([
+      `Gross Revenue: ${currency.format(packet.metrics.grossRevenue)}`,
+      `Net Revenue: ${currency.format(packet.metrics.netRevenue)}`,
+      `MRR: ${currency.format(packet.metrics.mrr)}`,
+      `ARR: ${currency.format(packet.metrics.arr)}`,
+      `Active customers: ${wholeNumber.format(packet.metrics.activeCustomers)}`,
+      `Refunds / disputes: ${currency.format(packet.metrics.refunds)} / ${currency.format(packet.metrics.chargebacks)}`,
+    ]);
+    if (packet.metrics.grossRevenue === 0) {
+      writeText('No verified Stripe revenue was detected during the selected reporting window.', { bold: true, size: 10 });
+    }
+  };
+
+  const page2 = () => {
+    writeHeading('Revenue & Growth Verification');
+    writeSubheading('Monthly Stripe revenue observations and directional growth signals');
+    writeLine();
+    writeHeading('Revenue history');
+    if (packet.metrics.monthlyBreakdown.length === 0) {
+      writeText('No recurring monthly revenue detected.', { bold: true, size: 11 });
+      writeBullets([
+        'This means ProofRound did not find recurring monthly Stripe observations in the selected window.',
+        'It does not imply the company has no revenue outside Stripe.',
+      ]);
+    } else {
+      writeBullets(packet.metrics.monthlyBreakdown.map(point => `${point.period}: ${currency.format(point.value)}`));
+    }
+    writeLine();
+    writeHeading('Growth Signals');
+    writeBullets([
+      `1-month growth: ${packet.metrics.growth.oneMonth === null ? 'Not available' : percent.format(packet.metrics.growth.oneMonth)}`,
+      `3-month growth: ${packet.metrics.growth.threeMonth === null ? 'Not available' : percent.format(packet.metrics.growth.threeMonth)}`,
+      `6-month growth: ${packet.metrics.growth.sixMonth === null ? 'Not available' : percent.format(packet.metrics.growth.sixMonth)}`,
+      packet.metrics.growth.commentary,
+    ]);
+  };
+
+  const page3 = () => {
+    writeHeading('Customer & Revenue Quality');
+    writeSubheading('Customer counts, concentration, refunds, disputes, and subscription context');
+    writeLine();
+    writeHeading('Customer Metrics');
+    writeBullets([
+      `Active customers: ${wholeNumber.format(packet.metrics.activeCustomers)}`,
+      `Average revenue per customer: ${packet.metrics.activeCustomers > 0 ? decimalCurrency.format(packet.metrics.arpc) : 'Not available'}`,
+      `Repeat customer rate: ${packet.metrics.repeatCustomerRate === null ? 'Not available' : percent.format(packet.metrics.repeatCustomerRate)}`,
+      `Subscription count: ${wholeNumber.format(packet.metrics.subscriptionCount)}`,
+    ]);
+    writeHeading('Revenue Quality');
+    writeBullets([
+      `Refunds: ${currency.format(packet.metrics.refunds)}`,
+      `Chargebacks / disputes: ${currency.format(packet.metrics.chargebacks)}`,
+      `Dispute rate: ${packet.metrics.grossRevenue > 0 ? percent.format(packet.metrics.chargebacks / packet.metrics.grossRevenue) : 'Not available'}`,
+      `Net revenue ratio: ${packet.metrics.grossRevenue > 0 ? percent.format(packet.metrics.netRevenue / packet.metrics.grossRevenue) : 'Not available'}`,
+    ]);
+    writeHeading('Customer Concentration');
+    if (packet.metrics.customerConcentration.available) {
+      writeBullets([
+        `Largest customer % of revenue: ${packet.metrics.customerConcentration.largestCustomerShare === null ? 'Not available' : percent.format(packet.metrics.customerConcentration.largestCustomerShare)}`,
+        `Top 5 customers % of revenue: ${packet.metrics.customerConcentration.topFiveCustomerShare === null ? 'Not available' : percent.format(packet.metrics.customerConcentration.topFiveCustomerShare)}`,
+      ]);
+    } else {
+      writeText('Customer concentration not available from current Stripe dataset.', { bold: true, size: 10 });
+    }
+    writeHeading('Investor read');
+    writeText(
+      packet.metrics.refunds === 0 && packet.metrics.chargebacks === 0
+        ? 'Green/neutral: no refunds or disputes were detected in the selected reporting window. That is a positive operational signal, but it does not prove product-market fit or durable revenue quality.'
+        : 'Neutral/conservative: payment adjustments were observed, so investors should review refunds and disputes alongside bank statements, churn, and underlying customer contracts.',
+      { size: 10 }
+    );
+  };
+
+  const page4 = () => {
+    writeHeading('Verification Methodology');
+    writeSubheading('How the packet was generated and what it does not attempt to prove');
+    writeLine();
+    writeHeading('How data was verified');
+    writeBullets([
+      'Connected Stripe account verified through read-only API access.',
+      'Report generated from a timestamped window and tied to the selected startup.',
+      'Integrity hash computed from the startup, time window, metrics, references, and generation timestamp.',
+      'No write access, charging capability, or account modification rights were used.',
+    ]);
+    writeHeading('Evidence references');
+    writeBullets([
+      packet.references.chargeIds.length > 0 ? `Stripe charge IDs: ${packet.references.chargeIds.join(', ')}` : 'Stripe charge IDs: none captured',
+      packet.references.invoiceIds.length > 0 ? `Stripe invoice IDs: ${packet.references.invoiceIds.join(', ')}` : 'Stripe invoice IDs: none captured',
+      packet.references.subscriptionIds.length > 0 ? `Stripe subscription IDs: ${packet.references.subscriptionIds.join(', ')}` : 'Stripe subscription IDs: none captured',
+      packet.references.customerIds.length > 0 ? `Stripe customer IDs: ${packet.references.customerIds.join(', ')}` : 'Stripe customer IDs: none captured',
+    ]);
+    writeHeading('Limitations');
+    writeBullets([
+      'Only Stripe-processed revenue is included.',
+      'Off-platform revenue is excluded from the packet.',
+      'This packet is not tax, legal, accounting, or investment advice.',
+      'Investors should still review bank statements, contracts, churn, CAC, cap table, and founder materials.',
+    ]);
+  };
+
+  startPage();
+  page1();
+  writeFooter();
+
+  pdf.addPage();
+  state.page = 2;
+  state.y = margin;
+  startPage();
+  page2();
+  writeFooter();
+
+  pdf.addPage();
+  state.page = 3;
+  state.y = margin;
+  startPage();
+  page3();
+  writeFooter();
+
+  pdf.addPage();
+  state.page = 4;
+  state.y = margin;
+  startPage();
+  page4();
+  writeFooter();
 
   pdf.end();
   return output;
