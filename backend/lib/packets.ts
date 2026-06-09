@@ -491,13 +491,11 @@ export async function renderPacketPdf(startup: StartupDoc, packet: PacketRecord)
 
   const shortReportId = (packetId: string) => truncateMiddle(packetId, 18);
   const shortHash = (hash: string) => `${hash.slice(0, 12)}...`;
-  const formatHash = (value: string) => value.match(/.{1,8}/g)?.join(' ') ?? value;
 
   const PAGE_WIDTH = pdf.page.width;
   const PAGE_HEIGHT = pdf.page.height;
   const MARGIN_X = 48;
   const MARGIN_TOP = 48;
-  const MARGIN_BOTTOM = 56;
   const CONTENT_WIDTH = PAGE_WIDTH - MARGIN_X * 2;
   const FOOTER_Y = PAGE_HEIGHT - 40;
   const CARD_PADDING = 14;
@@ -1278,7 +1276,6 @@ export async function renderInvestorPacketPdf(startup: StartupDoc, packet: Packe
 
   const shortReportId = (packetId: string) => truncateMiddle(packetId, 18);
   const shortHash = (hash: string) => `${hash.slice(0, 12)}...`;
-  const formatHash = (value: string) => value.match(/.{1,8}/g)?.join(' ') ?? value;
 
   const measureText = (text: string, width: number, options?: { font?: string; fontSize?: number; lineGap?: number; align?: 'left' | 'center' | 'right' | 'justify' }) => {
     if (options?.font) {
