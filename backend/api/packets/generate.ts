@@ -1,4 +1,4 @@
-import { createVerifiedPacket, renderPacketPdf } from '../../lib/packets.js';
+import { createVerifiedPacket, renderInvestorPacketPdf } from '../../lib/packets.js';
 import { uploadBuffer } from '../../lib/storage.js';
 import { getDb } from '../../lib/firebase-admin.js';
 import type { BackendRequest, BackendResponse } from '../../lib/http.js';
@@ -37,7 +37,7 @@ export default async function handler(req: BackendRequest, res: BackendResponse)
     const start = typeof req.query.start === 'string' ? req.query.start : undefined;
     const end = typeof req.query.end === 'string' ? req.query.end : undefined;
     const { startup, packet } = await createVerifiedPacket(startupId, { start, end });
-    const pdfBuffer = await renderPacketPdf(startup, packet);
+    const pdfBuffer = await renderInvestorPacketPdf(startup, packet);
 
     // Free-tier mode: if no bucket is configured, return the generated PDF directly.
     if (!process.env.FIREBASE_STORAGE_BUCKET) {
