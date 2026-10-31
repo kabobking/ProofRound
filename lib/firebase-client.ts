@@ -3,7 +3,7 @@
  * Use this in client components to interact with Firebase services
  */
 
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { 
   getAuth, 
   Auth,
@@ -14,42 +14,51 @@ import {
   getFirestore, 
   Firestore 
 } from 'firebase/firestore';
-import { getAnalytics, Analytics, logEvent } from 'firebase/analytics';
+import { getAnalytics, isSupported, Analytics, logEvent } from 'firebase/analytics';
 import firebaseConfig from './firebase-config';
 
-let app: ReturnType<typeof initializeApp> | null = null;
+let app: FirebaseApp | null = null;
 let auth: Auth | null = null;
 let firestore: Firestore | null = null;
 let analytics: Analytics | null = null;
+let analyticsPromise: Promise<Analytics | null> | null = null;
 
 /**
  * Initialize Firebase (client-side)
  */
 export function initFirebase() {
-  if (app) return { app, auth, firestore, analytics };
+  if (app && auth && firestore) return { app, auth, firestore, analytics };
 
   try {
-    app = initializeApp(firebaseConfig);
+    app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     auth = getAuth(app);
     firestore = getFirestore(app);
     
-    // Initialize Analytics (safe to call even if Analytics is not enabled in Firebase Console)
-    try {
-      analytics = getAnalytics(app);
-    } catch (e) {
-      console.warn('Analytics not available:', e);
+    // Initialize Analytics and Persistence safely on client-side only
+    if (typeof window !== 'undefined') {
+      if (!analyticsPromise) {
+        analyticsPromise = isSupported()
+          .then(supported => {
+            if (supported && app) {
+              try {
+                analytics = getAnalytics(app);
+                return analytics;
+              } catch (e) {
+                console.warn('Analytics initialization failed:', e);
+              }
+            }
+            return null;
+          })
+          .catch(e => {
+            console.warn('Analytics check failed:', e);
+            return null;
+          });
+      }
+
+      setPersistence(auth, browserLocalPersistence).catch(err => {
+        console.warn('Could not enable persistence:', err);
+      });
     }
-
-    // Enable offline persistence
-    setPersistence(auth, browserLocalPersistence).catch(err => {
-      console.warn('Could not enable persistence:', err);
-    });
-
-    // Uncomment to use Firebase emulators locally
-    // if (process.env.NODE_ENV === 'development') {
-    //   connectAuthEmulator(auth, 'http://127.0.0.1:9099', { disableWarnings: true });
-    //   connectFirestoreEmulator(firestore, '127.0.0.1', 8080);
-    // }
 
     return { app, auth, firestore, analytics };
   } catch (error) {
@@ -85,8 +94,7 @@ export function getFirestoreInstance(): Firestore {
  */
 export function getAnalyticsInstance(): Analytics | null {
   if (!analytics) {
-    const { analytics: analyticsInstance } = initFirebase();
-    analytics = analyticsInstance;
+    initFirebase();
   }
   return analytics;
 }
@@ -95,10 +103,19 @@ export function getAnalyticsInstance(): Analytics | null {
  * Log event to Firebase Analytics
  */
 export function trackEvent(eventName: string, eventParams?: Record<string, unknown>) {
+  if (typeof window === 'undefined') return;
   try {
-    const analyticsInstance = getAnalyticsInstance();
-    if (analyticsInstance) {
-      logEvent(analyticsInstance, eventName, eventParams);
+    initFirebase();
+    if (analytics) {
+      logEvent(analytics, eventName, eventParams);
+    } else if (analyticsPromise) {
+      analyticsPromise
+        .then(inst => {
+          if (inst) {
+            logEvent(inst, eventName, eventParams);
+          }
+        })
+        .catch(() => {});
     }
   } catch (error) {
     console.warn('Failed to log analytics event:', error);

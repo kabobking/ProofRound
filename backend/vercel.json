@@ -5,5 +5,9 @@
     "api/**/*.ts": {
       "runtime": "@vercel/node@5.1.16"
     }
-  }
+  },
+  "rewrites": [
+    { "source": "/health", "destination": "/api/health" },
+    { "source": "/", "destination": "/api/index" }
+  ]
 }

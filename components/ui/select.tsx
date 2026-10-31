@@ -18,4 +18,21 @@ const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
 );
 Select.displayName = 'Select';
 
-export { Select };
+export type SelectOptionProps = React.OptionHTMLAttributes<HTMLOptionElement>;
+
+const SelectOption = React.forwardRef<HTMLOptionElement, SelectOptionProps>(
+  ({ className = '', children, ...props }, ref) => {
+    return (
+      <option
+        ref={ref}
+        className={`bg-[var(--surface)] text-[var(--text)] ${className}`}
+        {...props}
+      >
+        {children}
+      </option>
+    );
+  }
+);
+SelectOption.displayName = 'SelectOption';
+
+export { Select, SelectOption };

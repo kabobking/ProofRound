@@ -45,7 +45,8 @@ export function getAdminApp() {
 
   return initializeApp({
     credential: cert(getServiceAccount()),
-    projectId: process.env.FIREBASE_PROJECT_ID,
+    projectId: process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'proofround',
+    storageBucket: process.env.FIREBASE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'proofround.firebasestorage.app',
   });
 }
 
@@ -54,10 +55,10 @@ export function getDb() {
 }
 
 export function getStorageBucket() {
-  const rawBucketName = process.env.FIREBASE_STORAGE_BUCKET;
-  if (!rawBucketName) {
-    throw new Error('FIREBASE_STORAGE_BUCKET is required for uploading files (example: your-project.firebasestorage.app)');
-  }
+  const rawBucketName =
+    process.env.FIREBASE_STORAGE_BUCKET ||
+    process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ||
+    'proofround.firebasestorage.app';
 
   const bucketName = normalizeBucketName(rawBucketName);
   return getStorage(getAdminApp()).bucket(bucketName);

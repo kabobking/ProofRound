@@ -145,7 +145,10 @@ function RecoveryCard({ onReconnect }: { onReconnect: () => void }) {
 }
 
 function openStripeConnect() {
-  const stripeUrl = process.env.NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL || process.env.NEXT_PUBLIC_STRIPE_OAUTH_URL;
+  const stripeUrl =
+    process.env.NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL ||
+    process.env.NEXT_PUBLIC_STRIPE_OAUTH_URL ||
+    'https://api.proofround.com/api/stripe/connect';
 
   if (!stripeUrl) {
     window.alert('Stripe Connect is not configured yet.');

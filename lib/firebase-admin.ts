@@ -12,25 +12,35 @@ let adminApp: admin.app.App | null = null;
  * Uses the GOOGLE_APPLICATION_CREDENTIALS environment variable or default credentials
  */
 export function getAdminApp(): admin.app.App {
+  if (admin.apps.length > 0) {
+    adminApp = admin.apps[0]!;
+    return adminApp;
+  }
+
   if (adminApp) {
     return adminApp;
   }
 
   try {
+    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || 'proofround';
+    const storageBucket = process.env.FIREBASE_STORAGE_BUCKET || process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || 'proofround.firebasestorage.app';
+
     // Check if we have a service account key
     if (process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
       const serviceAccount = JSON.parse(
-        Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY, 'base64').toString()
+        Buffer.from(process.env.FIREBASE_SERVICE_ACCOUNT_KEY, 'base64').toString('utf8')
       );
 
       adminApp = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        projectId,
+        storageBucket,
       });
     } else {
       // Use application default credentials (works in Cloud Functions, Cloud Run, etc)
       adminApp = admin.initializeApp({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+        projectId,
+        storageBucket,
       });
     }
 

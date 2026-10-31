@@ -2,6 +2,23 @@
 
 import { MouseEvent, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogBody,
+  DialogSection,
+  DialogGrid,
+  DialogText,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { Select, SelectOption } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface StartupRevenueActionsProps {
   startupId: string;
@@ -19,6 +36,7 @@ type PacketRange = {
 type RangePreset = '30d' | '90d' | '365d' | 'all' | 'custom';
 
 const packetPriceLabel = process.env.NEXT_PUBLIC_VERIFIED_PACKET_PRICE_USD || '49';
+const DEFAULT_BACKEND_URL = 'https://api.proofround.com';
 
 function openExternalTarget(url: string | undefined, fallbackMessage: string) {
   if (url) {
@@ -52,7 +70,7 @@ function resolveGeneratePacketUrl() {
     return requestUrl.replace(/\/api\/packets\/request(?:\?.*)?$/, '/api/packets/generate');
   }
 
-  return undefined;
+  return `${DEFAULT_BACKEND_URL}/api/packets/generate`;
 }
 
 function createPresetRange(days: number): PacketRange {
@@ -181,16 +199,12 @@ export default function StartupRevenueActions({
     event.preventDefault();
     
     const stripeUrl = process.env.NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL || 
-                      process.env.NEXT_PUBLIC_STRIPE_OAUTH_URL;
-    
-    if (!stripeUrl) {
-      alert('Stripe Connect URL not configured. Set NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL or NEXT_PUBLIC_STRIPE_OAUTH_URL in .env.local');
-      return;
-    }
+                      process.env.NEXT_PUBLIC_STRIPE_OAUTH_URL ||
+                      `${DEFAULT_BACKEND_URL}/api/stripe/connect`;
     
     openExternalTarget(
       appendStartupId(stripeUrl),
-      'Configure NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL or NEXT_PUBLIC_STRIPE_OAUTH_URL in .env.local'
+      'Configure NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL or NEXT_PUBLIC_STRIPE_OAUTH_URL in .env'
     );
   };
 
@@ -241,7 +255,8 @@ export default function StartupRevenueActions({
   const handleRequestPacket = (event: MouseEvent<HTMLButtonElement>) => {
     event.preventDefault();
 
-    const requestUrl = process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL;
+    const requestUrl = process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL ||
+                       `${DEFAULT_BACKEND_URL}/api/packets/request`;
     if (requestUrl) {
       // Try POSTing to create a Checkout session and open the returned URL
       fetch(requestUrl, {
@@ -301,45 +316,50 @@ export default function StartupRevenueActions({
           )}
         </div>
 
-        {isRangeModalOpen && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <button
-              type="button"
-              aria-label="Close date range picker"
-              className="absolute inset-0 bg-[var(--overlay)] backdrop-blur-[2px]"
-              onClick={closeRangeModal}
-            />
-            <div className="relative w-full max-w-md rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_30px_80px_rgba(2,6,23,0.25)]">
-              <p className="text-xs uppercase tracking-[0.2em] text-[var(--muted)]">Verification packet</p>
-              <h3 className="mt-2 text-xl font-semibold tracking-tight text-[var(--text)]">Choose a date range</h3>
-              <p className="mt-2 text-sm leading-6 text-[var(--muted)]">Select the reporting window for this generated PDF.</p>
+        <Dialog open={isRangeModalOpen} onOpenChange={setIsRangeModalOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <Badge variant="secondary" className="w-fit tracking-[0.2em] uppercase text-[10px]">
+                Verification packet
+              </Badge>
+              <DialogTitle className="mt-1 text-xl font-semibold">
+                Choose a date range
+              </DialogTitle>
+              <DialogDescription>
+                Select the reporting window for this generated PDF.
+              </DialogDescription>
+            </DialogHeader>
 
-              <label htmlFor="packet-range" className="mt-5 block text-xs font-medium uppercase tracking-[0.18em] text-[var(--muted)]">
-                Date range
-              </label>
-              <select
-                id="packet-range"
-                value={rangePreset}
-                onChange={event => {
-                  setRangePreset(event.target.value as RangePreset);
-                  setRangeError(null);
-                }}
-                className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
-              >
-                <option value="30d">Last 30 days</option>
-                <option value="90d">Last 90 days</option>
-                <option value="365d">Last 12 months</option>
-                <option value="all">All available history</option>
-                <option value="custom">Custom range</option>
-              </select>
-
-              <p className="mt-2 text-xs text-[var(--muted)]">{presetDescription}</p>
+            <DialogBody>
+              <DialogSection>
+                <Label htmlFor="packet-range" className="text-xs uppercase tracking-[0.18em] text-[var(--muted)]">
+                  Date range
+                </Label>
+                <Select
+                  id="packet-range"
+                  value={rangePreset}
+                  onChange={event => {
+                    setRangePreset(event.target.value as RangePreset);
+                    setRangeError(null);
+                  }}
+                  className="bg-[var(--surface2)]"
+                >
+                  <SelectOption value="30d">Last 30 days</SelectOption>
+                  <SelectOption value="90d">Last 90 days</SelectOption>
+                  <SelectOption value="365d">Last 12 months</SelectOption>
+                  <SelectOption value="all">All available history</SelectOption>
+                  <SelectOption value="custom">Custom range</SelectOption>
+                </Select>
+                <DialogText>{presetDescription}</DialogText>
+              </DialogSection>
 
               {isCustomRange && (
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label htmlFor="packet-start" className="block text-xs font-medium uppercase tracking-[0.16em] text-[var(--muted)]">Start date</label>
-                    <input
+                <DialogGrid>
+                  <DialogSection>
+                    <Label htmlFor="packet-start" className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
+                      Start date
+                    </Label>
+                    <Input
                       id="packet-start"
                       type="date"
                       value={customStartDate}
@@ -347,12 +367,14 @@ export default function StartupRevenueActions({
                         setCustomStartDate(event.target.value);
                         setRangeError(null);
                       }}
-                      className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="bg-[var(--surface2)]"
                     />
-                  </div>
-                  <div>
-                    <label htmlFor="packet-end" className="block text-xs font-medium uppercase tracking-[0.16em] text-[var(--muted)]">End date</label>
-                    <input
+                  </DialogSection>
+                  <DialogSection>
+                    <Label htmlFor="packet-end" className="text-xs uppercase tracking-[0.16em] text-[var(--muted)]">
+                      End date
+                    </Label>
+                    <Input
                       id="packet-end"
                       type="date"
                       value={customEndDate}
@@ -360,36 +382,36 @@ export default function StartupRevenueActions({
                         setCustomEndDate(event.target.value);
                         setRangeError(null);
                       }}
-                      className="mt-2 w-full rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-3 py-2 text-sm text-[var(--text)] outline-none transition focus:border-[var(--accent)] focus:ring-2 focus:ring-[var(--accent)]/20"
+                      className="bg-[var(--surface2)]"
                     />
-                  </div>
-                </div>
+                  </DialogSection>
+                </DialogGrid>
               )}
 
               {rangeError && (
-                <p className="mt-4 rounded-lg border border-red-400/40 bg-red-500/10 px-3 py-2 text-sm text-red-600 dark:text-red-300">
-                  {rangeError}
-                </p>
+                <Alert variant="destructive">
+                  <AlertDescription>{rangeError}</AlertDescription>
+                </Alert>
               )}
+            </DialogBody>
 
-              <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                <Button
-                  type="button"
-                  variant="secondary"
-                  onClick={closeRangeModal}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  onClick={handleConfirmRange}
-                >
-                  Generate PDF
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={closeRangeModal}
+              >
+                Cancel
+              </Button>
+              <Button
+                type="button"
+                onClick={handleConfirmRange}
+              >
+                Generate PDF
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </>
     );
   }
