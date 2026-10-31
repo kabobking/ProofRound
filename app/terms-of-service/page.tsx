@@ -70,7 +70,7 @@ export default function TermsOfServicePage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Contact</h2>
         <p className="mt-3">
-          Questions about these terms can be sent to support@proofround.com.
+          Questions about these terms can be sent to rahul.menon85280@gmail.com.
         </p>
       </section>
     </LegalPageShell>

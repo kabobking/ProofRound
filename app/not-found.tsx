@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, Home, ShieldCheck, TrendingUp, Search, LifeBuoy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,9 +15,15 @@ export default function NotFound() {
       {/* Top Bar */}
       <header className="border-b border-[var(--border)] bg-[var(--surface)]/80 backdrop-blur-md">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-          <Link href="/" className="inline-flex items-center gap-2 text-lg font-semibold tracking-tight text-[var(--text)]">
-            <Home className="h-5 w-5 text-[var(--accent)]" />
-            <span>ProofRound</span>
+          <Link href="/" aria-label="ProofRound Home" className="inline-flex items-center transition-opacity hover:opacity-90">
+            <Image
+              src="/logo.svg"
+              alt="ProofRound"
+              width={141}
+              height={28}
+              priority
+              className="h-6 sm:h-7 w-auto"
+            />
           </Link>
           <Link
             href="/"
@@ -122,10 +129,10 @@ export default function NotFound() {
             <span>
               Need assistance? Contact us at{' '}
               <a
-                href="mailto:support@proofround.com"
+                href="mailto:rahul.menon85280@gmail.com"
                 className="font-medium text-[var(--accent)] hover:underline"
               >
-                support@proofround.com
+                rahul.menon85280@gmail.com
               </a>
             </span>
           </div>

@@ -265,7 +265,7 @@ export default function StartupRevenueActions({
       return;
     }
 
-    const email = founderEmail || 'support@proofround.com';
+    const email = founderEmail || 'rahul.menon85280@gmail.com';
     const subject = encodeURIComponent(`Request verified revenue packet for ${startupName}`);
     const body = encodeURIComponent(
       `Hi, I would like to request the ProofRound verified revenue packet for ${startupName}. The current listed request price is $${packetPriceLabel}. Please send the next steps.`

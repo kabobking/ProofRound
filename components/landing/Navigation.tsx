@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
-import { FileText, HelpCircle, Home, ShieldCheck, Menu, Rocket, X } from 'lucide-react';
+import { FileText, HelpCircle, ShieldCheck, Menu, Rocket, X } from 'lucide-react';
 import { useScrollSpy } from './ScrollSpy';
 import { Button } from '@/components/ui/button';
 
@@ -73,9 +74,15 @@ export default function Navigation() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="inline-flex items-center gap-2 text-xl font-medium text-[var(--text)]">
-            <Home className="h-5 w-5" />
-            ProofRound
+          <Link href="/" aria-label="ProofRound Home" className="inline-flex items-center transition-opacity hover:opacity-90">
+            <Image
+              src="/logo.svg"
+              alt="ProofRound"
+              width={141}
+              height={28}
+              priority
+              className="h-6 sm:h-7 w-auto"
+            />
           </Link>
 
           {/* Desktop Navigation */}
@@ -134,7 +141,13 @@ export default function Navigation() {
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Menu</p>
-                  <p className="mt-1 text-lg font-semibold">ProofRound</p>
+                  <Image
+                    src="/logo.svg"
+                    alt="ProofRound"
+                    width={121}
+                    height={24}
+                    className="mt-1 h-6 w-auto"
+                  />
                 </div>
                 <button
                   type="button"

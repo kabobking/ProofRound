@@ -64,7 +64,7 @@ export default function PrivacyPolicyPage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Contact</h2>
         <p className="mt-3">
-          Questions about privacy can be sent to support@proofround.com.
+          Questions about privacy can be sent to rahul.menon85280@gmail.com.
         </p>
       </section>
     </LegalPageShell>
