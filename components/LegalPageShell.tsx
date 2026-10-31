@@ -37,6 +37,14 @@ export default function LegalPageShell({ title, updatedAt, children }: LegalPage
             <Link href="/terms-of-service" className="hover:text-[var(--text)] transition-colors">
               Terms of Service
             </Link>
+            <a
+              href="https://www.linkedin.com/company/proofround/home"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[var(--text)] transition-colors"
+            >
+              LinkedIn
+            </a>
           </div>
         </footer>
       </div>

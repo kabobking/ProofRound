@@ -158,6 +158,9 @@ export const metadata: Metadata = {
         : {}),
     },
   },
+  other: {
+    "og:see_also": "https://www.linkedin.com/company/proofround/home",
+  },
 };
 
 const jsonLd = {
@@ -168,6 +171,9 @@ const jsonLd = {
       "@id": `${siteUrl}/#organization`,
       name: "ProofRound",
       url: siteUrl,
+      sameAs: [
+        "https://www.linkedin.com/company/proofround/home",
+      ],
       logo: {
         "@type": "ImageObject",
         "@id": `${siteUrl}/#logo`,
@@ -187,6 +193,9 @@ const jsonLd = {
       publisher: {
         "@id": `${siteUrl}/#organization`,
       },
+      sameAs: [
+        "https://www.linkedin.com/company/proofround/home",
+      ],
       description:
         "Discover verified investment opportunities. Connect investors with vetted startups backed by real financial data.",
     },
@@ -205,6 +214,8 @@ export default function RootLayout({
         <link rel="icon" href="/icon-192.png?v=2" type="image/png" sizes="192x192" />
         <link rel="icon" href="/icon-512.png?v=2" type="image/png" sizes="512x512" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180" />
+        <meta property="og:see_also" content="https://www.linkedin.com/company/proofround/home" />
+        <link rel="me" href="https://www.linkedin.com/company/proofround/home" />
         <meta name="apple-mobile-web-app-capable" content="true" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#fafafa" data-proofround-theme-color />

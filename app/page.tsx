@@ -239,6 +239,14 @@ export default function Home() {
               <Link href="#faq" className="transition-colors hover:text-[var(--text)]">FAQ</Link>
               <Link href="/privacy-policy" className="transition-colors hover:text-[var(--text)]">Privacy Policy</Link>
               <Link href="/terms-of-service" className="transition-colors hover:text-[var(--text)]">Terms of Service</Link>
+              <a
+                href="https://www.linkedin.com/company/proofround/home"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition-colors hover:text-[var(--text)]"
+              >
+                LinkedIn
+              </a>
             </div>
           </div>
         </div>
