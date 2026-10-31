@@ -2,9 +2,9 @@ name: Build and Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ "V1.0-Landing-Page" ]
+    branches: [ "main" ]
   pull_request:
-    branches: [ "V1.0-Landing-Page" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
@@ -68,7 +68,7 @@ jobs:
 
   deploy:
     needs: build
-    if: github.ref == 'refs/heads/V1.0-Landing-Page' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
     environment:
       name: github-pages
