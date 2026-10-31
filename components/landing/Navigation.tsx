@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { FileText, HelpCircle, Home, ShieldCheck, Menu, Rocket, X } from 'lucide-react';
 import { useScrollSpy } from './ScrollSpy';
+import { Button } from '@/components/ui/button';
 
 export default function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -74,7 +75,7 @@ export default function Navigation() {
           {/* Logo */}
           <Link href="/" className="inline-flex items-center gap-2 text-xl font-medium text-[var(--text)]">
             <Home className="h-5 w-5" />
-            Proofround
+            ProofRound
           </Link>
 
           {/* Desktop Navigation */}
@@ -100,11 +101,12 @@ export default function Navigation() {
             })}
             <Link
               href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-lg bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md transition-all"
               data-analytics="cta_get_started_nav"
             >
-              <Rocket className="h-4 w-4" />
-              Get started
+              <Button size="sm" className="gap-2">
+                <Rocket className="h-4 w-4" />
+                Get started
+              </Button>
             </Link>
           </div>
 
@@ -132,7 +134,7 @@ export default function Navigation() {
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-4">
                 <div>
                   <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Menu</p>
-                  <p className="mt-1 text-lg font-semibold">Proofround</p>
+                  <p className="mt-1 text-lg font-semibold">ProofRound</p>
                 </div>
                 <button
                   type="button"
@@ -169,12 +171,13 @@ export default function Navigation() {
 
                   <Link
                     href="/dashboard"
-                    className="flex items-center justify-center gap-2 rounded-2xl bg-[var(--accent)] px-4 py-4 text-sm font-medium text-[var(--accent-foreground)] transition-colors hover:opacity-90"
                     onClick={closeMobileMenu}
                     data-analytics="cta_get_started_nav"
                   >
-                    <Rocket className="h-4 w-4" />
-                    Get started
+                    <Button className="w-full gap-2 py-4 rounded-2xl">
+                      <Rocket className="h-4 w-4" />
+                      Get started
+                    </Button>
                   </Link>
                 </div>
               </div>

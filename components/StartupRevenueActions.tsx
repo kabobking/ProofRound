@@ -1,6 +1,7 @@
 'use client';
 
 import { MouseEvent, useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 interface StartupRevenueActionsProps {
   startupId: string;
@@ -277,21 +278,22 @@ export default function StartupRevenueActions({
     return (
       <>
         <div className="flex flex-wrap gap-3">
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={handleConnectStripe}
-            className="inline-flex items-center rounded-full border border-[var(--accent)] bg-[var(--accentTint)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:opacity-90"
+            className="rounded-full border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)] hover:opacity-90"
           >
             {stripeConnected ? 'Manage Stripe' : 'Connect with Stripe'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={handleGeneratePacket}
-            className="inline-flex items-center rounded-full border border-[var(--accent2)]/40 bg-[var(--accent2)]/10 px-4 py-2 text-sm font-medium text-[var(--accent2)] transition-colors hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            className="rounded-full border border-[var(--accent2)]/40 bg-[var(--accent2)]/10 text-[var(--accent2)] hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             disabled={!stripeConnected}
           >
             Generate verified PDF
-          </button>
+          </Button>
           {!stripeConnected && (
             <span className="self-center text-xs text-[var(--muted)]">
               Stripe access is required before generating verified packets.
@@ -371,20 +373,19 @@ export default function StartupRevenueActions({
               )}
 
               <div className="mt-6 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={closeRangeModal}
-                  className="inline-flex min-h-[42px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface2)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-colors hover:bg-[var(--surface)]"
                 >
                   Cancel
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
                   onClick={handleConfirmRange}
-                  className="inline-flex min-h-[42px] items-center justify-center rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-semibold text-[var(--accent-foreground)] transition-opacity hover:opacity-90"
                 >
                   Generate PDF
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -395,13 +396,14 @@ export default function StartupRevenueActions({
 
   return (
     <div className="flex flex-wrap gap-3">
-      <button
+      <Button
         type="button"
+        variant="outline"
         onClick={handleRequestPacket}
-        className="inline-flex items-center rounded-full border border-[var(--accent)] bg-[var(--accentTint)] px-4 py-2 text-sm font-medium text-[var(--accent)] transition-colors hover:opacity-90"
+        className="rounded-full border-[var(--accent)] bg-[var(--accentTint)] text-[var(--accent)] hover:opacity-90"
       >
         Request verified PDF {packetPriceLabel ? `($${packetPriceLabel})` : ''}
-      </button>
+      </Button>
     </div>
   );
 }

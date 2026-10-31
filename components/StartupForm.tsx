@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import { createStartup } from '@/lib/database';
 import { Startup } from '@/lib/models';
+import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 type FormValues = {
   name: string;
@@ -137,16 +139,16 @@ export default function StartupForm({
   };
 
   const fieldClass = 'mt-2 w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] px-4 py-3 text-sm text-[var(--text)] outline-none transition-all placeholder:text-[var(--muted)] focus:border-[var(--accent)] focus:ring-4 focus:ring-[var(--accent)]/15';
-  const errorClass = 'mt-2 text-xs text-rose-300';
+  const errorClass = 'mt-2 text-xs font-medium text-red-600 dark:text-red-400';
 
   const showError = (key: keyof FormValues) => touched[key] && errors[key];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {submitError && (
-        <div className="rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
-          {submitError}
-        </div>
+        <Alert variant="destructive">
+          <AlertDescription>{submitError}</AlertDescription>
+        </Alert>
       )}
 
       <section className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 shadow-[0_18px_50px_rgba(2,6,23,0.18)]">
@@ -162,7 +164,7 @@ export default function StartupForm({
           <label className="block lg:col-span-2">
             <span className="text-sm font-medium text-[var(--text)]">Company name</span>
             <span className="ml-2 text-xs text-[var(--muted)]">Required</span>
-            <input type="text" value={values.name} onChange={e => updateValue('name', e.target.value)} onBlur={() => handleBlur('name')} className={fieldClass} placeholder="Proofround" />
+            <input type="text" value={values.name} onChange={e => updateValue('name', e.target.value)} onBlur={() => handleBlur('name')} className={fieldClass} placeholder="ProofRound" />
             <p className="mt-2 text-xs text-[var(--muted)]">Use the name founders and investors will see everywhere.</p>
             {showError('name') && <p className={errorClass}>{errors.name}</p>}
           </label>
@@ -268,12 +270,12 @@ export default function StartupForm({
       </section>
 
       <div className="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-        <button type="button" onClick={onCancel} className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-5 py-3 text-sm font-medium text-[var(--text)] transition-all hover:bg-[var(--surface2)]">
+        <Button type="button" variant="secondary" onClick={onCancel}>
           Cancel
-        </button>
-        <button type="submit" disabled={loading} className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-6 py-3 text-sm font-medium text-[var(--accent-foreground)] transition-all hover:-translate-y-0.5 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60">
+        </Button>
+        <Button type="submit" disabled={loading}>
           {loading ? 'Saving profile…' : 'Save startup profile'}
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -58,7 +58,7 @@ export default function Home() {
               <AnimatedCard delay={0}>
                 <div className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)] transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(2,6,23,0.22)]">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-300 ring-1 ring-rose-400/20">01</div>
+                    <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 ring-1 ring-rose-400/20">01</div>
                     <h2 className="text-2xl font-semibold tracking-tight text-[var(--text)]">Why founders need this</h2>
                   </div>
                   <ul className="mt-6 space-y-4 text-[var(--muted)] leading-relaxed">
@@ -73,7 +73,7 @@ export default function Home() {
                 <div className="rounded-[1.5rem] border border-[var(--accent)]/20 bg-[linear-gradient(180deg,var(--surface),var(--surface2))] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.12)] transition-all hover:-translate-y-0.5 hover:shadow-[0_24px_70px_rgba(2,6,23,0.18)]">
                   <div className="flex items-center gap-3">
                     <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-[var(--accentTint)] text-[var(--accent)] ring-1 ring-[var(--accent)]/20">02</div>
-                    <h2 className="text-2xl font-semibold tracking-tight text-[var(--text)]">What Proofround does</h2>
+                    <h2 className="text-2xl font-semibold tracking-tight text-[var(--text)]">What ProofRound does</h2>
                   </div>
                   <ul className="mt-6 space-y-4 text-[var(--muted)] leading-relaxed">
                     <li className="flex items-start gap-3"><span className="mt-2 h-2 w-2 flex-shrink-0 rounded-full bg-[var(--accent2)]" /><span>Metrics are computed directly from Stripe source data with clear definitions.</span></li>
@@ -183,7 +183,7 @@ export default function Home() {
             <div className="mt-12"><SecurityCards /></div>
 
             <div className="mt-8 rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-6 text-sm leading-7 text-[var(--muted)] shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
-              <p>Proofround complements diligence but does not replace accounting reviews, audits, or investor judgment.</p>
+              <p>ProofRound complements diligence but does not replace accounting reviews, audits, or investor judgment.</p>
             </div>
           </div>
         </div>
@@ -232,7 +232,7 @@ export default function Home() {
       <footer className="border-t border-[var(--border)] bg-[var(--surface)] py-12">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="text-sm text-[var(--muted)]">© {new Date().getFullYear()} Proofround. All rights reserved.</div>
+            <div className="text-sm text-[var(--muted)]">© {new Date().getFullYear()} ProofRound. All rights reserved.</div>
             <div className="flex flex-wrap gap-6 text-sm text-[var(--muted)]">
               <Link href="#security" className="transition-colors hover:text-[var(--text)]">Security</Link>
               <Link href="/security" className="transition-colors hover:text-[var(--text)]">Security Model</Link>

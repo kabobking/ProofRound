@@ -11,12 +11,12 @@ const faqItems: FAQItem[] = [
   {
     question: 'What does "verified" mean here?',
     answer:
-      '"Verified" means metrics are computed directly from Stripe transaction and subscription records using documented rules. Each packet includes a time-stamped snapshot, consistent definitions, and drill-down to underlying Stripe objects. Metrics cannot be manually edited within Proofround.',
+      '"Verified" means metrics are computed directly from Stripe transaction and subscription records using documented rules. Each packet includes a time-stamped snapshot, consistent definitions, and drill-down to underlying Stripe objects. Metrics cannot be manually edited within ProofRound.',
   },
   {
     question: 'Is access read-only?',
     answer:
-      'Yes. Proofround requests read-only access to your Stripe account. We cannot initiate charges, issue refunds, or modify any account settings. We only read transaction and customer data to generate verification packets.',
+      'Yes. ProofRound requests read-only access to your Stripe account. We cannot initiate charges, issue refunds, or modify any account settings. We only read transaction and customer data to generate verification packets.',
   },
   {
     question: 'Do investors need an account?',
@@ -36,7 +36,7 @@ const faqItems: FAQItem[] = [
   {
     question: 'Is this a data room?',
     answer:
-      'No. Proofround generates focused verification packets for revenue metrics and related financial indicators. It is not a comprehensive data room solution and does not replace full diligence processes.',
+      'No. ProofRound generates focused verification packets for revenue metrics and related financial indicators. It is not a comprehensive data room solution and does not replace full diligence processes.',
   },
   {
     question: 'How long does packet generation take?',
@@ -51,7 +51,7 @@ const faqItems: FAQItem[] = [
   {
     question: 'Are accounting tools supported?',
     answer:
-      'Currently, Proofround supports Stripe as the primary data source. Support for additional accounting platforms and payment processors is planned for future releases.',
+      'Currently, ProofRound supports Stripe as the primary data source. Support for additional accounting platforms and payment processors is planned for future releases.',
   },
 ];
 

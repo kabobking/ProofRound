@@ -146,7 +146,7 @@ export interface AuditMetadata {
 }
 
 /**
- * Proofround Packet - minimal storage structure
+ * ProofRound Packet - minimal storage structure
  * 
  * This is the ONLY structure that should be persisted.
  * It contains NO raw Stripe objects, only aggregates and references.

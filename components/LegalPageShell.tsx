@@ -14,7 +14,7 @@ export default function LegalPageShell({ title, updatedAt, children }: LegalPage
       <div className="mx-auto flex min-h-screen w-full max-w-4xl flex-col px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
         <header className="mb-8 flex items-center justify-between gap-4 border-b border-[var(--border)] pb-6">
           <Link href="/" className="text-sm font-medium text-[var(--accent)] hover:underline">
-            ← Back to Proofround
+            ← Back to ProofRound
           </Link>
           <p className="text-xs uppercase tracking-[0.24em] text-[var(--muted)]">Updated {updatedAt}</p>
         </header>
@@ -29,7 +29,7 @@ export default function LegalPageShell({ title, updatedAt, children }: LegalPage
         </main>
 
         <footer className="mt-10 flex flex-col gap-3 border-t border-[var(--border)] pt-6 text-sm text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {new Date().getFullYear()} Proofround.</p>
+          <p>© {new Date().getFullYear()} ProofRound.</p>
           <div className="flex gap-5">
             <Link href="/privacy-policy" className="hover:text-[var(--text)] transition-colors">
               Privacy Policy

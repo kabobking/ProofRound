@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { ReactNode } from 'react';
+import { Button } from '@/components/ui/button';
 
 type Action = {
   label: string;
@@ -11,20 +12,20 @@ type Action = {
 };
 
 function ActionButton({ action }: { action: Action }) {
-  const baseClass = action.variant === 'secondary'
-    ? 'border border-[var(--border)] bg-[var(--surface)] text-[var(--text)] hover:bg-[var(--surface2)]'
-    : 'bg-[var(--accent)] text-[var(--accent-foreground)] hover:opacity-90 hover:-translate-y-0.5';
-
-  const shared = `inline-flex min-h-[44px] items-center justify-center rounded-xl px-5 py-3 text-sm font-medium transition-all ${baseClass}`;
+  const buttonVariant = action.variant === 'secondary' ? 'secondary' : 'default';
 
   if (action.href) {
-    return <Link href={action.href} className={shared}>{action.label}</Link>;
+    return (
+      <Link href={action.href}>
+        <Button variant={buttonVariant}>{action.label}</Button>
+      </Link>
+    );
   }
 
   return (
-    <button type="button" onClick={action.onClick} className={shared}>
+    <Button variant={buttonVariant} onClick={action.onClick}>
       {action.label}
-    </button>
+    </Button>
   );
 }
 
@@ -44,7 +45,7 @@ export default function EmptyState({
   children?: ReactNode;
 }) {
   return (
-    <div className="rounded-[1.75rem] border border-[var(--border)] bg-[linear-gradient(180deg,rgba(15,23,42,0.82),rgba(15,23,42,0.9))] p-8 shadow-[0_24px_70px_rgba(2,6,23,0.22)] ring-1 ring-white/5">
+    <div className="rounded-[1.75rem] border border-[var(--border)] bg-[linear-gradient(180deg,var(--surface),var(--surface2))] p-8 text-[var(--text)] shadow-[0_20px_60px_rgba(2,6,23,0.12)]">
       <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
         {eyebrow && <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">{eyebrow}</p>}
         <h2 className="mt-3 text-2xl font-semibold tracking-tight text-[var(--text)] sm:text-3xl">{title}</h2>

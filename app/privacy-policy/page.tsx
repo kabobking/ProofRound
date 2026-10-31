@@ -2,17 +2,17 @@ import type { Metadata } from 'next';
 import LegalPageShell from '@/components/LegalPageShell';
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy | Proofround',
-  description: 'How Proofround collects, uses, and protects information.',
+  title: 'Privacy Policy | ProofRound',
+  description: 'How ProofRound collects, uses, and protects information.',
 };
 
 export default function PrivacyPolicyPage() {
   return (
-    <LegalPageShell title="Privacy Policy" updatedAt="May 13, 2026">
+    <LegalPageShell title="Privacy Policy" updatedAt="October 31, 2026">
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Overview</h2>
         <p className="mt-3">
-          Proofround is built to minimize the data we need to operate the product. We collect only what is necessary to
+          ProofRound is built to minimize the data we need to operate the product. We collect only what is necessary to
           provide verification packets, support accounts, and improve the service.
         </p>
       </section>
@@ -30,7 +30,7 @@ export default function PrivacyPolicyPage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">How we use information</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5">
-          <li>To provide and secure the Proofround platform.</li>
+          <li>To provide and secure the ProofRound platform.</li>
           <li>To generate and display verification packets and related startup pages.</li>
           <li>To communicate with users about product updates, support, and account changes.</li>
           <li>To improve reliability, analytics, and fraud prevention.</li>

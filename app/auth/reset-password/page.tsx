@@ -3,6 +3,11 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { resetPassword } from '@/lib/auth';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 export default function ResetPasswordPage() {
   const [email, setEmail] = useState('');
@@ -28,57 +33,59 @@ export default function ResetPasswordPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center px-4 sm:px-6 lg:px-8">
+    <div className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-4 py-12 text-[var(--text)] sm:px-6 lg:px-8">
       <div className="w-full max-w-md opacity-0 translate-y-2 transition-all duration-500 ease-out" style={{ animation: 'fadeInUp 0.6s ease-out forwards' }}>
-        <div className="bg-white rounded-lg shadow-md p-8">
-          <h1 className="text-3xl font-bold text-zinc-900 mb-2">Reset password</h1>
-          <p className="text-zinc-600 mb-6">Enter your email to receive a password reset link</p>
+        <Card>
+          <CardHeader className="pb-4">
+            <CardTitle className="text-2xl sm:text-3xl">Reset password</CardTitle>
+            <CardDescription>Enter your email to receive a password reset link</CardDescription>
+          </CardHeader>
 
-          {error && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-800 text-sm">
-              {error}
-            </div>
-          )}
+          <CardContent className="space-y-4">
+            {error && (
+              <Alert variant="destructive">
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
 
-          {success && (
-            <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800 text-sm">
-              Check your email for a password reset link
-            </div>
-          )}
+            {success && (
+              <Alert variant="success">
+                <AlertDescription>Check your email for a password reset link</AlertDescription>
+              </Alert>
+            )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-zinc-900 mb-1">
-                Email address
-              </label>
-              <input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                className="w-full px-4 py-2 border border-zinc-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none"
-                placeholder="you@example.com"
-              />
-            </div>
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                  placeholder="you@example.com"
+                />
+              </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full py-2 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-            >
-              {loading ? 'Sending...' : 'Send reset link'}
-            </button>
-          </form>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="w-full"
+              >
+                {loading ? 'Sending link...' : 'Send reset link'}
+              </Button>
+            </form>
+          </CardContent>
 
-          <div className="mt-6 pt-6 border-t border-zinc-200">
-            <p className="text-sm text-zinc-600">
-              <Link href="/auth/login" className="text-indigo-600 font-medium hover:underline">
-                Back to sign in
+          <CardFooter className="justify-center border-t border-[var(--border)] pt-4 text-center">
+            <p className="text-sm text-[var(--muted)]">
+              Remember your password?{' '}
+              <Link href="/auth/login" className="font-medium text-[var(--accent)] hover:underline">
+                Sign in
               </Link>
             </p>
-          </div>
-        </div>
+          </CardFooter>
+        </Card>
       </div>
     </div>
   );

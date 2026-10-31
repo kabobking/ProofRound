@@ -1,6 +1,6 @@
 # Data Minimization Guide
 
-This document describes the data minimization approach for Proofround packet storage.
+This document describes the data minimization approach for ProofRound packet storage.
 
 ## Principles
 

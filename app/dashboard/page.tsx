@@ -17,6 +17,9 @@ import {
   getStartupsByFounder,
 } from '@/lib/database';
 import { InvestmentInterest, InvestmentOpportunity, ProofroundPacket, Startup } from '@/lib/models';
+import { Badge as UIBadge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type DashboardDataset = {
   startups: Startup[];
@@ -63,14 +66,14 @@ function Badge({
   children: React.ReactNode;
   tone?: 'slate' | 'indigo' | 'emerald' | 'amber';
 }) {
-  const classes = {
-    slate: 'bg-slate-100 text-slate-700 ring-slate-200',
-    indigo: 'bg-indigo-50 text-indigo-700 ring-indigo-100',
-    emerald: 'bg-emerald-50 text-emerald-700 ring-emerald-100',
-    amber: 'bg-amber-50 text-amber-800 ring-amber-100',
-  }[tone];
+  const variantMap = {
+    slate: 'secondary' as const,
+    indigo: 'indigo' as const,
+    emerald: 'success' as const,
+    amber: 'warning' as const,
+  };
 
-  return <span className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset ${classes}`}>{children}</span>;
+  return <UIBadge variant={variantMap[tone]}>{children}</UIBadge>;
 }
 
 function Panel({
@@ -97,17 +100,17 @@ function DashboardSkeleton() {
   return (
     <div className="space-y-8">
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="h-48 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
-        <div className="h-48 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+        <Skeleton className="h-48 rounded-3xl border border-[var(--border)]" />
+        <Skeleton className="h-48 rounded-3xl border border-[var(--border)]" />
       </div>
       <div className="grid gap-8 xl:grid-cols-[240px_minmax(0,1fr)]">
         <div className="space-y-6">
-          <div className="h-64 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
-          <div className="h-72 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+          <Skeleton className="h-64 rounded-3xl border border-[var(--border)]" />
+          <Skeleton className="h-72 rounded-3xl border border-[var(--border)]" />
         </div>
         <div className="space-y-8">
-          <div className="h-80 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
-          <div className="h-96 animate-pulse rounded-3xl border border-[var(--border)] bg-[var(--surface)]" />
+          <Skeleton className="h-80 rounded-3xl border border-[var(--border)]" />
+          <Skeleton className="h-96 rounded-3xl border border-[var(--border)]" />
         </div>
       </div>
     </div>
@@ -125,14 +128,14 @@ function RecoveryCard({ onReconnect }: { onReconnect: () => void }) {
           <h2 className="mt-2 text-2xl font-semibold tracking-tight text-[var(--text)]">We couldn’t load your dashboard data.</h2>
           <p className="mt-3 text-sm leading-6 text-[var(--muted)]">Your data is safe. Try again, reconnect Stripe, or return to your startup profiles.</p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-            <Link href="/dashboard" className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-4 py-2 text-sm font-medium text-[var(--accent-foreground)] transition-all hover:opacity-90">
-              Retry
+            <Link href="/dashboard">
+              <Button variant="default">Retry</Button>
             </Link>
-            <button type="button" onClick={onReconnect} className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-all hover:bg-[var(--surface2)]">
+            <Button variant="secondary" onClick={onReconnect}>
               Reconnect Stripe
-            </button>
-            <Link href="/startups" className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm font-medium text-[var(--text)] transition-all hover:bg-[var(--surface2)]">
-              Go to Startups
+            </Button>
+            <Link href="/startups">
+              <Button variant="outline">Go to Startups</Button>
             </Link>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 ## Overview
 
-This refactoring implements data minimization for Proofround packet storage, ensuring that only aggregated metrics and references are stored, never raw Stripe objects.
+This refactoring implements data minimization for ProofRound packet storage, ensuring that only aggregated metrics and references are stored, never raw Stripe objects.
 
 ## Files Created
 

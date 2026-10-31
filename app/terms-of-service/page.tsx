@@ -2,17 +2,17 @@ import type { Metadata } from 'next';
 import LegalPageShell from '@/components/LegalPageShell';
 
 export const metadata: Metadata = {
-  title: 'Terms of Service | Proofround',
-  description: 'Terms governing use of the Proofround platform.',
+  title: 'Terms of Service | ProofRound',
+  description: 'Terms governing use of the ProofRound platform.',
 };
 
 export default function TermsOfServicePage() {
   return (
-    <LegalPageShell title="Terms of Service" updatedAt="May 13, 2026">
+    <LegalPageShell title="Terms of Service" updatedAt="October 31, 2026">
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Agreement</h2>
         <p className="mt-3">
-          By using Proofround, you agree to these Terms of Service and any additional policies referenced here. If you
+          By using ProofRound, you agree to these Terms of Service and any additional policies referenced here. If you
           do not agree, do not use the service.
         </p>
       </section>
@@ -20,7 +20,7 @@ export default function TermsOfServicePage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Use of the service</h2>
         <ul className="mt-3 list-disc space-y-2 pl-5">
-          <li>You may use Proofround only for lawful purposes.</li>
+          <li>You may use ProofRound only for lawful purposes.</li>
           <li>You are responsible for the accuracy of information you submit.</li>
           <li>You may not interfere with the operation or security of the platform.</li>
           <li>You may not attempt to access data you are not authorized to see.</li>
@@ -30,7 +30,7 @@ export default function TermsOfServicePage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Accounts and Stripe access</h2>
         <p className="mt-3">
-          Founder accounts may connect Stripe in read-only mode so Proofround can generate verified revenue packets. You
+          Founder accounts may connect Stripe in read-only mode so ProofRound can generate verified revenue packets. You
           are responsible for maintaining control of your account and any shared links you create.
         </p>
       </section>
@@ -38,7 +38,7 @@ export default function TermsOfServicePage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Content and intellectual property</h2>
         <p className="mt-3">
-          Proofround and its content, branding, and software are owned by Proofround or its licensors. You retain rights
+          ProofRound and its content, branding, and software are owned by ProofRound or its licensors. You retain rights
           to the content you submit, subject to the permissions necessary for us to operate the service.
         </p>
       </section>
@@ -54,7 +54,7 @@ export default function TermsOfServicePage() {
       <section>
         <h2 className="text-lg font-semibold text-[var(--text)]">Limitation of liability</h2>
         <p className="mt-3">
-          To the maximum extent permitted by law, Proofround will not be liable for indirect, incidental, special, or
+          To the maximum extent permitted by law, ProofRound will not be liable for indirect, incidental, special, or
           consequential damages arising from your use of the service.
         </p>
       </section>

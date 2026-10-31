@@ -477,7 +477,7 @@ function extractReferences(
 }
 
 /**
- * Generate a Proofround packet from Stripe data
+ * Generate a ProofRound packet from Stripe data
  * 
  * This function processes raw Stripe API responses in memory and generates
  * a minimal packet structure. Raw Stripe objects are NOT stored.

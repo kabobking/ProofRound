@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 import PacketPreview from '@/components/PacketPreview';
+import { Button } from '@/components/ui/button';
 import { prefersReducedMotion, getMotionClasses } from './motion';
 
 export default function Hero() {
@@ -64,16 +65,14 @@ export default function Hero() {
             <div className="mt-10 flex flex-col gap-3 sm:flex-row">
               <Link
                 href="/dashboard"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-xl bg-[var(--accent)] px-6 py-3 text-base font-medium text-[var(--accent-foreground)] hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md transition-all focus:outline-none focus:ring-2 focus:ring-[var(--accent)] focus:ring-offset-2"
                 data-analytics="cta_get_started_hero"
               >
-                Get started
+                <Button size="lg" className="w-full sm:w-auto">Get started</Button>
               </Link>
               <Link
                 href="#packet-contents"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--surface)] px-6 py-3 text-base font-medium text-[var(--text)] hover:-translate-y-0.5 hover:bg-[var(--surface2)] hover:shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[var(--text)] focus:ring-offset-2"
               >
-                View sample packet
+                <Button variant="secondary" size="lg" className="w-full sm:w-auto">View sample packet</Button>
               </Link>
             </div>
             <p className="mt-4 text-sm leading-6 text-[var(--muted)]">
