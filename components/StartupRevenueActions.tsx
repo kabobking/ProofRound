@@ -67,10 +67,13 @@ function resolveGeneratePacketUrl() {
 
   const requestUrl = process.env.NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL;
   if (requestUrl && !requestUrl.startsWith('mailto:')) {
-    return requestUrl.replace(/\/api\/packets\/request(?:\?.*)?$/, '/api/packets/generate');
+    if (requestUrl.includes('/packets/request')) {
+      return requestUrl.replace(/\/packets\/request(?:\?.*)?$/, '/packets/generate');
+    }
+    return requestUrl.replace(/\/api\/packets\/request(?:\?.*)?$/, '/packets/generate');
   }
 
-  return `${DEFAULT_BACKEND_URL}/api/packets/generate`;
+  return `${DEFAULT_BACKEND_URL}/packets/generate`;
 }
 
 function createPresetRange(days: number): PacketRange {
@@ -219,7 +222,7 @@ export default function StartupRevenueActions({
     const configuredUrl = appendStartupId(resolveGeneratePacketUrl());
     if (!configuredUrl) {
       window.alert(
-        'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL, or set NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL to the matching backend host so ProofRound can derive /api/packets/generate automatically.'
+        'Configure NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL, or set NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL to the matching backend host so ProofRound can derive /packets/generate automatically.'
       );
       return;
     }

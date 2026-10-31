@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/lib/auth-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -66,15 +67,15 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.ico", sizes: "any" },
-      { url: "/favicon-32x32.png", type: "image/png", sizes: "32x32" },
-      { url: "/favicon-16x16.png", type: "image/png", sizes: "16x16" },
-      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
-      { url: "/icon-512.png", type: "image/png", sizes: "512x512" },
+      { url: "/favicon.ico?v=2", sizes: "any" },
+      { url: "/favicon-32x32.png?v=2", type: "image/png", sizes: "32x32" },
+      { url: "/favicon-16x16.png?v=2", type: "image/png", sizes: "16x16" },
+      { url: "/icon-192.png?v=2", type: "image/png", sizes: "192x192" },
+      { url: "/icon-512.png?v=2", type: "image/png", sizes: "512x512" },
     ],
-    shortcut: "/favicon.ico",
+    shortcut: "/favicon.ico?v=2",
     apple: [
-      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
+      { url: "/apple-touch-icon.png?v=2", sizes: "180x180", type: "image/png" },
     ],
   },
   manifest: "/site.webmanifest",
@@ -200,7 +201,10 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="icon" href="/favicon.ico" sizes="any" />
+        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
+        <link rel="icon" href="/icon-192.png?v=2" type="image/png" sizes="192x192" />
+        <link rel="icon" href="/icon-512.png?v=2" type="image/png" sizes="512x512" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=2" sizes="180x180" />
         <meta name="apple-mobile-web-app-capable" content="true" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
         <meta name="theme-color" content="#fafafa" data-proofround-theme-color />
@@ -223,6 +227,10 @@ export default function RootLayout({
             <ThemeToggle />
           </AuthProvider>
         </ThemeProvider>
+        <Analytics
+          endpoint={process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_ENDPOINT || "https://api.proofround.com/_vercel/insights"}
+          scriptSrc={process.env.NEXT_PUBLIC_VERCEL_ANALYTICS_SCRIPT_SRC || "https://va.vercel-scripts.com/v1/script.js"}
+        />
       </body>
     </html>
   );

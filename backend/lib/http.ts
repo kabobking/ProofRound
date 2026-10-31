@@ -10,6 +10,7 @@ export interface BackendResponse {
   status(code: number): BackendResponse;
   json(payload: unknown): BackendResponse;
   send(payload: string | Buffer): BackendResponse;
+  end(): BackendResponse;
   redirect(status: number, url: string): BackendResponse;
 }
 

@@ -217,7 +217,7 @@ export default function Home() {
         </div>
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">Final CTA</p>
+            {/* <p className="text-xs uppercase tracking-[0.28em] text-[var(--muted)]">Final CTA</p> */}
             <h2 className="mt-3 text-3xl font-semibold tracking-tight text-[var(--text)]">Share a verification packet in minutes.</h2>
             <p className="mt-5 text-lg leading-7 text-[var(--muted)]">Generate a time-stamped snapshot and share a source-linked investor view.</p>
             <div className="mt-12 flex flex-col items-center justify-center gap-3 sm:flex-row">

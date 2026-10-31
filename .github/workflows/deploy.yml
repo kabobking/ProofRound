@@ -51,15 +51,17 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: '847272395699'
           NEXT_PUBLIC_FIREBASE_APP_ID: '1:847272395699:web:8b45309a61e537179fc1c6'
           NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: 'G-4Q4CMZ2EWG'
-          NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL: 'https://api.proofround.com/api/stripe/connect'
+          NEXT_PUBLIC_STRIPE_CONNECT_BACKEND_URL: 'https://api.proofround.com/stripe/connect'
           NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: 'pk_test_51TW7mp2K9mbY6SbUlb2lIWe6Te68MBVz4TVJrffhvBQGieC8xcRwdflLeKPXEOMsmUyyT0ZRDAGfMxnQvAq2lQwL00YsmGEk1x'
-          NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL: 'https://api.proofround.com/api/packets/generate'
-          NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL: 'https://api.proofround.com/api/packets/request'
+          NEXT_PUBLIC_VERIFIED_PACKET_GENERATE_URL: 'https://api.proofround.com/packets/generate'
+          NEXT_PUBLIC_VERIFIED_PACKET_REQUEST_URL: 'https://api.proofround.com/packets/request'
           NEXT_PUBLIC_VERIFIED_PACKET_PRICE_USD: '49'
           NEXT_PUBLIC_SITE_URL: 'https://proofround.com'
           FRONTEND_BASE_URL: 'https://proofround.com'
           BACKEND_BASE_URL: 'https://api.proofround.com'
           NEXT_PUBLIC_BACKEND_BASE_URL: 'https://api.proofround.com'
+          NEXT_PUBLIC_VERCEL_ANALYTICS_ENDPOINT: 'https://api.proofround.com/_vercel/insights'
+          NEXT_PUBLIC_VERCEL_ANALYTICS_SCRIPT_SRC: 'https://va.vercel-scripts.com/v1/script.js'
           NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION: ${{ secrets.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION || vars.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }}
           NEXT_PUBLIC_BING_SITE_VERIFICATION: ${{ secrets.NEXT_PUBLIC_BING_SITE_VERIFICATION || vars.NEXT_PUBLIC_BING_SITE_VERIFICATION }}
 

@@ -8,6 +8,12 @@
   },
   "rewrites": [
     { "source": "/health", "destination": "/api/health" },
+    { "source": "/api-health", "destination": "/api/health" },
+    { "source": "/ping", "destination": "/api/health" },
+    { "source": "/packets/:path*", "destination": "/api/packets/:path*" },
+    { "source": "/stripe/:path*", "destination": "/api/stripe/:path*" },
+    { "source": "/_vercel/insights/view", "destination": "/api/insights/view" },
+    { "source": "/_vercel/insights/event", "destination": "/api/insights/event" },
     { "source": "/", "destination": "/api/index" }
   ]
 }

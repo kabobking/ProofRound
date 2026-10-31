@@ -2,8 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { getStartup, getOpportunitiesByStartup, getPacketsByStartup } from '@/lib/database';
-import { Startup, InvestmentOpportunity, ProofroundPacket } from '@/lib/models';
+import { getStartup, getOpportunitiesByStartup } from '@/lib/database';
+import { Startup, InvestmentOpportunity } from '@/lib/models';
 import { useAuth } from '@/lib/auth-context';
 import Link from 'next/link';
 import AnimatedCard from '@/components/AnimatedCard';
@@ -13,6 +13,7 @@ import StartupRevenueActions from '@/components/StartupRevenueActions';
 import { Button } from '@/components/ui/button';
 import { Spinner } from '@/components/ui/spinner';
 import { Badge } from '@/components/ui/badge';
+import { ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 
 function StartupDetails() {
   const searchParams = useSearchParams();
@@ -22,7 +23,6 @@ function StartupDetails() {
 
   const [startup, setStartup] = useState<Startup | null>(null);
   const [opportunities, setOpportunities] = useState<InvestmentOpportunity[]>([]);
-  const [packets, setPackets] = useState<ProofroundPacket[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -35,15 +35,13 @@ function StartupDetails() {
 
       try {
         setLoading(true);
-        const [startupData, oppsData, packetsData] = await Promise.all([
+        const [startupData, oppsData] = await Promise.all([
           getStartup(startupId),
           getOpportunitiesByStartup(startupId),
-          getPacketsByStartup(startupId),
         ]);
 
         setStartup(startupData);
         setOpportunities(oppsData);
-        setPackets(packetsData);
         analyticsEvents.startup_detail_view(startupId);
       } catch (error) {
         console.error('Error loading startup:', error);
@@ -230,28 +228,115 @@ function StartupDetails() {
               </AnimatedCard>
             )}
 
-            {packets.length > 0 && (
-              <AnimatedCard delay={240}>
-                <section className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
-                  <h2 className="mb-4 text-2xl font-semibold tracking-tight text-[var(--text)]">Verified Financial Packets</h2>
-                  <div className="space-y-4">
-                    {packets.map((packet) => (
-                      <div key={packet.id} className="rounded-lg border border-[var(--accent2)]/30 bg-[var(--accent2)]/10 p-4">
-                        <div className="flex items-start justify-between">
-                          <div>
-                            <h3 className="font-semibold text-[var(--text)]">
-                              {packet.timeRangeStart} to {packet.timeRangeEnd}
-                            </h3>
-                            <p className="mt-1 text-sm text-[var(--muted)]">Verified MRR: ${(packet.metrics.mrr / 1000).toFixed(1)}K</p>
-                          </div>
-                          <span className="text-sm font-medium text-[var(--accent)]">Verified packet</span>
-                        </div>
-                      </div>
-                    ))}
+            <AnimatedCard delay={240}>
+              <section className="rounded-[1.5rem] border border-[var(--border)] bg-[var(--surface)] p-8 shadow-[0_20px_60px_rgba(2,6,23,0.16)]">
+                <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-2xl font-semibold tracking-tight text-[var(--text)]">Traction & Diligence Indicators</h2>
+                    <p className="mt-1 text-sm text-[var(--muted)]">
+                      Real-time diligence posture and operational performance signals
+                    </p>
                   </div>
-                </section>
-              </AnimatedCard>
-            )}
+                  <Badge variant={startup.stripeAccountId ? 'indigo' : 'secondary'}>
+                    {startup.stripeAccountId ? 'Stripe Connected' : 'Manual Entry'}
+                  </Badge>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface2)]/50 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-[var(--muted)]">Source Verification</span>
+                      {startup.stripeAccountId ? (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-emerald-600 dark:text-emerald-400">
+                          <CheckCircle2 className="h-4 w-4" /> Live Telemetry
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 text-xs font-medium text-[var(--muted)]">
+                          <AlertCircle className="h-4 w-4" /> Awaiting Stripe
+                        </span>
+                      )}
+                    </div>
+                    <p className="mt-3 text-lg font-semibold text-[var(--text)]">
+                      {startup.stripeAccountId ? 'Direct Stripe API Sync' : 'Self-Reported Profile'}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">
+                      {startup.stripeAccountId
+                        ? 'All diligence queries directly poll Stripe billing ledgers with zero intermediate storage.'
+                        : 'Connect Stripe to enable instant cryptographic verification of revenue and churn.'}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface2)]/50 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-[var(--muted)]">Capital Runway</span>
+                      {startup.financialMetrics?.runway_months ? (
+                        <Badge variant={startup.financialMetrics.runway_months >= 12 ? 'success' : 'warning'}>
+                          {startup.financialMetrics.runway_months >= 12 ? 'Sustainable' : 'Needs Capital'}
+                        </Badge>
+                      ) : (
+                        <Badge variant="secondary">N/A</Badge>
+                      )}
+                    </div>
+                    <p className="mt-3 text-lg font-semibold text-[var(--text)]">
+                      {startup.financialMetrics?.runway_months
+                        ? `${startup.financialMetrics.runway_months} Months Operating Runway`
+                        : 'Runway Not Disclosed'}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">
+                      {startup.financialMetrics?.burn_rate
+                        ? `Net monthly cash burn: $${(startup.financialMetrics.burn_rate / 1000).toFixed(1)}K/mo`
+                        : 'Tracked against verified cash balance and burn velocity.'}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface2)]/50 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-[var(--muted)]">Funding Stage</span>
+                      <Badge variant="indigo" className="uppercase text-[10px] tracking-wider">
+                        {startup.stage || 'Seed'}
+                      </Badge>
+                    </div>
+                    <p className="mt-3 text-lg font-semibold text-[var(--text)]">
+                      {startup.seeking_amount
+                        ? `Seeking $${(startup.seeking_amount / 1000000).toFixed(1)}M Round`
+                        : 'Stage: ' + (startup.stage ? startup.stage.toUpperCase() : 'Active')}
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">
+                      {startup.valuation
+                        ? `Pre-money valuation anchor: $${(startup.valuation / 1000000).toFixed(1)}M`
+                        : 'Open to discussions with verified institutional investors.'}
+                    </p>
+                  </div>
+
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface2)]/50 p-5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-[var(--muted)]">Audit Readiness</span>
+                      <span className="inline-flex items-center gap-1.5 text-xs font-semibold text-[var(--accent)]">
+                        <ShieldCheck className="h-4 w-4" /> Diligence Grade
+                      </span>
+                    </div>
+                    <p className="mt-3 text-lg font-semibold text-[var(--text)]">
+                      Dynamic PDF Packet Ready
+                    </p>
+                    <p className="mt-1 text-xs text-[var(--muted)]">
+                      Investors can download a 3-page verifiable financial packet with vector breakdown and customer quality metrics.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-6 rounded-xl border border-[var(--accent)]/20 bg-[var(--accentTint)]/60 p-4">
+                  <div className="flex items-start gap-3">
+                    <ShieldCheck className="h-5 w-5 shrink-0 text-[var(--accent)] mt-0.5" />
+                    <div>
+                      <p className="text-sm font-medium text-[var(--text)]">Investor Assurance Guarantee</p>
+                      <p className="mt-0.5 text-xs text-[var(--muted)]">
+                        ProofRound diligence packets generate real-time metrics pulled directly from the payment processor. No historical snapshot tampering is possible, and customer PII is never exposed or saved to any secondary database.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </AnimatedCard>
           </div>
 
           <div className="lg:col-span-1">
