@@ -1182,39 +1182,6 @@ export async function renderLocalFallbackPdf(startup: StartupDoc, packet: Packet
     subtitle: "Net revenue realized / gross",
   });
 
-  curY += 74 + 32;
-
-  // Portfolio Diligence & Resilience Summary (Replacing Cryptographic Ledger section)
-  const summaryBoxH = 108;
-  drawPanel(MARGIN_X, curY, CONTENT_WIDTH, summaryBoxH, { fill: colors.cardSubtle, stroke: colors.cardBorder });
-  pdf.save();
-  pdf.roundedRect(MARGIN_X, curY, 4, summaryBoxH, 2).fill(colors.accent);
-  pdf.restore();
-
-  pdf.font(pdfFonts.bold).fontSize(8).fillColor(colors.accent).text("PORTFOLIO RETENTION & REVENUE RESILIENCE DILIGENCE SUMMARY", MARGIN_X + 14, curY + 10);
-
-  const top5ShareVal = conc.topFiveCustomerShare ?? 0;
-  const diversificationAssessment = top5ShareVal < 0.25
-    ? "Low customer concentration (<25% from top 5 accounts) indicates healthy revenue diversification and resilience against individual account attrition."
-    : top5ShareVal < 0.5
-      ? "Moderate customer concentration (25%–50% from top 5 accounts) indicates a growing customer base with meaningful top-account contribution."
-      : "High customer concentration (>50% from top 5 accounts) reflects early enterprise or key-account dependency typical of initial scaling stages.";
-
-  const retentionAssessment = m.churnRate < 5.0
-    ? `Strong subscription contract retention with a low observed churn rate of ${m.churnRate.toFixed(1)}%, supporting high customer lifetime value.`
-    : `Subscription contract churn rate of ${m.churnRate.toFixed(1)}% observed across recurring accounts during this period.`;
-
-  const qualityAssessment = disputeRate < 1.0
-    ? `Payment integrity metrics demonstrate stable operations with a ${netRealizationRatio.toFixed(1)}% net revenue realization ratio and dispute rates below 1.0%.`
-    : `Payment integrity metrics indicate a ${netRealizationRatio.toFixed(1)}% net realization ratio with ${disputeRate.toFixed(2)}% dispute activity.`;
-
-  const page3Summary = `${diversificationAssessment} ${retentionAssessment} ${qualityAssessment} All figures reflect direct read-only Stripe API verification across charges, customer profiles, and recurring subscriptions.`;
-
-  pdf.font(pdfFonts.regular).fontSize(8.5).fillColor(colors.textSecondary).text(page3Summary, MARGIN_X + 14, curY + 26, {
-    width: CONTENT_WIDTH - 28,
-    lineGap: 3,
-  });
-
   drawFooter(3);
 
   pdf.end();
