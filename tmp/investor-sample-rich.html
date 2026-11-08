@@ -5,11 +5,11 @@
   <title>ProofRound Verified Investor Snapshot - Acme Technologies, Inc.</title>
   <style>
     /* ==========================================================================
-       Print-Specific Document Dimensions & Global Variables (Browserless)
+       Print-Specific Document Dimensions & Global Variables
        ========================================================================== */
     @page {
-      size: letter portrait;
-      margin: 0.55in 0.6in 0.55in 0.6in;
+      size: letter;
+      margin: 0.65in 0.7in 0.65in 0.7in;
     }
 
     * {
@@ -18,12 +18,12 @@
       padding: 0;
     }
 
-    html, body {
+    body {
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
       color: #111827;
       background: #FFFFFF;
-      font-size: 9.25pt;
-      line-height: 1.4;
+      font-size: 9.5pt;
+      line-height: 1.45;
       -webkit-font-smoothing: antialiased;
       -webkit-print-color-adjust: exact;
       print-color-adjust: exact;
@@ -32,18 +32,14 @@
     /* Page container */
     .report-page {
       width: 100%;
-      height: 9.9in;
-      max-height: 9.9in;
+      min-height: 9.7in;
       page-break-after: always;
       break-after: page;
-      page-break-inside: avoid;
-      break-inside: avoid;
       position: relative;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       background: #FFFFFF;
-      overflow: hidden;
     }
 
     .report-page:last-child {
@@ -53,28 +49,26 @@
 
     .page-content {
       flex: 1;
-      display: flex;
-      flex-direction: column;
     }
 
     /* Typography */
     h1.report-title {
-      font-size: 21pt;
+      font-size: 24pt;
       font-weight: 700;
       color: #111827;
       letter-spacing: -0.025em;
       line-height: 1.15;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     p.report-subtitle {
-      font-size: 8.75pt;
+      font-size: 9.5pt;
       color: #6B7280;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
     }
 
     h2.section-title {
-      font-size: 13.5pt;
+      font-size: 15pt;
       font-weight: 700;
       color: #111827;
       letter-spacing: -0.02em;
@@ -82,26 +76,26 @@
     }
 
     p.section-subtitle {
-      font-size: 8.5pt;
+      font-size: 9pt;
       color: #6B7280;
-      margin-bottom: 10px;
+      margin-bottom: 14px;
     }
 
     h3.block-title {
-      font-size: 7.5pt;
+      font-size: 8pt;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       color: #6B7280;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     /* Badges */
     .badge {
       display: inline-block;
-      font-size: 7pt;
+      font-size: 7.5pt;
       font-weight: 700;
-      padding: 2px 6px;
+      padding: 2px 7px;
       border-radius: 4px;
       text-transform: uppercase;
       letter-spacing: 0.03em;
@@ -120,9 +114,15 @@
       border: 1px solid #A7F3D0;
     }
 
+    .badge-negative {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+    }
+
     .badge-neutral {
       background: #F3F4F6;
-      color: #4B5563;
+      color: #6B7280;
       border: 1px solid #E5E7EB;
     }
 
@@ -131,8 +131,8 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 8px;
-      margin-bottom: 12px;
+      padding-bottom: 10px;
+      margin-bottom: 16px;
       border-bottom: 1px solid #E5E7EB;
     }
 
@@ -164,14 +164,13 @@
     /* Footers */
     .report-footer {
       border-top: 1px solid #E5E7EB;
-      padding-top: 8px;
-      margin-top: auto;
+      padding-top: 10px;
+      margin-top: 18px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 7.25pt;
+      font-size: 7.5pt;
       color: #9CA3AF;
-      page-break-inside: avoid;
       break-inside: avoid;
     }
 
@@ -181,41 +180,56 @@
       gap: 6px;
     }
 
-    /* Panels & Cards */
+    /* Cards & Panels */
     .panel {
       background: #F9FAFB;
       border: 1px solid #E5E7EB;
       border-radius: 6px;
-      padding: 9px 12px;
-      page-break-inside: avoid;
+      padding: 12px 14px;
       break-inside: avoid;
+      page-break-inside: avoid;
     }
 
+    .panel-white {
+      background: #FFFFFF;
+      border: 1px solid #E5E7EB;
+      border-radius: 6px;
+      padding: 12px 14px;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* KPI Grid */
     .kpi-grid-3 {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: 8px;
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .kpi-grid-4 {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin-bottom: 10px;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .kpi-grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .kpi-card {
       background: #FFFFFF;
       border: 1px solid #E5E7EB;
       border-radius: 6px;
-      padding: 8px 10px;
+      padding: 10px 12px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      min-height: 58px;
-      page-break-inside: avoid;
-      break-inside: avoid;
+      min-height: 68px;
     }
 
     .kpi-card.highlight {
@@ -224,12 +238,12 @@
     }
 
     .kpi-card-label {
-      font-size: 7pt;
+      font-size: 7.5pt;
       font-weight: 700;
       color: #6B7280;
       text-transform: uppercase;
       letter-spacing: 0.03em;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .kpi-card.highlight .kpi-card-label {
@@ -237,12 +251,12 @@
     }
 
     .kpi-card-value {
-      font-size: 14.5pt;
+      font-size: 16.5pt;
       font-weight: 700;
       color: #111827;
       letter-spacing: -0.02em;
       line-height: 1.1;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .kpi-card.highlight .kpi-card-value {
@@ -250,7 +264,7 @@
     }
 
     .kpi-card-sub {
-      font-size: 7pt;
+      font-size: 7.5pt;
       color: #9CA3AF;
       white-space: nowrap;
       overflow: hidden;
@@ -261,21 +275,20 @@
     table.data-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 8pt;
+      font-size: 8.5pt;
       margin-top: 4px;
-      margin-bottom: 8px;
-      page-break-inside: avoid;
+      margin-bottom: 12px;
       break-inside: avoid;
     }
 
     table.data-table th {
       background: #F9FAFB;
       color: #6B7280;
-      font-size: 7pt;
+      font-size: 7.5pt;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
-      padding: 6px 8px;
+      padding: 7px 10px;
       border-top: 1px solid #E5E7EB;
       border-bottom: 1px solid #E5E7EB;
       text-align: left;
@@ -287,10 +300,14 @@
     }
 
     table.data-table td {
-      padding: 5.5px 8px;
+      padding: 7px 10px;
       border-bottom: 1px solid #F3F4F6;
       color: #374151;
       font-variant-numeric: tabular-nums;
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: 1px solid #E5E7EB;
     }
 
     /* Charts */
@@ -298,37 +315,52 @@
       background: #F9FAFB;
       border: 1px solid #E5E7EB;
       border-radius: 6px;
-      padding: 8px 12px 4px 12px;
-      margin-bottom: 8px;
-      page-break-inside: avoid;
+      padding: 12px 14px 6px 14px;
+      margin-bottom: 14px;
       break-inside: avoid;
     }
 
-    /* Diligence Observation Box */
+    .empty-chart-box {
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    .empty-title {
+      font-size: 9.5pt;
+      font-weight: 600;
+      color: #4B5563;
+      margin-bottom: 4px;
+    }
+
+    .empty-sub {
+      font-size: 8pt;
+      color: #9CA3AF;
+    }
+
+    /* Overview Quote Box */
     .overview-box {
       background: #F9FAFB;
       border: 1px solid #E5E7EB;
       border-left: 3.5px solid #4F46E5;
       border-radius: 6px;
-      padding: 9px 12px;
-      margin-top: 8px;
-      page-break-inside: avoid;
+      padding: 12px 14px;
+      margin-top: 14px;
       break-inside: avoid;
     }
 
     .overview-title {
-      font-size: 7.5pt;
+      font-size: 8pt;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: #4F46E5;
-      margin-bottom: 3px;
+      margin-bottom: 6px;
     }
 
     .overview-text {
-      font-size: 8pt;
+      font-size: 8.5pt;
       color: #374151;
-      line-height: 1.45;
+      line-height: 1.5;
     }
   </style>
 </head>
@@ -341,119 +373,119 @@
     <div class="page-content">
 
       <!-- Header -->
-      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #E5E7EB;">
+      <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px solid #E5E7EB;">
         <div>
-          <div class="running-brand" style="margin-bottom: 4px;">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="14" height="17" fill="none">
-              <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-            </svg>
-            <span class="running-brand-name">ProofRound</span>
+          <div class="running-brand" style="margin-bottom: 6px;">
+            
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
+            <span class="running-brand-name" style="font-size: 11pt;">ProofRound</span>
           </div>
           <div>
-            <span class="badge badge-indigo">STRIPE-CONNECTED DILIGENCE PACKET</span>
+            <span class="badge badge-indigo">STRIPE-CONNECTED FINANCIAL SNAPSHOT</span>
           </div>
         </div>
         <div style="text-align: right;">
-          <div style="font-size: 7.5pt; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.04em;">Audit Generation Date</div>
-          <div style="font-size: 8.5pt; font-weight: 600; color: #111827;">Oct 31, 2026</div>
-          <div style="font-size: 7pt; color: #9CA3AF;">Read-Only Stripe OAuth Verification</div>
+          <div style="font-size: 8pt; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.04em;">Report Generation Date</div>
+          <div style="font-size: 9pt; font-weight: 600; color: #111827;">Oct 31, 2026</div>
+          <div style="font-size: 7.5pt; color: #9CA3AF;">Direct Stripe OAuth Integration</div>
         </div>
       </div>
 
       <!-- Title Block -->
-      <div style="margin-bottom: 10px;">
+      <div style="margin-bottom: 14px;">
         <h1 class="report-title">Verified Investor Snapshot</h1>
-        <p class="report-subtitle">Direct ledger audit of transactional volume, contract commitments, and counterparty distribution.</p>
+        <p class="report-subtitle">Stripe-connected financial performance for startup diligence.</p>
       </div>
 
       <!-- Metadata Box -->
-      <div class="panel" style="display: grid; grid-template-columns: 1.6fr 1.4fr 1.1fr 1.3fr; gap: 8px; margin-bottom: 12px;">
+      <div class="panel" style="display: grid; grid-template-columns: 1.6fr 1.4fr 1.1fr 1.3fr; gap: 12px; margin-bottom: 16px;">
         <div>
-          <div style="font-size: 7pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Entity Audited</div>
-          <div style="font-size: 9pt; font-weight: 700; color: #111827;">Acme Technologies, Inc.</div>
-          <div style="font-size: 7pt; color: #9CA3AF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Stripe Account ID: acct_1N923AcmeStripe</div>
+          <div style="font-size: 7.5pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Company Name</div>
+          <div style="font-size: 9.5pt; font-weight: 700; color: #111827;">Acme Technologies, Inc.</div>
+          <div style="font-size: 7.5pt; color: #9CA3AF; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Developer workflows automated via generative AI infrastructure.</div>
         </div>
         <div>
-          <div style="font-size: 7pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Observation Window</div>
-          <div style="font-size: 8pt; font-weight: 600; color: #111827;">Apr 30, 2026 – Oct 31, 2026</div>
+          <div style="font-size: 7.5pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Reporting Period</div>
+          <div style="font-size: 8.5pt; font-weight: 600; color: #111827;">Apr 30, 2026 – Oct 31, 2026</div>
         </div>
         <div>
-          <div style="font-size: 7pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Ledger Status</div>
-          <div style="font-size: 8pt; font-weight: 600; color: #059669;">Direct Read Verified</div>
+          <div style="font-size: 7.5pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Snapshot Date</div>
+          <div style="font-size: 8.5pt; font-weight: 600; color: #111827;">Oct 31, 2026</div>
         </div>
         <div>
-          <div style="font-size: 7pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Verification ID</div>
-          <div style="font-size: 7.5pt; font-family: monospace; color: #4B5563;">pkt_live_acme_9921</div>
+          <div style="font-size: 7.5pt; font-weight: 700; color: #6B7280; text-transform: uppercase;">Report ID</div>
+          <div style="font-size: 8pt; font-family: monospace; color: #4B5563;">pkt_live_acme_9921</div>
         </div>
       </div>
 
       <!-- Traction Overview -->
-      <div style="margin-bottom: 4px;">
-        <h3 class="block-title">Top-Line Volume &amp; Recurring Commitments</h3>
+      <div style="margin-bottom: 6px;">
+        <h3 class="block-title">Traction Overview &amp; Key Financial Highlights</h3>
         <div class="kpi-grid-3">
           <div class="kpi-card highlight">
-            <span class="kpi-card-label">Gross Billed Volume</span>
+            <span class="kpi-card-label">Gross Revenue</span>
             <span class="kpi-card-value">$124,500</span>
-            <span class="kpi-card-sub">Total Stripe charge attempts processed</span>
+            <span class="kpi-card-sub">Total volume processed in window</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Net Realized Volume</span>
+            <span class="kpi-card-label">Net Revenue</span>
             <span class="kpi-card-value">$122,100</span>
-            <span class="kpi-card-sub">Gross volume minus refunds and disputes</span>
+            <span class="kpi-card-sub">Net realized volume after refunds</span>
           </div>
           <div class="kpi-card highlight">
-            <span class="kpi-card-label">Active MRR (Run-Rate)</span>
+            <span class="kpi-card-label">Monthly Recurring Revenue</span>
             <span class="kpi-card-value">$10,375</span>
-            <span class="kpi-card-sub">Active recurring contracts as of snapshot</span>
+            <span class="kpi-card-sub">Normalized monthly run rate (MRR)</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Annualized Run-Rate (ARR)</span>
+            <span class="kpi-card-label">Annual Recurring Revenue</span>
             <span class="kpi-card-value">$124,500</span>
-            <span class="kpi-card-sub">Extrapolated run-rate (MRR &times; 12)</span>
+            <span class="kpi-card-sub">Annualized run rate (MRR &times; 12)</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Distinct Paid Accounts</span>
+            <span class="kpi-card-label">Active Customers</span>
             <span class="kpi-card-value">42</span>
-            <span class="kpi-card-sub">Unique Customer IDs with &gt;$0 settled</span>
+            <span class="kpi-card-sub">Distinct customer accounts billed</span>
           </div>
           <div class="kpi-card">
             <span class="kpi-card-label">Active Subscriptions</span>
             <span class="kpi-card-value">38</span>
-            <span class="kpi-card-sub">Recurring contracts in 'active' status</span>
+            <span class="kpi-card-sub">Active recurring contracts in Stripe</span>
           </div>
         </div>
       </div>
 
       <!-- Unit Economics Row -->
-      <div class="kpi-grid-4" style="margin-bottom: 8px;">
+      <div class="kpi-grid-4" style="margin-bottom: 16px;">
         <div class="kpi-card">
           <span class="kpi-card-label">Average Revenue / Customer</span>
-          <span class="kpi-card-value" style="font-size: 12.5pt;">$2,907.14</span>
-          <span class="kpi-card-sub">Net revenue / unique billed accounts</span>
+          <span class="kpi-card-value" style="font-size: 13.5pt;">$2,907.14</span>
+          <span class="kpi-card-sub">ARPC across active accounts</span>
         </div>
         <div class="kpi-card">
-          <span class="kpi-card-label">Settlement Realization</span>
-          <span class="kpi-card-value" style="font-size: 12.5pt;">98.1%</span>
-          <span class="kpi-card-sub">Net realized volume / gross volume</span>
+          <span class="kpi-card-label">Net Realization Ratio</span>
+          <span class="kpi-card-value" style="font-size: 13.5pt;">98.1%</span>
+          <span class="kpi-card-sub">Net revenue realized / Gross</span>
         </div>
         <div class="kpi-card">
-          <span class="kpi-card-label">Multi-Transaction Accounts</span>
-          <span class="kpi-card-value" style="font-size: 12.5pt;">65.0%</span>
-          <span class="kpi-card-sub">Accounts with &ge;2 settled charges</span>
+          <span class="kpi-card-label">Repeat Customer Rate</span>
+          <span class="kpi-card-value" style="font-size: 13.5pt;">65.0%</span>
+          <span class="kpi-card-sub">Accounts with &gt;1 charge</span>
         </div>
         <div class="kpi-card">
-          <span class="kpi-card-label">Observed Contract Churn</span>
-          <span class="kpi-card-value" style="font-size: 12.5pt;">2.1%</span>
+          <span class="kpi-card-label">Observed Churn Rate</span>
+          <span class="kpi-card-value" style="font-size: 13.5pt;">2.1%</span>
           <span class="kpi-card-sub">Canceled / total subscription cohort</span>
         </div>
       </div>
 
-      <!-- Diligence Findings Section -->
+      <!-- Business Overview Section -->
       <div class="overview-box">
-        <div class="overview-title">Diligence Summary &amp; Scope Note</div>
-        <div class="overview-text">
-          During the 6-month observation window (Apr 30 – Oct 31, 2026), Acme Technologies, Inc. recorded $124,500 in gross processed volume across 186 successful charges and 42 distinct customer identifiers. Net realized revenue stood at $122,100 after deducting $1,800 in settled refunds and $600 in formal dispute claims. Active recurring subscription contracts recorded in the Stripe ledger total $10,375 in MRR ($124,500 ARR baseline). <em>Note: This ledger represents settled Stripe card and bank transactions only; off-platform receivables, ACH wire transfers outside Stripe, or partner revenue splits are excluded from verification.</em>
-        </div>
+        <div class="overview-title">Business Overview</div>
+        <div class="overview-text">Between Apr 30, 2026 and Oct 31, 2026, Acme Technologies, Inc. processed $124,500 in gross Stripe volume across 186 successful transactions, achieving $122,100 in net realized revenue (98.1% net realization ratio). Contracted subscription revenue represents $10,375 MRR ($124,500 ARR) across 38 active subscriptions with an observed cohort churn rate of 2.1%. Payment risk remained low: refund volume was $1,800 (1.4% of volume), and disputes totaled $600 (0.48% dispute rate).</div>
       </div>
 
     </div>
@@ -461,10 +493,12 @@
     <!-- Page 1 Footer -->
     <div class="report-footer">
       <div class="footer-left">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="13" height="16" fill="none">
-          <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-        </svg>
-        <span>ProofRound &middot; Diligence Snapshot &middot; ID: pkt_live_acme_9921</span>
+        
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
+        <span>ProofRound &middot; Verified Investor Snapshot &middot; Report ID: pkt_live_acme_9921</span>
       </div>
       <div>Page 1 of 4</div>
     </div>
@@ -479,176 +513,194 @@
       <!-- Running Header -->
       <div class="running-header">
         <div class="running-brand">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="13" height="16" fill="none">
-            <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-          </svg>
+          
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
           <span class="running-brand-name">ProofRound</span>
-          <span class="running-section-name">Revenue Trajectory Analysis</span>
+          <span class="running-section-name">Revenue Performance</span>
         </div>
         <div class="running-header-right">Acme Technologies, Inc. &middot; Oct 31, 2026</div>
       </div>
 
-      <h2 class="section-title">Revenue Trajectory &amp; Volume Trends</h2>
-      <p class="section-subtitle">Empirical monthly ledger activity and historical growth rates across the audited timeline.</p>
+      <!-- Section Title -->
+      <h2 class="section-title">Revenue Performance</h2>
+      <p class="section-subtitle">Revenue trends and payment activity across the reporting period.</p>
 
       <!-- Revenue Overview KPIs -->
       <div class="kpi-grid-4">
         <div class="kpi-card highlight">
-          <span class="kpi-card-label">Gross Billed</span>
-          <span class="kpi-card-value" style="font-size: 13pt;">$124,500</span>
-          <span class="kpi-card-sub">Audited ledger total</span>
+          <span class="kpi-card-label">Gross Revenue</span>
+          <span class="kpi-card-value" style="font-size: 14pt;">$124,500</span>
+          <span class="kpi-card-sub">Total billed in period</span>
         </div>
         <div class="kpi-card">
           <span class="kpi-card-label">Net Realized</span>
-          <span class="kpi-card-value" style="font-size: 13pt;">$122,100</span>
-          <span class="kpi-card-sub">Minus deductions</span>
+          <span class="kpi-card-value" style="font-size: 14pt;">$122,100</span>
+          <span class="kpi-card-sub">After refunds &amp; disputes</span>
         </div>
         <div class="kpi-card">
           <span class="kpi-card-label">Avg Transaction</span>
-          <span class="kpi-card-value" style="font-size: 13pt;">$669.35</span>
-          <span class="kpi-card-sub">Gross / 186 successful</span>
+          <span class="kpi-card-value" style="font-size: 14pt;">$669.35</span>
+          <span class="kpi-card-sub">Volume / successful charges</span>
         </div>
         <div class="kpi-card">
-          <span class="kpi-card-label">Volume Realization</span>
-          <span class="kpi-card-value" style="font-size: 13pt;">98.1%</span>
-          <span class="kpi-card-sub">Net to Gross ratio</span>
+          <span class="kpi-card-label">Net Realization</span>
+          <span class="kpi-card-value" style="font-size: 14pt;">98.1%</span>
+          <span class="kpi-card-sub">Retention efficiency</span>
         </div>
       </div>
 
       <!-- Growth Indicators -->
-      <div style="margin-bottom: 8px;">
-        <h3 class="block-title">Observed Velocity (Rolling Ledger Intervals)</h3>
+      <div style="margin-bottom: 14px;">
+        <h3 class="block-title">Revenue Growth Velocity</h3>
         <div class="kpi-grid-3">
           <div class="kpi-card">
-            <span class="kpi-card-label">Trailing 30-Day Growth</span>
-            <div style="margin: 2px 0;"><span class="badge badge-positive">+13.5%</span></div>
-            <span class="kpi-card-sub">Oct 2026 vs Sep 2026</span>
+            <span class="kpi-card-label">1-Month Growth (MoM)</span>
+            <div style="margin: 4px 0;"><span class="badge badge-positive">+13.5%</span></div>
+            <span class="kpi-card-sub">Trailing 30-day velocity</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Quarterly Expansion (QoQ)</span>
-            <div style="margin: 2px 0;"><span class="badge badge-positive">+42.8%</span></div>
-            <span class="kpi-card-sub">Aug–Oct vs May–Jul</span>
+            <span class="kpi-card-label">3-Month Growth (QoQ)</span>
+            <div style="margin: 4px 0;"><span class="badge badge-positive">+42.8%</span></div>
+            <span class="kpi-card-sub">Quarterly expansion rate</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Window Expansion (6-Month)</span>
-            <div style="margin: 2px 0;"><span class="badge badge-positive">+100.7%</span></div>
-            <span class="kpi-card-sub">Oct 2026 vs May 2026 baseline</span>
+            <span class="kpi-card-label">6-Month Growth</span>
+            <div style="margin: 4px 0;"><span class="badge badge-positive">+100.7%</span></div>
+            <span class="kpi-card-sub">Half-year trajectory velocity</span>
           </div>
         </div>
 
-        <div class="panel" style="padding: 7px 10px; margin-bottom: 8px; font-size: 8pt; color: #4B5563;">
-          <strong style="color: #111827;">Ledger Observation:</strong>
-          Monthly gross processed volume expanded from $14,200 in May 2026 to $28,500 in October 2026 (+$14,300 absolute change). Each monthly interval demonstrated positive net delta without historical contraction in the 6-month observation period.
+        <div class="panel" style="padding: 9px 12px; margin-bottom: 14px; font-size: 8.5pt; color: #4B5563;">
+          <strong style="color: #4F46E5;">Trajectory Commentary:</strong>
+          Over the verified reporting period, monthly revenue expanded from $14,200 (May 2026) to $28,500 (Oct 2026), representing a 100.7% shift ($14,300 net change). Peak monthly volume was achieved in Oct 2026 at $28,500.
         </div>
       </div>
 
       <!-- Revenue Chart -->
-      <div style="margin-bottom: 8px;">
-        <h3 class="block-title">Monthly Settled Gross Volume ($ USD)</h3>
+      <div style="margin-bottom: 14px;">
+        <h3 class="block-title">Monthly Revenue Progression</h3>
         <div class="chart-panel">
-          <svg viewBox="0 0 660 160" width="100%" height="150" class="chart-svg">
-            <line x1="42" y1="20" x2="660" y2="20" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
-            <text x="36" y="23" font-size="8.5" fill="#9CA3AF" text-anchor="end" font-family="sans-serif">$29k</text>
-
-            <line x1="42" y1="58" x2="660" y2="58" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
-            <text x="36" y="61" font-size="8.5" fill="#9CA3AF" text-anchor="end" font-family="sans-serif">$19k</text>
-
-            <line x1="42" y1="96" x2="660" y2="96" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
-            <text x="36" y="99" font-size="8.5" fill="#9CA3AF" text-anchor="end" font-family="sans-serif">$10k</text>
-
-            <line x1="42" y1="134" x2="660" y2="134" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
-            <text x="36" y="137" font-size="8.5" fill="#9CA3AF" text-anchor="end" font-family="sans-serif">$0</text>
-
-            <rect x="72.5" y="78" width="40" height="56" rx="2" fill="#818CF8" />
-            <text x="92.5" y="72" font-size="8.5" font-weight="600" fill="#111827" text-anchor="middle" font-family="sans-serif">$14.2k</text>
-            <text x="92.5" y="148" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="sans-serif">May 2026</text>
-
-            <rect x="175.5" y="67" width="40" height="67" rx="2" fill="#818CF8" />
-            <text x="195.5" y="61" font-size="8.5" font-weight="600" fill="#111827" text-anchor="middle" font-family="sans-serif">$16.8k</text>
-            <text x="195.5" y="148" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Jun 2026</text>
-
-            <rect x="278.5" y="61" width="40" height="73" rx="2" fill="#818CF8" />
-            <text x="298.5" y="55" font-size="8.5" font-weight="600" fill="#111827" text-anchor="middle" font-family="sans-serif">$18.5k</text>
-            <text x="298.5" y="148" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Jul 2026</text>
-
-            <rect x="381.5" y="49" width="40" height="85" rx="2" fill="#818CF8" />
-            <text x="401.5" y="43" font-size="8.5" font-weight="600" fill="#111827" text-anchor="middle" font-family="sans-serif">$21.4k</text>
-            <text x="401.5" y="148" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Aug 2026</text>
-
-            <rect x="484.5" y="34" width="40" height="100" rx="2" fill="#818CF8" />
-            <text x="504.5" y="28" font-size="8.5" font-weight="600" fill="#111827" text-anchor="middle" font-family="sans-serif">$25.1k</text>
-            <text x="504.5" y="148" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Sep 2026</text>
-
-            <rect x="587.5" y="20" width="40" height="114" rx="2" fill="#4F46E5" />
-            <text x="607.5" y="14" font-size="8.5" font-weight="600" fill="#4F46E5" text-anchor="middle" font-family="sans-serif">$28.5k</text>
-            <text x="607.5" y="148" font-size="8.5" fill="#6B7280" text-anchor="middle" font-family="sans-serif">Oct 2026</text>
-          </svg>
+          
+    <svg viewBox="0 0 660 170" width="100%" height="170" class="chart-svg">
+      
+      <line x1="42" y1="26" x2="660" y2="26" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
+      <text x="36" y="29" font-size="9" fill="#9CA3AF" text-anchor="end" font-family="system-ui, sans-serif">$29k</text>
+    
+      <line x1="42" y1="64.66666666666666" x2="660" y2="64.66666666666666" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
+      <text x="36" y="67.66666666666666" font-size="9" fill="#9CA3AF" text-anchor="end" font-family="system-ui, sans-serif">$19k</text>
+    
+      <line x1="42" y1="103.33333333333333" x2="660" y2="103.33333333333333" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
+      <text x="36" y="106.33333333333333" font-size="9" fill="#9CA3AF" text-anchor="end" font-family="system-ui, sans-serif">$10k</text>
+    
+      <line x1="42" y1="142" x2="660" y2="142" stroke="#E5E7EB" stroke-width="0.8" stroke-dasharray="3,3" />
+      <text x="36" y="145" font-size="9" fill="#9CA3AF" text-anchor="end" font-family="system-ui, sans-serif">$0</text>
+    
+      
+      <rect x="72.5" y="84.20350877192982" width="42" height="57.796491228070174" rx="3" fill="#818CF8" />
+      <text x="93.5" y="78.20350877192982" font-size="9" font-weight="600" fill="#111827" text-anchor="middle" font-family="system-ui, sans-serif">$14.2k</text>
+      <text x="93.5" y="164" font-size="9" fill="#6B7280" text-anchor="middle" font-family="system-ui, sans-serif">May 2026</text>
+    
+      <rect x="175.5" y="73.62105263157895" width="42" height="68.37894736842105" rx="3" fill="#818CF8" />
+      <text x="196.5" y="67.62105263157895" font-size="9" font-weight="600" fill="#111827" text-anchor="middle" font-family="system-ui, sans-serif">$16.8k</text>
+      <text x="196.5" y="164" font-size="9" fill="#6B7280" text-anchor="middle" font-family="system-ui, sans-serif">Jun 2026</text>
+    
+      <rect x="278.5" y="66.7017543859649" width="42" height="75.2982456140351" rx="3" fill="#818CF8" />
+      <text x="299.5" y="60.701754385964904" font-size="9" font-weight="600" fill="#111827" text-anchor="middle" font-family="system-ui, sans-serif">$18.5k</text>
+      <text x="299.5" y="164" font-size="9" fill="#6B7280" text-anchor="middle" font-family="system-ui, sans-serif">Jul 2026</text>
+    
+      <rect x="381.5" y="54.89824561403509" width="42" height="87.10175438596491" rx="3" fill="#818CF8" />
+      <text x="402.5" y="48.89824561403509" font-size="9" font-weight="600" fill="#111827" text-anchor="middle" font-family="system-ui, sans-serif">$21.4k</text>
+      <text x="402.5" y="164" font-size="9" fill="#6B7280" text-anchor="middle" font-family="system-ui, sans-serif">Aug 2026</text>
+    
+      <rect x="484.5" y="39.838596491228074" width="42" height="102.16140350877193" rx="3" fill="#818CF8" />
+      <text x="505.5" y="33.838596491228074" font-size="9" font-weight="600" fill="#111827" text-anchor="middle" font-family="system-ui, sans-serif">$25.1k</text>
+      <text x="505.5" y="164" font-size="9" fill="#6B7280" text-anchor="middle" font-family="system-ui, sans-serif">Sep 2026</text>
+    
+      <rect x="587.5" y="26" width="42" height="116" rx="3" fill="#4F46E5" />
+      <text x="608.5" y="20" font-size="9" font-weight="600" fill="#4F46E5" text-anchor="middle" font-family="system-ui, sans-serif">$28.5k</text>
+      <text x="608.5" y="164" font-size="9" fill="#6B7280" text-anchor="middle" font-family="system-ui, sans-serif">Oct 2026</text>
+    
+        <rect x="592.5" y="4" width="32" height="12" rx="3" fill="#EEF2FF" stroke="#C7D2FE" stroke-width="0.6" />
+        <text x="608.5" y="13" font-size="7.5" font-weight="700" fill="#4F46E5" text-anchor="middle" font-family="system-ui, sans-serif">PEAK</text>
+      
+    </svg>
+  
         </div>
       </div>
 
       <!-- Revenue Table -->
       <div>
-        <h3 class="block-title">Monthly Ledger Summary</h3>
+        <h3 class="block-title">Monthly Revenue Breakdown Ledger</h3>
         <table class="data-table">
           <thead>
             <tr>
-              <th>Period</th>
-              <th class="num">Gross Processed</th>
+              <th>Period / Month</th>
+              <th class="num">Gross Revenue</th>
               <th class="num">Refunds</th>
-              <th class="num">Net Realized</th>
-              <th class="num">Charges</th>
-              <th class="num">Share of Volume</th>
+              <th class="num">Net Revenue</th>
+              <th class="num">Transactions</th>
+              <th class="num">% of Window</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td style="font-weight: 600;">May 2026</td>
-              <td class="num" style="color: #4F46E5; font-weight: 600;">$14,200</td>
-              <td class="num" style="color: #DC2626;">$200</td>
-              <td class="num" style="font-weight: 600;">$14,000</td>
-              <td class="num">24</td>
-              <td class="num" style="color: #6B7280;">11.4%</td>
-            </tr>
-            <tr>
-              <td style="font-weight: 600;">Jun 2026</td>
-              <td class="num" style="color: #4F46E5; font-weight: 600;">$16,800</td>
-              <td class="num" style="color: #DC2626;">$300</td>
-              <td class="num" style="font-weight: 600;">$16,500</td>
-              <td class="num">27</td>
-              <td class="num" style="color: #6B7280;">13.5%</td>
-            </tr>
-            <tr>
-              <td style="font-weight: 600;">Jul 2026</td>
-              <td class="num" style="color: #4F46E5; font-weight: 600;">$18,500</td>
-              <td class="num" style="color: #6B7280;">$0</td>
-              <td class="num" style="font-weight: 600;">$18,500</td>
-              <td class="num">30</td>
-              <td class="num" style="color: #6B7280;">14.9%</td>
-            </tr>
-            <tr>
-              <td style="font-weight: 600;">Aug 2026</td>
-              <td class="num" style="color: #4F46E5; font-weight: 600;">$21,400</td>
-              <td class="num" style="color: #DC2626;">$400</td>
-              <td class="num" style="font-weight: 600;">$21,000</td>
-              <td class="num">33</td>
-              <td class="num" style="color: #6B7280;">17.2%</td>
-            </tr>
-            <tr>
-              <td style="font-weight: 600;">Sep 2026</td>
-              <td class="num" style="color: #4F46E5; font-weight: 600;">$25,100</td>
-              <td class="num" style="color: #DC2626;">$500</td>
-              <td class="num" style="font-weight: 600;">$24,600</td>
-              <td class="num">35</td>
-              <td class="num" style="color: #6B7280;">20.2%</td>
-            </tr>
-            <tr>
-              <td style="font-weight: 600;">Oct 2026</td>
-              <td class="num" style="color: #4F46E5; font-weight: 600;">$28,500</td>
-              <td class="num" style="color: #DC2626;">$400</td>
-              <td class="num" style="font-weight: 600;">$28,100</td>
-              <td class="num">37</td>
-              <td class="num" style="color: #6B7280;">22.9%</td>
-            </tr>
+            
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">May 2026</td>
+                          <td class="num" style="font-weight: 600; color: #4F46E5;">$14,200</td>
+                          <td class="num" style="color: #DC2626;">$200</td>
+                          <td class="num" style="font-weight: 600;">$14,000</td>
+                          <td class="num">24</td>
+                          <td class="num" style="color: #6B7280;">11.4%</td>
+                        </tr>
+                      
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">Jun 2026</td>
+                          <td class="num" style="font-weight: 600; color: #4F46E5;">$16,800</td>
+                          <td class="num" style="color: #DC2626;">$300</td>
+                          <td class="num" style="font-weight: 600;">$16,500</td>
+                          <td class="num">27</td>
+                          <td class="num" style="color: #6B7280;">13.5%</td>
+                        </tr>
+                      
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">Jul 2026</td>
+                          <td class="num" style="font-weight: 600; color: #4F46E5;">$18,500</td>
+                          <td class="num" style="color: #DC2626;">$0</td>
+                          <td class="num" style="font-weight: 600;">$18,500</td>
+                          <td class="num">30</td>
+                          <td class="num" style="color: #6B7280;">14.9%</td>
+                        </tr>
+                      
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">Aug 2026</td>
+                          <td class="num" style="font-weight: 600; color: #4F46E5;">$21,400</td>
+                          <td class="num" style="color: #DC2626;">$400</td>
+                          <td class="num" style="font-weight: 600;">$21,000</td>
+                          <td class="num">33</td>
+                          <td class="num" style="color: #6B7280;">17.2%</td>
+                        </tr>
+                      
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">Sep 2026</td>
+                          <td class="num" style="font-weight: 600; color: #4F46E5;">$25,100</td>
+                          <td class="num" style="color: #DC2626;">$500</td>
+                          <td class="num" style="font-weight: 600;">$24,600</td>
+                          <td class="num">35</td>
+                          <td class="num" style="color: #6B7280;">20.2%</td>
+                        </tr>
+                      
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">Oct 2026</td>
+                          <td class="num" style="font-weight: 600; color: #4F46E5;">$28,500</td>
+                          <td class="num" style="color: #DC2626;">$400</td>
+                          <td class="num" style="font-weight: 600;">$28,100</td>
+                          <td class="num">37</td>
+                          <td class="num" style="color: #6B7280;">22.9%</td>
+                        </tr>
+                      
           </tbody>
         </table>
       </div>
@@ -658,10 +710,12 @@
     <!-- Page 2 Footer -->
     <div class="report-footer">
       <div class="footer-left">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="13" height="16" fill="none">
-          <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-        </svg>
-        <span>ProofRound &middot; Diligence Snapshot &middot; ID: pkt_live_acme_9921</span>
+        
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
+        <span>ProofRound &middot; Verified Investor Snapshot &middot; Report ID: pkt_live_acme_9921</span>
       </div>
       <div>Page 2 of 4</div>
     </div>
@@ -676,129 +730,129 @@
       <!-- Running Header -->
       <div class="running-header">
         <div class="running-brand">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="13" height="16" fill="none">
-            <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-          </svg>
+          
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
           <span class="running-brand-name">ProofRound</span>
-          <span class="running-section-name">Customer Concentration &amp; Quality</span>
+          <span class="running-section-name">Customer &amp; Revenue Quality</span>
         </div>
         <div class="running-header-right">Acme Technologies, Inc. &middot; Oct 31, 2026</div>
       </div>
 
-      <h2 class="section-title">Customer Concentration &amp; Revenue Integrity</h2>
-      <p class="section-subtitle">Account-level volume exposure, settlement dispute frequency, and payment deductions.</p>
+      <!-- Section Title -->
+      <h2 class="section-title">Customer &amp; Revenue Quality</h2>
+      <p class="section-subtitle">Customer activity, revenue distribution, and payment quality.</p>
 
       <!-- Customer Concentration Section -->
-      <div style="margin-bottom: 10px;">
-        <h3 class="block-title">Counterparty Concentration (Audited Stripe Customers)</h3>
-        <div class="kpi-grid-3" style="margin-bottom: 6px;">
+      <div style="margin-bottom: 16px;">
+        <h3 class="block-title">Customer Revenue Concentration</h3>
+        <div class="kpi-grid-3" style="margin-bottom: 10px;">
           <div class="kpi-card highlight">
-            <span class="kpi-card-label">Largest Single Account</span>
-            <span class="kpi-card-value" style="font-size: 13pt;">8.2% ($10,200)</span>
+            <span class="kpi-card-label">Largest Customer Share</span>
+            <span class="kpi-card-value" style="font-size: 14pt;">8.2% ($10,200)</span>
             <span class="kpi-card-sub">Top account share of gross volume</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Top 3 Accounts Combined</span>
-            <span class="kpi-card-value" style="font-size: 13pt;">16.2% ($20,170)</span>
-            <span class="kpi-card-sub">Top 3 accounts share of gross volume</span>
+            <span class="kpi-card-label">Top 3 Customers Share</span>
+            <span class="kpi-card-value" style="font-size: 14pt;">16.2% ($20,170)</span>
+            <span class="kpi-card-sub">Top 3 accounts combined volume</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Top 5 Accounts Combined</span>
-            <span class="kpi-card-value" style="font-size: 13pt;">21.4% ($26,650)</span>
-            <span class="kpi-card-sub">Top 5 accounts share of gross volume</span>
+            <span class="kpi-card-label">Top 5 Customers Share</span>
+            <span class="kpi-card-value" style="font-size: 14pt;">21.4% ($26,650)</span>
+            <span class="kpi-card-sub">Top 5 accounts combined volume</span>
           </div>
         </div>
 
-        <!-- Anonymous Customer Table -->
+        <!-- Anonymous Customer Table (Zero PII Exposed) -->
         <table class="data-table">
           <thead>
             <tr>
-              <th>Counterparty Tier</th>
+              <th>Account Tier</th>
               <th class="num">Volume Contribution</th>
               <th class="num">% of Gross Revenue</th>
-              <th>Audited Diligence Note</th>
+              <th>Concentration Assessment</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td style="font-weight: 600;">Account #1 (Highest Volume)</td>
+              <td style="font-weight: 600;">Customer 1 (Top Account)</td>
               <td class="num" style="font-weight: 600; color: #4F46E5;">$10,200</td>
               <td class="num">8.2%</td>
-              <td style="color: #4B5563;">Single customer exposure remains &lt;10%</td>
+              <td style="color: #4B5563;">Primary account contribution</td>
             </tr>
             <tr>
-              <td style="font-weight: 600;">Accounts #2 through #5</td>
-              <td class="num" style="font-weight: 600;">$16,450</td>
-              <td class="num">13.2%</td>
-              <td style="color: #4B5563;">Next 4 largest billed accounts</td>
-            </tr>
-            <tr>
-              <td style="font-weight: 600;">Top 5 Combined Cohort</td>
+              <td style="font-weight: 600;">Top 5 Accounts Combined</td>
               <td class="num" style="font-weight: 600;">$26,650</td>
               <td class="num">21.4%</td>
-              <td style="color: #4B5563;">Combined cohort exposure in reporting window</td>
+              <td style="color: #4B5563;">
+                <span class="badge badge-positive">Healthy Diversification (&lt;25%)</span>
+              </td>
             </tr>
             <tr>
-              <td style="font-weight: 600;">Remaining Accounts (37 Customers)</td>
+              <td style="font-weight: 600;">Remaining Customer Cohort</td>
               <td class="num">$97,850</td>
               <td class="num">78.6%</td>
-              <td style="color: #6B7280;">Long-tail distributed billing baseline</td>
+              <td style="color: #6B7280;">Diversified customer base</td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <!-- Customer Metrics & Unit Economics -->
-      <div style="margin-bottom: 10px;">
-        <h3 class="block-title">Customer Breadth &amp; Engagement Metrics</h3>
+      <div style="margin-bottom: 16px;">
+        <h3 class="block-title">Customer Activity &amp; Retention Quality</h3>
         <div class="kpi-grid-4">
           <div class="kpi-card">
-            <span class="kpi-card-label">Distinct Accounts Billed</span>
+            <span class="kpi-card-label">Total Billed Customers</span>
             <span class="kpi-card-value">42</span>
-            <span class="kpi-card-sub">With settled invoices in window</span>
+            <span class="kpi-card-sub">Accounts charged in window</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Net ARPC</span>
+            <span class="kpi-card-label">Average Revenue / Customer</span>
             <span class="kpi-card-value">$2,907.14</span>
-            <span class="kpi-card-sub">Net revenue per billed customer</span>
+            <span class="kpi-card-sub">ARPC across cohort</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Repeat Billed Ratio</span>
+            <span class="kpi-card-label">Repeat Customers</span>
             <span class="kpi-card-value">65.0%</span>
-            <span class="kpi-card-sub">27 of 42 billed multiple times</span>
+            <span class="kpi-card-sub">Repeat billing engagement</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Observed Churn</span>
+            <span class="kpi-card-label">Subscription Churn</span>
             <span class="kpi-card-value">2.1%</span>
-            <span class="kpi-card-sub">1 canceled active contract in cohort</span>
+            <span class="kpi-card-sub">Observed contract churn rate</span>
           </div>
         </div>
       </div>
 
       <!-- Revenue & Payment Quality Baseline -->
       <div>
-        <h3 class="block-title">Payment Settlement Integrity &amp; Risk Baseline</h3>
-        <div class="kpi-grid-3" style="margin-bottom: 6px;">
+        <h3 class="block-title">Payment Integrity &amp; Risk Baseline</h3>
+        <div class="kpi-grid-3" style="margin-bottom: 10px;">
           <div class="kpi-card">
-            <span class="kpi-card-label">Settled Refund Volume</span>
-            <span class="kpi-card-value" style="font-size: 13pt;">$1,800</span>
-            <span class="kpi-card-sub">6 refunds issued (1.4% of gross)</span>
+            <span class="kpi-card-label">Total Refunds</span>
+            <span class="kpi-card-value" style="font-size: 13.5pt;">$1,800</span>
+            <span class="kpi-card-sub">6 refunded transactions (1.4%)</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Dispute / Chargeback Volume</span>
-            <span class="kpi-card-value" style="font-size: 13pt;">$600</span>
-            <span class="kpi-card-sub">1 dispute claim (0.48% rate)</span>
+            <span class="kpi-card-label">Disputes &amp; Chargebacks</span>
+            <span class="kpi-card-value" style="font-size: 13.5pt;">$600</span>
+            <span class="kpi-card-sub">1 dispute claims (0.48%)</span>
           </div>
           <div class="kpi-card highlight">
-            <span class="kpi-card-label">Realization Ratio</span>
-            <span class="kpi-card-value" style="font-size: 13pt;">98.1%</span>
-            <span class="kpi-card-sub">Net realized volume / gross volume</span>
+            <span class="kpi-card-label">Net Revenue Ratio</span>
+            <span class="kpi-card-value" style="font-size: 13.5pt;">98.1%</span>
+            <span class="kpi-card-sub">Net revenue realized / Gross volume</span>
           </div>
         </div>
 
-        <div class="panel" style="font-size: 8pt; color: #4B5563; line-height: 1.45;">
-          <strong style="color: #111827;">Empirical Settlement Integrity:</strong>
-          Total deductions from gross volume were 1.9% ($1,800 refunds + $600 disputes). Dispute activity represents 1 formal claim across 186 successful transactions (0.54% by transaction count), below the standard 1.0% card brand dispute monitoring threshold.
+        <div class="panel" style="font-size: 8.5pt; color: #4B5563; line-height: 1.5;">
+          <strong style="color: #111827;">Risk Assessment:</strong>
+          Dispute claim rate stands below 1.0%, meeting standard card network acceptable risk thresholds.
+          Net revenue realization ratio of 98.1% indicates strong payment settlement durability.
         </div>
       </div>
 
@@ -807,10 +861,12 @@
     <!-- Page 3 Footer -->
     <div class="report-footer">
       <div class="footer-left">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="13" height="16" fill="none">
-          <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-        </svg>
-        <span>ProofRound &middot; Diligence Snapshot &middot; ID: pkt_live_acme_9921</span>
+        
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
+        <span>ProofRound &middot; Verified Investor Snapshot &middot; Report ID: pkt_live_acme_9921</span>
       </div>
       <div>Page 3 of 4</div>
     </div>
@@ -825,113 +881,119 @@
       <!-- Running Header -->
       <div class="running-header">
         <div class="running-brand">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="13" height="16" fill="none">
-            <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-          </svg>
+          
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
           <span class="running-brand-name">ProofRound</span>
-          <span class="running-section-name">Payment Rails &amp; Contract Details</span>
+          <span class="running-section-name">Payments &amp; Subscription Activity</span>
         </div>
         <div class="running-header-right">Acme Technologies, Inc. &middot; Oct 31, 2026</div>
       </div>
 
-      <h2 class="section-title">Payment Execution Rails &amp; Subscriptions</h2>
-      <p class="section-subtitle">Breakdown of underlying clearing mechanisms, settlement success, and recurring contract status.</p>
+      <!-- Section Title -->
+      <h2 class="section-title">Payments &amp; Subscription Activity</h2>
+      <p class="section-subtitle">Transaction execution channels, dispute records, and recurring contract retention.</p>
 
       <!-- Payment Activity Section -->
-      <div style="margin-bottom: 10px;">
-        <h3 class="block-title">Payment Processing Baseline</h3>
+      <div style="margin-bottom: 16px;">
+        <h3 class="block-title">Payment Execution Overview</h3>
         <div class="kpi-grid-4">
           <div class="kpi-card">
-            <span class="kpi-card-label">Total Charge Attempts</span>
+            <span class="kpi-card-label">Total Transactions</span>
             <span class="kpi-card-value">190</span>
-            <span class="kpi-card-sub">Stripe charges initiated</span>
+            <span class="kpi-card-sub">Charges processed in Stripe</span>
           </div>
           <div class="kpi-card highlight">
-            <span class="kpi-card-label">Successful Settlements</span>
+            <span class="kpi-card-label">Successful Payments</span>
             <span class="kpi-card-value">186</span>
-            <span class="kpi-card-sub">97.9% execution rate</span>
+            <span class="kpi-card-sub">97.9% settlement rate</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Failed / Declined Charges</span>
+            <span class="kpi-card-label">Failed Payments</span>
             <span class="kpi-card-value" style="color: #DC2626;">4</span>
-            <span class="kpi-card-sub">2.1% uncollected attempts</span>
+            <span class="kpi-card-sub">Declined or uncollectible</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Mean Settled Charge</span>
+            <span class="kpi-card-label">Average Payment Value</span>
             <span class="kpi-card-value">$669.35</span>
-            <span class="kpi-card-sub">Average value per charge</span>
+            <span class="kpi-card-sub">Average per settlement</span>
           </div>
         </div>
 
         <!-- Payment Methods Table -->
-        <h3 class="block-title" style="margin-top: 6px;">Volume Distribution by Clearing Method</h3>
+        <h3 class="block-title" style="margin-top: 10px;">Payment Method Distribution</h3>
         <table class="data-table">
           <thead>
             <tr>
-              <th>Method / Payment Rail</th>
-              <th class="num">Settled Transactions</th>
+              <th>Channel / Payment Method</th>
+              <th class="num">Transactions</th>
               <th class="num">Processed Volume</th>
-              <th class="num">Share of Volume</th>
+              <th class="num">% of Total Volume</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td style="font-weight: 600;">Card (Visa / Mastercard / Amex)</td>
-              <td class="num">182</td>
-              <td class="num" style="font-weight: 600;">$120,500</td>
-              <td class="num" style="color: #6B7280;">96.8%</td>
-            </tr>
-            <tr>
-              <td style="font-weight: 600;">ACH Direct Debit</td>
-              <td class="num">4</td>
-              <td class="num" style="font-weight: 600;">$4,000</td>
-              <td class="num" style="color: #6B7280;">3.2%</td>
-            </tr>
+            
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">Card (Visa / Mastercard)</td>
+                          <td class="num">182</td>
+                          <td class="num" style="font-weight: 600;">$120,500</td>
+                          <td class="num" style="color: #6B7280;">96.8%</td>
+                        </tr>
+                      
+                        <tr>
+                          <td style="font-weight: 600; color: #111827;">ACH Direct Debit</td>
+                          <td class="num">4</td>
+                          <td class="num" style="font-weight: 600;">$4,000</td>
+                          <td class="num" style="color: #6B7280;">3.2%</td>
+                        </tr>
+                      
           </tbody>
         </table>
       </div>
 
       <!-- Subscription Activity Section -->
-      <div style="margin-bottom: 10px;">
-        <h3 class="block-title">Recurring Contract Baseline (Stripe Subscriptions)</h3>
+      <div style="margin-bottom: 16px;">
+        <h3 class="block-title">Subscription Contract Activity &amp; Retention</h3>
         <div class="kpi-grid-4">
           <div class="kpi-card highlight">
             <span class="kpi-card-label">Active Subscriptions</span>
             <span class="kpi-card-value">38</span>
-            <span class="kpi-card-sub">Contracted billing schedules</span>
+            <span class="kpi-card-sub">Active recurring contracts</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Contracted ARR</span>
+            <span class="kpi-card-label">Annual Run Rate (ARR)</span>
             <span class="kpi-card-value">$124,500</span>
-            <span class="kpi-card-sub">Active recurring run rate</span>
+            <span class="kpi-card-sub">Contracted run rate (MRR &times; 12)</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Active MRR</span>
+            <span class="kpi-card-label">Monthly Run Rate (MRR)</span>
             <span class="kpi-card-value">$10,375</span>
             <span class="kpi-card-sub">Contracted monthly baseline</span>
           </div>
           <div class="kpi-card">
-            <span class="kpi-card-label">Canceled Subscriptions</span>
-            <span class="kpi-card-value">1</span>
-            <span class="kpi-card-sub">Terminated in reporting period</span>
+            <span class="kpi-card-label">Observed Churn Rate</span>
+            <span class="kpi-card-value">2.1%</span>
+            <span class="kpi-card-sub">Canceled / total subscription cohort</span>
           </div>
         </div>
       </div>
 
-      <!-- Diligence Verification Box -->
-      <div class="panel" style="margin-top: 4px; padding: 9px 12px;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-          <span style="font-size: 7.5pt; font-weight: 700; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.04em;">DILIGENCE &amp; DATA PROVENANCE NOTICE &middot; READ-ONLY AUDIT</span>
-          <span style="font-size: 7pt; font-family: monospace; color: #6B7280;">SHA-256: d7a8fbb307d7809469ca9abc...</span>
+      <!-- Diligence & Confidentiality Notice Box -->
+      <div class="panel" style="margin-top: 10px; padding: 12px 14px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+          <span style="font-size: 8pt; font-weight: 700; color: #4F46E5; text-transform: uppercase; letter-spacing: 0.04em;">DILIGENCE &amp; CONFIDENTIALITY NOTICE &middot; STRIPE VERIFIED</span>
+          <span style="font-size: 7.5pt; font-family: monospace; color: #6B7280;">SHA-256: d7a8fbb307d7809469ca9abc...</span>
         </div>
-        <p style="font-size: 7.25pt; color: #4B5563; line-height: 1.45; margin-bottom: 6px;">
-          ProofRound directly ingests raw transaction and subscription ledgers via restricted read-only Stripe Connect tokens. All presented metrics reflect settled payment intents, charges, and active subscription schedules recorded inside the connected Stripe account during the observation period. Unsettled invoices, external ERP ledgers, wire transfers outside Stripe, and manually reported sales are not represented.
+        <p style="font-size: 8pt; color: #4B5563; line-height: 1.55; margin-bottom: 8px;">
+          ProofRound connects directly to the company's Stripe account via read-only OAuth to verify financial performance. Figures represent actual ledger data recorded in Stripe during the stated reporting window. This snapshot does not account for off-platform sales, non-Stripe payment processors, or bank wires.
         </p>
-        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; font-size: 7pt; color: #6B7280; border-top: 1px solid #E5E7EB; padding-top: 4px;">
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; font-size: 7.5pt; color: #6B7280; border-top: 1px solid #E5E7EB; padding-top: 6px;">
           <div><strong>Stripe Account:</strong> acct_1N923AcmeStripe</div>
-          <div><strong>Charges Evaluated:</strong> 190</div>
-          <div><strong>Invoices Evaluated:</strong> 180</div>
-          <div><strong>Subscriptions Evaluated:</strong> 40</div>
+          <div><strong>Charges Analyzed:</strong> 186</div>
+          <div><strong>Invoices Analyzed:</strong> 180</div>
+          <div><strong>Subscriptions:</strong> 40</div>
         </div>
       </div>
 
@@ -940,10 +1002,12 @@
     <!-- Page 4 Footer -->
     <div class="report-footer">
       <div class="footer-left">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="13" height="16" fill="none">
-          <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
-        </svg>
-        <span>ProofRound &middot; Diligence Snapshot &middot; ID: pkt_live_acme_9921</span>
+        
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="352 267 78 96" width="16" height="20" fill="none">
+  <path fill="#4F46E5" d="M352 267.085L396.78 267.09L396.78 281.373L387.63 291.203L404.28 308.946L415.51 296.845L425.83 296.839L425.84 363L352.01 363L352 267.085Z M424.98 270.662L430.07 275.617L404.31 303.453L392.77 291.215L397.65 285.961L404.3 293.055L424.98 270.662Z M400.53 267C400.6 267.08 400.67 267.157 400.74 267.233C400.74 267.233 400.89 267.384 400.89 267.384C401.48 268.005 402.07 268.625 402.67 269.241C405.24 271.883 407.79 274.549 410.37 277.184C410.97 277.801 411.58 278.418 412.17 279.05L404.28 287.596L400.54 283.557L400.53 267Z M418.95 293.07L422.27 289.445L425.77 293.08L418.95 293.07Z" />
+</svg>
+
+        <span>ProofRound &middot; Verified Investor Snapshot &middot; Report ID: pkt_live_acme_9921</span>
       </div>
       <div>Page 4 of 4</div>
     </div>
