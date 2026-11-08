@@ -4,7 +4,12 @@ import path from 'path';
 import PDFDocument from 'pdfkit';
 import { getDb } from './firebase-admin.js';
 import { getStripeClient } from './stripe.js';
+import { generatePdfWithBrowserless, getBrowserlessConfig } from './browserless.js';
+import { generateInvestorSnapshotHtml } from './report-template.js';
 import type Stripe from 'stripe';
+
+export { generateInvestorSnapshotHtml } from './report-template.js';
+export { generatePdfWithBrowserless, getBrowserlessConfig } from './browserless.js';
 
 type StartupDoc = {
   id: string;
@@ -26,7 +31,15 @@ type PacketMetrics = {
   netRevenue: number;
   refunds: number;
   chargebacks: number;
-  monthlyBreakdown: Array<{ period: string; value: number }>;
+  monthlyBreakdown: Array<{
+    period: string;
+    value: number;
+    monthKey?: string;
+    grossRevenue?: number;
+    refunds?: number;
+    netRevenue?: number;
+    transactions?: number;
+  }>;
   churnRate: number;
   activeCustomers: number;
   arpc: number;
@@ -53,6 +66,9 @@ type PacketMetrics = {
     topFiveCustomerShare: number | null;
     largestCustomerRevenue: number | null;
     topFiveCustomerRevenue: number | null;
+    topThreeCustomerShare?: number | null;
+    topThreeCustomerRevenue?: number | null;
+    topCustomersList?: Array<{ label: string; revenue: number; share: number }>;
     available: boolean;
   };
 };
@@ -212,7 +228,7 @@ function buildMetrics(charges: Stripe.Charge[], invoices: Stripe.Invoice[], subs
   let successfulPaymentsCount = 0;
   let failedPaymentsCount = 0;
 
-  const monthlyBreakdown = new Map<string, number>();
+  const monthlyStats = new Map<string, { grossRevenue: number; refunds: number; transactions: number }>();
   const activeCustomers = new Set<string>();
   const revenueByCustomer = new Map<string, { revenue: number; observations: number }>();
   const paymentMethodsMap = new Map<string, { count: number; volume: number }>();
@@ -229,6 +245,17 @@ function buildMetrics(charges: Stripe.Charge[], invoices: Stripe.Invoice[], subs
     current.revenue += amount;
     current.observations += 1;
     revenueByCustomer.set(customerId, current);
+  };
+
+  const trackMonthly = (monthKey: string, amount: number, isRefund = false) => {
+    const cur = monthlyStats.get(monthKey) ?? { grossRevenue: 0, refunds: 0, transactions: 0 };
+    if (isRefund) {
+      cur.refunds += amount;
+    } else {
+      cur.grossRevenue += amount;
+      cur.transactions += 1;
+    }
+    monthlyStats.set(monthKey, cur);
   };
 
   for (const charge of charges) {
@@ -250,7 +277,7 @@ function buildMetrics(charges: Stripe.Charge[], invoices: Stripe.Invoice[], subs
     }
 
     const monthKey = new Date(charge.created * 1000).toISOString().slice(0, 7);
-    monthlyBreakdown.set(monthKey, (monthlyBreakdown.get(monthKey) || 0) + amount);
+    trackMonthly(monthKey, amount, false);
 
     // Track payment method channels
     const rawType = (charge.payment_method_details as { type?: string } | null)?.type || (typeof charge.source === 'object' && charge.source && 'object' in charge.source ? String(charge.source.object) : 'card');
@@ -264,6 +291,7 @@ function buildMetrics(charges: Stripe.Charge[], invoices: Stripe.Invoice[], subs
       const refundAmt = charge.amount_refunded ? charge.amount_refunded / 100 : amount;
       refunds += refundAmt;
       refundCount += 1;
+      trackMonthly(monthKey, refundAmt, true);
     }
 
     if (charge.disputed) {
@@ -296,7 +324,7 @@ function buildMetrics(charges: Stripe.Charge[], invoices: Stripe.Invoice[], subs
     }
 
     const monthKey = new Date(invoice.created * 1000).toISOString().slice(0, 7);
-    monthlyBreakdown.set(monthKey, (monthlyBreakdown.get(monthKey) || 0) + amount);
+    trackMonthly(monthKey, amount, false);
 
     const invoiceMethod = 'Invoice / Direct';
     const existingMethod = paymentMethodsMap.get(invoiceMethod) ?? { count: 0, volume: 0 };
@@ -344,12 +372,35 @@ function buildMetrics(charges: Stripe.Charge[], invoices: Stripe.Invoice[], subs
   const activeCustomerCount = activeCustomers.size;
   const customerRevenueEntries = Array.from(revenueByCustomer.values()).sort((left, right) => right.revenue - left.revenue);
   const largestCustomerRevenue = customerRevenueEntries[0]?.revenue ?? null;
+  const topThreeCustomerRevenue = customerRevenueEntries.slice(0, 3).reduce((sum, entry) => sum + entry.revenue, 0);
   const topFiveCustomerRevenue = customerRevenueEntries.slice(0, 5).reduce((sum, entry) => sum + entry.revenue, 0);
   const repeatCustomerCount = customerRevenueEntries.filter(entry => entry.observations > 1).length;
 
-  const sortedMonthlyBreakdown = Array.from(monthlyBreakdown.entries())
-    .map(([period, value]) => ({ period, value }))
-    .sort((left, right) => left.period.localeCompare(right.period));
+  const topCustomersList = customerRevenueEntries.slice(0, 5).map((entry, idx) => ({
+    label: `Customer ${idx + 1}`,
+    revenue: entry.revenue,
+    share: grossRevenue > 0 ? entry.revenue / grossRevenue : 0,
+  }));
+
+  const sortedMonthlyBreakdown = Array.from(monthlyStats.entries())
+    .map(([monthKey, stat]) => {
+      const [year, monthNum] = monthKey.split('-');
+      const d = new Date(Number(year), Number(monthNum) - 1, 1);
+      const period = !isNaN(d.getTime())
+        ? d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+        : monthKey;
+      const net = Math.max(0, stat.grossRevenue - stat.refunds);
+      return {
+        period,
+        monthKey,
+        grossRevenue: stat.grossRevenue,
+        refunds: stat.refunds,
+        netRevenue: net,
+        transactions: stat.transactions,
+        value: stat.grossRevenue,
+      };
+    })
+    .sort((a, b) => (a.monthKey || a.period).localeCompare(b.monthKey || b.period));
 
   const growthAt = (monthsBack: number) => {
     if (sortedMonthlyBreakdown.length <= monthsBack) {
@@ -429,9 +480,12 @@ function buildMetrics(charges: Stripe.Charge[], invoices: Stripe.Invoice[], subs
     },
     customerConcentration: {
       largestCustomerShare: grossRevenue > 0 && largestCustomerRevenue !== null ? largestCustomerRevenue / grossRevenue : null,
+      topThreeCustomerShare: grossRevenue > 0 && customerRevenueEntries.length >= 1 ? topThreeCustomerRevenue / grossRevenue : null,
       topFiveCustomerShare: grossRevenue > 0 ? topFiveCustomerRevenue / grossRevenue : null,
       largestCustomerRevenue,
+      topThreeCustomerRevenue: customerRevenueEntries.length >= 1 ? topThreeCustomerRevenue : null,
       topFiveCustomerRevenue,
+      topCustomersList,
       available: grossRevenue > 0 && customerRevenueEntries.length > 0,
     },
   };
@@ -550,7 +604,7 @@ function drawMarkSvgLogo(
   pdf.restore();
 }
 
-export async function renderInvestorPacketPdf(startup: StartupDoc, packet: PacketRecord): Promise<Buffer> {
+export async function renderLocalFallbackPdf(startup: StartupDoc, packet: PacketRecord): Promise<Buffer> {
   const pdf = new PDFDocument({ size: "A4", margin: 0 });
   const pdfFonts = configurePdfFonts(pdf);
   const chunks: Buffer[] = [];
@@ -1157,6 +1211,30 @@ export async function renderInvestorPacketPdf(startup: StartupDoc, packet: Packe
 
   pdf.end();
   return output;
+}
+
+export async function renderInvestorPacketPdf(
+  startup: StartupDoc,
+  packet: PacketRecord
+): Promise<Buffer> {
+  const html = generateInvestorSnapshotHtml(startup, packet);
+  const { isConfigured } = getBrowserlessConfig();
+
+  if (isConfigured || process.env.BROWSERLESS_URL) {
+    try {
+      return await generatePdfWithBrowserless(html);
+    } catch (err) {
+      console.warn('[Browserless] Remote Browserless PDF generation failed, falling back to local generator:', err);
+    }
+  } else {
+    try {
+      return await generatePdfWithBrowserless(html);
+    } catch {
+      // Browserless not configured in current environment, proceed to fallback
+    }
+  }
+
+  return renderLocalFallbackPdf(startup, packet);
 }
 
 export async function createPacketRequestRecord(data: { startupId: string; startupName?: string; requesterEmail?: string; requesterName?: string; priceUSD: number }) {

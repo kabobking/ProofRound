@@ -1,4 +1,4 @@
-import { createVerifiedPacket, renderInvestorPacketPdf } from '../../lib/packets.js';
+import { createVerifiedPacket, renderInvestorPacketPdf, generateInvestorSnapshotHtml } from '../../lib/packets.js';
 import type { BackendRequest, BackendResponse } from '../../lib/http.js';
 
 function toSafeFilenamePart(value: string) {
@@ -35,6 +35,15 @@ export default async function handler(req: BackendRequest, res: BackendResponse)
     const start = typeof req.query.start === 'string' ? req.query.start : undefined;
     const end = typeof req.query.end === 'string' ? req.query.end : undefined;
     const { startup, packet } = await createVerifiedPacket(startupId, { start, end });
+
+    // Allow HTML format preview if requested (e.g. ?format=html)
+    if (req.query.format === 'html') {
+      const html = generateInvestorSnapshotHtml(startup, packet);
+      res.setHeader('Content-Type', 'text/html; charset=utf-8');
+      res.setHeader('Cache-Control', 'no-store');
+      return res.status(200).send(html);
+    }
+
     const pdfBuffer = await renderInvestorPacketPdf(startup, packet);
 
     // Directly return the verified PDF inline
